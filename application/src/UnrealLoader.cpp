@@ -121,7 +121,7 @@ auto UnrealLoader::load_terrain_entities(
 
   const auto mesh = std::make_shared<EntityMesh>();
 
-  std::vector<std::uint16_t> heights((width + 1) * (height + 1));
+  std::vector<std::uint16_t> heights(full_width * full_height);
 
   {
     const auto position = to_vec3(terrain.position());
@@ -180,11 +180,11 @@ auto UnrealLoader::load_terrain_entities(
     }
   }
 
-  {
-    // South.
-    const auto south_terrain =
-        load_side_terrain(terrain.map_x, terrain.map_y + 1);
+  // South.
+  const auto south_terrain =
+      load_side_terrain(terrain.map_x, terrain.map_y + 1);
 
+  {
     if (south_terrain != nullptr) {
       const glm::vec3 position = {terrain.position().x, terrain.position().y,
                                   south_terrain->position().z};
@@ -221,11 +221,10 @@ auto UnrealLoader::load_terrain_entities(
     }
   }
 
-  {
-    // East.
-    const auto east_terrain =
-        load_side_terrain(terrain.map_x + 1, terrain.map_y);
+  // East.
+  const auto east_terrain = load_side_terrain(terrain.map_x + 1, terrain.map_y);
 
+  {
     if (east_terrain != nullptr) {
       const glm::vec3 position = {terrain.position().x, terrain.position().y,
                                   east_terrain->position().z};
@@ -262,11 +261,11 @@ auto UnrealLoader::load_terrain_entities(
     }
   }
 
-  {
-    // Southeast.
-    const auto southeast_terrain =
-        load_side_terrain(terrain.map_x + 1, terrain.map_y + 1);
+  // Southeast.
+  const auto southeast_terrain =
+      load_side_terrain(terrain.map_x + 1, terrain.map_y + 1);
 
+  {
     if (southeast_terrain != nullptr) {
       const glm::vec3 position = {terrain.position().x, terrain.position().y,
                                   southeast_terrain->position().z};
@@ -304,21 +303,28 @@ auto UnrealLoader::load_terrain_entities(
       for (auto x = 0; x < full_width; ++x) {
         const float z = heights[y * full_width + x];
 
-        auto top = y > 0 ? heights[(y - 1) * full_width + x] : z;
-        auto bottom = y < height ? heights[(y + 1) * full_width + x] : z;
-        auto left = x > 0 ? heights[y * full_width + (x - 1)] : z;
-        auto right = x < width ? heights[y * full_width + (x + 1)] : z;
+        const auto top = y > 0 ? heights[(y - 1) * full_width + x] : z;
+        const auto bottom = y < height - (south_terrain == nullptr ? 1 : 0)
+                                ? heights[(y + 1) * full_width + x]
+                                : z;
+        const auto left = x > 0 ? heights[y * full_width + (x - 1)] : z;
+        const auto right = x < width - (east_terrain == nullptr ? 1 : 0)
+                               ? heights[y * full_width + (x + 1)]
+                               : z;
 
         const auto normal = glm::normalize(
             glm::vec3{(left - right) / (full_width * 2.0f),
                       (top - bottom) / (full_height * 2.0f), 4.0f});
 
-        if (x < width && y <= height) {
+        if (x < width && y < height) {
           mesh->vertices[y * width + x].normal = normal;
-        } else if (x == width && y == height) {
+        } else if (x == width && y == height && southeast_terrain != nullptr) {
           // Southeast.
           mesh->vertices[y * full_width + x].normal = normal;
-        } else if (x == width) {
+        } else if (y == height && south_terrain != nullptr) {
+          // South.
+          mesh->vertices[y * width + x].normal = normal;
+        } else if (x == width && east_terrain != nullptr) {
           // East.
           mesh->vertices[full_height * width + y].normal = normal;
         }

@@ -19,16 +19,28 @@ Tested with clients:
 
 ## Usage
 
+### Preview
+
 1. *Optional*. Place L2J geodata files in the `geodata` directory for preview.
-2. Run `l2mapconv` providing path to the client and map names:
+2. Run `l2mapconv.exe preview` providing path to the client and map names:
 
 ```sh
-> l2mapconv.exe "C:/Path/To/L2" 19_21 20_21
+> l2mapconv.exe preview "C:/Path/To/L2" 19_21 20_21
 ```
 
 3. Use WASD, RMB, Shift and Alt to control camera.
 4. Press Build button to build geodata.
 5. See results in the `output` directory.
+
+### Build
+
+1. Run `l2mapconv.exe build` providing path to the client and map names:
+
+```sh
+> l2mapconv.exe build "C:/Path/To/L2" 19_21 20_21
+```
+
+2. See results in the `output` directory.
 
 ## Building
 

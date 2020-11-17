@@ -26,7 +26,7 @@ UISystem::UISystem(UIContext &ui_context, WindowContext &window_context,
   m_ui_context.rendering.exported_geodata = true;
 
   // Default geodata settings.
-  reset_geodata_settings();
+  m_ui_context.geodata.set_defaults();
 }
 
 UISystem::~UISystem() {
@@ -90,7 +90,8 @@ void UISystem::geodata_window() const {
                     &m_ui_context.geodata.max_walkable_climb);
 
   if (ImGui::Button("Reset")) {
-    reset_geodata_settings();
+    m_ui_context.geodata.set_defaults();
+
     ASSERT(m_ui_context.geodata.build_handler, "App",
            "Geodata build handler must be defined");
     m_ui_context.geodata.build_handler();
@@ -109,14 +110,4 @@ void UISystem::geodata_window() const {
   ImGui::Checkbox("Export", &m_ui_context.geodata.export_);
 
   ImGui::End();
-}
-
-void UISystem::reset_geodata_settings() const {
-  m_ui_context.geodata.cell_size = 8.0f;
-  m_ui_context.geodata.cell_height = 1.0f;
-  m_ui_context.geodata.walkable_height = 46.0f;
-  m_ui_context.geodata.wall_angle = 87.5f;
-  m_ui_context.geodata.walkable_angle = 45.0f;
-  m_ui_context.geodata.min_walkable_climb = 10.0f;
-  m_ui_context.geodata.max_walkable_climb = 16.0f;
 }

@@ -5,9 +5,9 @@
 #include "GeodataSystem.h"
 
 GeodataSystem::GeodataSystem(GeodataContext &geodata_context,
-                             UIContext &ui_context, const Renderer &renderer)
+                             UIContext &ui_context, const Renderer *renderer)
     : m_geodata_context{geodata_context}, m_ui_context{ui_context},
-      m_renderer{renderer}, m_geodata_exporter{"output"} {
+      m_renderer{renderer} {
 
   m_ui_context.geodata.build_handler = [this] { build(); };
 }
@@ -23,9 +23,12 @@ void GeodataSystem::build() const {
   settings.max_walkable_climb = m_ui_context.geodata.max_walkable_climb;
 
   geodata::Builder geodata_builder;
+  geodata::Exporter geodata_exporter{"output"};
   GeodataEntityFactory geodata_entity_factory;
 
-  m_renderer.remove(SURFACE_EXPORTED_GEODATA);
+  if (m_renderer != nullptr) {
+    m_renderer->remove(SURFACE_EXPORTED_GEODATA);
+  }
 
   for (const auto &map : m_geodata_context.maps) {
     utils::Log(utils::LOG_INFO, "App")
@@ -35,13 +38,15 @@ void GeodataSystem::build() const {
     const auto geodata_entity = geodata_entity_factory.make_entity(
         geodata, map.bounding_box(), SURFACE_EXPORTED_GEODATA);
 
-    m_renderer.render_geodata({geodata_entity});
+    if (m_renderer != nullptr) {
+      m_renderer->render_geodata({geodata_entity});
+    }
 
     if (m_ui_context.geodata.export_) {
       utils::Log(utils::LOG_INFO, "App")
           << "Exporting geodata for map: " << map.name() << std::endl;
 
-      m_geodata_exporter.export_l2j_geodata(map.name(), geodata);
+      geodata_exporter.export_l2j_geodata(map.name(), geodata);
     }
   }
 }

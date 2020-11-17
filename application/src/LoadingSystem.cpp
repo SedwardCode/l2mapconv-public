@@ -5,13 +5,14 @@
 #include "UnrealLoader.h"
 
 LoadingSystem::LoadingSystem(GeodataContext &geodata_context,
-                             const Renderer &renderer,
+                             const Renderer *renderer,
                              const std::filesystem::path &root_path,
                              const std::vector<std::string> &map_names)
     : m_geodata_context{geodata_context}, m_renderer{renderer} {
 
   UnrealLoader unreal_loader{root_path};
   geodata::Loader geodata_loader{"geodata"};
+
   GeodataEntityFactory geodata_entity_factory;
 
   std::vector<Map> maps;
@@ -36,18 +37,19 @@ LoadingSystem::LoadingSystem(GeodataContext &geodata_context,
     geodata_entities.push_back(std::move(geodata_entity));
   }
 
-  m_renderer.render_maps(maps);
-  m_renderer.render_geodata(geodata_entities);
+  if (m_renderer != nullptr) {
+    utils::Log(utils::LOG_INFO, "App")
+        << "Prepare maps for rendering" << std::endl;
+    m_renderer->render_maps(maps);
+    m_renderer->render_geodata(geodata_entities);
+  }
 
+  utils::Log(utils::LOG_INFO, "App")
+      << "Prepare maps for geodata building" << std::endl;
   prebuild_maps(maps);
-
-  utils::Log(utils::LOG_INFO, "App") << "Done!" << std::endl;
 }
 
 void LoadingSystem::prebuild_maps(const std::vector<Map> &maps) const {
-  utils::Log(utils::LOG_INFO, "App")
-      << "Prepare maps for geodata building" << std::endl;
-
   std::unordered_map<std::shared_ptr<EntityMesh>,
                      std::shared_ptr<geodata::Mesh>>
       entity_mesh_cache;

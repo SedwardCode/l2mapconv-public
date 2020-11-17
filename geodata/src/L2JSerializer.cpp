@@ -1,6 +1,5 @@
 #include "pch.h"
 
-#include "ExportBuffer.h"
 #include "L2JSerializer.h"
 #include "Optimizer.h"
 
@@ -63,15 +62,9 @@ auto L2JSerializer::deserialize(std::istream &input) const -> Geodata {
   return geodata;
 }
 
-void L2JSerializer::serialize(const Geodata &geodata,
+void L2JSerializer::serialize(ExportBuffer &buffer,
                               std::ostream &output) const {
 
-  ExportBuffer buffer{geodata};
-
-  Optimizer optimizer{buffer};
-  optimizer.optimize();
-
-  // Write geodata.
   for (auto x = 0; x < MAP_WIDTH_BLOCKS; ++x) {
     for (auto y = 0; y < MAP_HEIGHT_BLOCKS; ++y) {
       const auto &block = buffer.block(x, y);
@@ -79,26 +72,28 @@ void L2JSerializer::serialize(const Geodata &geodata,
       output.put(block.type);
 
       if (block.type == BLOCK_SIMPLE) {
-        std::int16_t z = block.z;
-        z = (z & 0x00ff) | (z & 0xff00); // Swap bytes.
+        const auto cell = buffer.cell(x, y);
 
-        output.write(reinterpret_cast<char *>(&z), sizeof(z));
+        std::int16_t z = cell.z;
+        round_height(z);
+
+        write(output, z);
       } else if (block.type == BLOCK_COMPLEX) {
         for (auto cx = 0; cx < BLOCK_WIDTH_CELLS; ++cx) {
           for (auto cy = 0; cy < BLOCK_HEIGHT_CELLS; ++cy) {
-            const auto &cell = buffer.cell(x, y, cx, cy);
+            const auto cell = buffer.cell(x, y, cx, cy);
             write_complex_block_cell(output, cell);
           }
         }
       } else if (block.type == BLOCK_MULTILAYER) {
         for (auto cx = 0; cx < BLOCK_WIDTH_CELLS; ++cx) {
           for (auto cy = 0; cy < BLOCK_HEIGHT_CELLS; ++cy) {
-            const auto &column = buffer.column(x, y, cx, cy);
+            const auto column = buffer.column(x, y, cx, cy);
 
             output.put(column.layers);
 
             for (auto layer = 0; layer < column.layers; ++layer) {
-              const auto &cell = buffer.cell(x, y, cx, cy, layer);
+              const auto cell = buffer.cell(x, y, cx, cy, layer);
               write_complex_block_cell(output, cell);
             }
           }
@@ -143,16 +138,22 @@ void L2JSerializer::write_complex_block_cell(std::ostream &output,
       (cell.west ? DIRECTION_W : 0) | (cell.east ? DIRECTION_E : 0);
 
   std::int16_t z = cell.z;
+  round_height(z);
+  z = (z << 1) | nswe; // Add NSWE.
 
-  // Round cell height to fit 12 bits (other 4 bits for NSWE).
-  if (z % CELL_HEIGHT != 0) {
-    z = (z / CELL_HEIGHT - 1) * CELL_HEIGHT;
-  }
-
-  z = (z << 1) | nswe;             // Add NSWE.
-  z = (z & 0x00ff) | (z & 0xff00); // Swap bytes.
-
-  output.write(reinterpret_cast<char *>(&z), sizeof(z));
+  write(output, z);
 }
+
+void L2JSerializer::round_height(std::int16_t &height) const {
+  // Round cell height to fit 12 bits (other 4 bits for NSWE).
+  if (height % CELL_HEIGHT != 0) {
+    height = (height / CELL_HEIGHT - 1) * CELL_HEIGHT;
+  }
+}
+
+void L2JSerializer::write(std::ostream &output, std::int16_t value) const {
+  value = (value & 0x00ff) | (value & 0xff00); // Swap bytes.
+  output.write(reinterpret_cast<char *>(&value), sizeof(value));
+};
 
 } // namespace geodata

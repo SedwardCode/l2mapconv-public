@@ -22,6 +22,4 @@ private:
 
   void rendering_window(Timestep frame_time) const;
   void geodata_window() const;
-
-  void reset_geodata_settings() const;
 };
