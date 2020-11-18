@@ -130,7 +130,6 @@ void Application::build(const std::filesystem::path &root_path,
 
   for (const auto &map_name : map_names) {
     UIContext ui_context{};
-    RenderingContext rendering_context{};
     GeodataContext geodata_context{};
 
     LoadingSystem loading_system{

@@ -25,6 +25,10 @@ LoadingSystem::LoadingSystem(GeodataContext &geodata_context,
     maps.push_back(map);
 
     // Load geodata.
+    if (m_renderer == nullptr) {
+      continue;
+    }
+
     const auto *geodata = geodata_loader.load_geodata(map_name);
 
     if (geodata == nullptr) {
