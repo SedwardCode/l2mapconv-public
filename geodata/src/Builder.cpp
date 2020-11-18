@@ -143,7 +143,7 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
   }
 
   if (black_holes > 0) {
-    utils::Log(utils::LOG_WARN)
+    utils::Log(utils::LOG_WARN, "Geodata")
         << "Black holes (points of no return): " << black_holes << std::endl;
   }
 
