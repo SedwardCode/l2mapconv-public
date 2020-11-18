@@ -22,7 +22,12 @@ void ExportBuffer::reset(const Geodata &geodata) {
   std::fill(m_columns.begin(), m_columns.end(), Column{});
   std::fill(m_cells.begin(), m_cells.end(), PackedCell{});
 
-  for (const auto &cell : geodata.cells) {
+  // Sort cells by Z for correct order of the layers.
+  auto sorted_cells = geodata.cells;
+  std::sort(sorted_cells.begin(), sorted_cells.end(),
+            [](const auto &a, const auto &b) { return a.z < b.z; });
+
+  for (const auto &cell : sorted_cells) {
     const auto column_index = cell.y + cell.x * MAP_WIDTH_CELLS;
     const auto block_index = cell.y / BLOCK_HEIGHT_CELLS +
                              cell.x / BLOCK_WIDTH_CELLS * MAP_WIDTH_BLOCKS;
@@ -30,9 +35,9 @@ void ExportBuffer::reset(const Geodata &geodata) {
     auto &column = m_columns[column_index];
     auto &block = m_blocks[block_index];
 
-    column.layers++;
     block.type = cell.type;
 
+    column.layers++;
     m_cells[column_index * MAX_LAYERS + column.layers - 1] = pack_cell(cell);
 
     ASSERT(column.layers < MAX_LAYERS - 1, "Geodata", // MAX_LAYERS - 1 is ok.
