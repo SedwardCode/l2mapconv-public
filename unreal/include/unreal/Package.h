@@ -18,7 +18,7 @@ public:
   void load_objects(const std::string &class_name,
                     std::vector<std::shared_ptr<T>> &objects) const {
 
-    m_archive.object_loader.load_objects(class_name, objects);
+    m_archive.load_objects(class_name, objects);
   }
 
   auto name() const -> std::string { return std::string{m_archive.name}; }

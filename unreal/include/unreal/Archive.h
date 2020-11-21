@@ -130,6 +130,18 @@ public:
   auto operator>>(std::uint32_t &value) -> Archive &;
   auto operator>>(std::uint64_t &value) -> Archive &;
 
+  template <typename T>
+  void load_objects(const std::string &class_name,
+                    std::vector<std::shared_ptr<T>> &objects) {
+
+    for (auto &object_export : export_map) {
+      if (object_export.class_name == class_name) {
+        objects.push_back(std::dynamic_pointer_cast<T>(
+            object_loader.export_object(object_export)));
+      }
+    }
+  }
+
   template <typename T> auto operator>>(std::vector<T> &vector) -> Archive & {
     *this >> extract_array<Index, T>(vector);
     return *this;
