@@ -88,9 +88,9 @@ public:
 
   PackageHeader header;
 
-  std::vector<Name> name_map;
-  std::vector<ObjectImport> import_map;
-  std::vector<ObjectExport> export_map;
+  mutable std::vector<Name> name_map;
+  mutable std::vector<ObjectImport> import_map;
+  mutable std::vector<ObjectExport> export_map;
 
   explicit Archive(const std::string &name, std::stringstream input,
                    const ArchiveLoader &archive_loader);
@@ -132,7 +132,7 @@ public:
 
   template <typename T>
   void load_objects(const std::string &class_name,
-                    std::vector<std::shared_ptr<T>> &objects) {
+                    std::vector<std::shared_ptr<T>> &objects) const {
 
     for (auto &object_export : export_map) {
       if (object_export.class_name == class_name) {
