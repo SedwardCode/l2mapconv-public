@@ -130,6 +130,11 @@ public:
   auto operator>>(std::uint32_t &value) -> Archive &;
   auto operator>>(std::uint64_t &value) -> Archive &;
 
+  template <typename T> auto operator>>(std::vector<T> &vector) -> Archive & {
+    *this >> extract_array<Index, T>(vector);
+    return *this;
+  }
+
   template <typename T>
   void load_objects(const std::string &class_name,
                     std::vector<std::shared_ptr<T>> &objects) const {
@@ -140,11 +145,6 @@ public:
             object_loader.export_object(object_export)));
       }
     }
-  }
-
-  template <typename T> auto operator>>(std::vector<T> &vector) -> Archive & {
-    *this >> extract_array<Index, T>(vector);
-    return *this;
   }
 
   void dump(int line_count = 64, int line_length = 24);
