@@ -48,7 +48,9 @@ auto Optimizer::is_multilayer_block(int x, int y) const -> bool {
   return false;
 }
 
-auto Optimizer::is_simple_block(int x, int y) const -> std::pair<bool, int> {
+auto Optimizer::is_simple_block(int x, int y) const
+    -> std::pair<bool, std::int16_t> {
+
   auto min_z = std::numeric_limits<std::int16_t>::max();
   auto max_z = std::numeric_limits<std::int16_t>::min();
 
