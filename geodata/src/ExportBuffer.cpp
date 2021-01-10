@@ -75,7 +75,8 @@ void ExportBuffer::set_block_type(int x, int y, BlockType type) {
 void ExportBuffer::set_block_height(int x, int y, std::int16_t height) {
   const auto column_index =
       (y * BLOCK_HEIGHT_CELLS) + (x * BLOCK_WIDTH_CELLS) * MAP_WIDTH_CELLS;
-  m_cells[column_index].height = height;
+  const auto cell_index = column_index * MAX_LAYERS;
+  m_cells[cell_index].height = height;
 }
 
 auto ExportBuffer::pack_cell(const Cell &cell) const -> PackedCell {

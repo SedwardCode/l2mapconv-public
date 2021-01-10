@@ -71,7 +71,7 @@ auto Optimizer::is_simple_block(int x, int y) const
     }
   }
 
-  return {true, min_z + (max_z - min_z) / 2};
+  return {true, max_z};
 }
 
 } // namespace geodata
