@@ -58,28 +58,30 @@ Requirements:
 ### Windows
 
 ```sh
-$ git clone --recurse-submodules -j8 git@github.com:madyanov/l2mapconv-public.git
-$ cd l2mapconv-public
-$ cmake -H. -G Ninja -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="C:/Program Files/LLVM/bin/clang.exe" -DCMAKE_CXX_COMPILER="C:/Program Files/LLVM/bin/clang.exe"
-$ cd build
-$ ninja
+> git clone --recurse-submodules -j8 git@github.com:madyanov/l2mapconv-public.git
+> cd l2mapconv-public
+> cmake -H. -G Ninja -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="C:/Program Files/LLVM/bin/clang.exe" -DCMAKE_CXX_COMPILER="C:/Program Files/LLVM/bin/clang.exe"
+> cd build
+> ninja
 ```
 
 ### macOS
 
-*Optional*. Install dependencies using [Brew](https://brew.sh/):
+1. *Optional*. Install dependencies using [Brew](https://brew.sh/):
 
-```sh
-brew install cmake ninja
-```
+    ```sh
+    $ brew install cmake ninja
+    ```
 
-```sh
-$ git clone --recurse-submodules -j8 git@github.com:madyanov/l2mapconv-public.git
-$ cd l2mapconv-public
-$ cmake -H. -G Ninja -Bbuild -DCMAKE_BUILD_TYPE=Release
-$ cd build
-$ ninja
-```
+2. Clone and build project:
+
+    ```sh
+    $ git clone --recurse-submodules -j8 git@github.com:madyanov/l2mapconv-public.git
+    $ cd l2mapconv-public
+    $ cmake -H. -G Ninja -Bbuild -DCMAKE_BUILD_TYPE=Release
+    $ cd build
+    $ ninja
+    ```
 
 ## Credits
 
