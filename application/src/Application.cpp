@@ -54,7 +54,7 @@ auto Application::run() -> int {
 
 void Application::usage() const {
   std::cout << "Usage:" << std::endl;
-  std::cout << "\tl2mapconv <L2 root path> <command> [<map package name>]"
+  std::cout << "\tl2mapconv <command> <L2 root path> [<map package name>]"
             << std::endl
             << std::endl;
   std::cout << "Available commands:" << std::endl;

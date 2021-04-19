@@ -84,7 +84,6 @@ void PropertyExtractor::deserialize(Property &property) const {
       input.read(reinterpret_cast<char *>(property.data_value.data()),
                  array_size);
     }
-
   } break;
   case PropertyType::Struct: {
     if (property.struct_name == "Rotator") {
