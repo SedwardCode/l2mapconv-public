@@ -1,50 +1,43 @@
 # l2mapconv
 
 <p align="center">
-    <img src="assets/cruma.png" width="400" />
-    <img src="assets/toi.png" width="400" />
+    <img src="assets/cruma.png" width="400">
+    <img src="assets/toi.png" width="400">
 </p>
 
-Lineage II geodata builder from client files.
+Lineage II geodata builder.
 
-Tested with clients:
-
-- C1
-- HF
-
-Supported geodata formats:
-
-- L2J
+- Supported clients: C1, HF.
+- Supported geodata formats: L2J.
 
 ## Features
 
-- Map rendering and geodata preview
-- L2J geodata building
+- Map and geodata preview.
+- L2J geodata building.
 
 ## Usage
 
 ### Geodata preview
 
-1. Place L2J geodata files in the `geodata` directory for preview
-2. Run `l2mapconv.exe preview` providing path to the client and map names:
+1. Place L2J geodata files in the `geodata` directory for preview.
+2. Run `l2mapconv.exe preview` providing path to the client and the map names:
 
 ```sh
 > l2mapconv.exe preview "C:/Path/To/L2" 19_21 20_21
 ```
 
-3. Use WASD, RMB, Shift and Alt to control camera
-4. *Optional*. Press Build button to build geodata
-5. *Optional*. See results in the `output` directory
+3. Use WASD, RMB, Shift and Alt to control camera.
+4. *Optional*. Press Build button to build geodata, see results in the `output` directory.
 
 ### Geodata building
 
-1. Run `l2mapconv.exe build` providing path to the client and map names:
+1. Run `l2mapconv.exe build` providing path to the client and the map names:
 
 ```sh
 > l2mapconv.exe build "C:/Path/To/L2" 19_21 20_21
 ```
 
-2. See results in the `output` directory
+2. See results in the `output` directory.
 
 ## Project building
 
