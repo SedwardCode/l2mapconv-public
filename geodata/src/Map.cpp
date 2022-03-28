@@ -34,7 +34,7 @@ void Map::add(const Entity &entity) {
       const auto index1 = entity.mesh->indices[index + 1];
       const auto index2 = entity.mesh->indices[index + 2];
 
-      // Try to fix winding.
+      // Try to fix winding
       const auto average_normal = glm::normalize(
           (normals[index0] + normals[index1] + normals[index2]) / 3.0f);
 
