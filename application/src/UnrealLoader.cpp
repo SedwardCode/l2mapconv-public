@@ -21,7 +21,7 @@ auto UnrealLoader::load_map(const std::string &name) const -> Map {
 
   const auto package = optional_package.value();
 
-  // Terrain.
+  // Terrain
   const auto terrain = load_terrain(package);
 
   map.position = to_vec3(terrain->position());
@@ -37,19 +37,19 @@ auto UnrealLoader::load_map(const std::string &name) const -> Map {
                         std::make_move_iterator(terrain_entities.end()));
   }
 
-  // Mesh actors.
+  // Mesh actors
   const auto mesh_actor_entities = load_mesh_actor_entities(package);
   map.entities.insert(map.entities.end(),
                       std::make_move_iterator(mesh_actor_entities.begin()),
                       std::make_move_iterator(mesh_actor_entities.end()));
 
-  // BSPs.
+  // BSPs
   const auto bsp_entities = load_bsp_entities(package, map.bounding_box);
   map.entities.insert(map.entities.end(),
                       std::make_move_iterator(bsp_entities.begin()),
                       std::make_move_iterator(bsp_entities.end()));
 
-  // Volumes.
+  // Volumes
   const auto volume_entities = load_volume_entities(package, map.bounding_box);
   map.entities.insert(map.entities.end(),
                       std::make_move_iterator(volume_entities.begin()),
@@ -115,7 +115,7 @@ auto UnrealLoader::load_terrain_entities(
   const auto width = terrain.terrain_map->u_size;
   const auto height = terrain.terrain_map->v_size;
 
-  // Size with edges.
+  // Size with edges
   const auto full_width = width + 1;
   const auto full_height = height + 1;
 
@@ -129,14 +129,14 @@ auto UnrealLoader::load_terrain_entities(
 
     const auto *heightmap = mips[0].as<std::uint16_t>();
 
-    // Bounding box.
+    // Bounding box
     const auto bounding_box = terrain.bounding_box();
 
     mesh->bounding_box =
         math::Box{to_vec3(bounding_box.min) * scale + position,
                   to_vec3(bounding_box.max) * scale + position};
 
-    // Vertices.
+    // Vertices
     for (auto y = 0; y < height; ++y) {
       for (auto x = 0; x < width; ++x) {
         mesh->vertices.push_back(
@@ -148,7 +148,7 @@ auto UnrealLoader::load_terrain_entities(
       }
     }
 
-    // Indices.
+    // Indices
     for (auto y = 0; y < height - 1; ++y) {
       for (auto x = 0; x < width - 1; ++x) {
         if (!terrain.quad_visibility_bitmap[x + y * width]) {
@@ -156,22 +156,22 @@ auto UnrealLoader::load_terrain_entities(
         }
 
         if (!terrain.edge_turn_bitmap[x + y * width]) {
-          // First part of quad.
+          // First part of quad
           mesh->indices.push_back((x + 0) + (y + 0) * width);
           mesh->indices.push_back((x + 1) + (y + 0) * width);
           mesh->indices.push_back((x + 1) + (y + 1) * width);
 
-          // Second part of quad.
+          // Second part of quad
           mesh->indices.push_back((x + 0) + (y + 0) * width);
           mesh->indices.push_back((x + 1) + (y + 1) * width);
           mesh->indices.push_back((x + 0) + (y + 1) * width);
         } else {
-          // First part of quad.
+          // First part of quad
           mesh->indices.push_back((x + 0) + (y + 1) * width);
           mesh->indices.push_back((x + 0) + (y + 0) * width);
           mesh->indices.push_back((x + 1) + (y + 0) * width);
 
-          // Second part of quad.
+          // Second part of quad
           mesh->indices.push_back((x + 0) + (y + 1) * width);
           mesh->indices.push_back((x + 1) + (y + 0) * width);
           mesh->indices.push_back((x + 1) + (y + 1) * width);
@@ -204,14 +204,14 @@ auto UnrealLoader::load_terrain_entities(
 
         heights[y * full_width + x] = heightmap[x];
 
-        // First part of quad.
+        // First part of quad
         if (x != width - 1) {
           mesh->indices.push_back((x + 0) + (y - 1) * width);
           mesh->indices.push_back((x + 1) + (y - 1) * width);
           mesh->indices.push_back(mesh->vertices.size() - 1);
         }
 
-        // Second part of quad.
+        // Second part of quad
         if (x != 0) {
           mesh->indices.push_back((x + 0) + (y - 1) * width);
           mesh->indices.push_back(mesh->vertices.size() - 1);
@@ -221,7 +221,7 @@ auto UnrealLoader::load_terrain_entities(
     }
   }
 
-  // East.
+  // East
   const auto east_terrain = load_side_terrain(terrain.map_x + 1, terrain.map_y);
 
   {
@@ -244,14 +244,14 @@ auto UnrealLoader::load_terrain_entities(
 
         heights[y * full_width + x] = heightmap[y * width];
 
-        // First part of quad.
+        // First part of quad
         if (y != height - 1) {
           mesh->indices.push_back((x - 1) + (y + 0) * width);
           mesh->indices.push_back(mesh->vertices.size() - 1);
           mesh->indices.push_back((x - 1) + (y + 1) * width);
         }
 
-        // Second part of quad.
+        // Second part of quad
         if (y != 0) {
           mesh->indices.push_back((x - 1) + (y + 0) * width);
           mesh->indices.push_back(mesh->vertices.size() - 2);
@@ -261,7 +261,7 @@ auto UnrealLoader::load_terrain_entities(
     }
   }
 
-  // Southeast.
+  // Southeast
   const auto southeast_terrain =
       load_side_terrain(terrain.map_x + 1, terrain.map_y + 1);
 
@@ -285,12 +285,12 @@ auto UnrealLoader::load_terrain_entities(
 
       heights[y * full_width + x] = heightmap[0];
 
-      // First part of quad.
+      // First part of quad
       mesh->indices.push_back((x - 1) + (y - 1) * width);
       mesh->indices.push_back(mesh->vertices.size() - 2);
       mesh->indices.push_back(mesh->vertices.size() - 1);
 
-      // Second part of quad.
+      // Second part of quad
       mesh->indices.push_back((x - 1) + (y - 1) * width);
       mesh->indices.push_back(mesh->vertices.size() - 1);
       mesh->indices.push_back(mesh->vertices.size() - (width + 2));
@@ -298,7 +298,7 @@ auto UnrealLoader::load_terrain_entities(
   }
 
   {
-    // Normals.
+    // Normals
     for (auto y = 0; y < full_height; ++y) {
       for (auto x = 0; x < full_width; ++x) {
         const float z = heights[y * full_width + x];
@@ -319,20 +319,20 @@ auto UnrealLoader::load_terrain_entities(
         if (x < width && y < height) {
           mesh->vertices[y * width + x].normal = normal;
         } else if (x == width && y == height && southeast_terrain != nullptr) {
-          // Southeast.
+          // Southeast
           mesh->vertices[y * full_width + x].normal = normal;
         } else if (y == height && south_terrain != nullptr) {
-          // South.
+          // South
           mesh->vertices[y * width + x].normal = normal;
         } else if (x == width && east_terrain != nullptr) {
-          // East.
+          // East
           mesh->vertices[full_height * width + y].normal = normal;
         }
       }
     }
   }
 
-  // Surface.
+  // Surface
   Surface surface{};
   surface.type = SURFACE_TERRAIN;
   surface.index_offset = 0;
@@ -341,11 +341,11 @@ auto UnrealLoader::load_terrain_entities(
 
   mesh->surfaces.push_back(surface);
 
-  // Terrain entity.
+  // Terrain entity
   Entity entity{mesh};
   entities.push_back(std::move(entity));
 
-  // Bounding box entity.
+  // Bounding box entity
   Entity bb_entity{bounding_box_mesh(SURFACE_TERRAIN, mesh->bounding_box)};
   bb_entity.wireframe = true;
   entities.push_back(std::move(bb_entity));
@@ -392,14 +392,14 @@ auto UnrealLoader::load_mesh_actor_entities(
       const auto mesh = std::make_shared<EntityMesh>();
       cached_mesh = m_mesh_cache.insert({mesh_name, mesh}).first;
 
-      // Bounding box.
+      // Bounding box
       mesh->bounding_box = bounding_box;
 
       ASSERT(!unreal_mesh->uv_stream.empty(), "App",
              "Surface doesn't have texture coordinates");
       auto uvs = unreal_mesh->uv_stream[0].uvs.begin();
 
-      // Vertices.
+      // Vertices
       for (const auto &vertex : unreal_mesh->vertex_stream.vertices) {
         mesh->vertices.push_back({to_vec3(vertex.location),
                                   to_vec3(vertex.normal),
@@ -407,7 +407,7 @@ auto UnrealLoader::load_mesh_actor_entities(
         ++uvs;
       }
 
-      // Surfaces.
+      // Surfaces
       for (auto unreal_surface = unreal_mesh->surfaces.begin(),
                 end = unreal_mesh->surfaces.end();
            unreal_surface != end; ++unreal_surface) {
@@ -417,7 +417,7 @@ auto UnrealLoader::load_mesh_actor_entities(
           continue;
         }
 
-        // Indices.
+        // Indices
         for (auto i = 0; i < unreal_surface->triangle_max; ++i) {
           mesh->indices.push_back(
               unreal_mesh->index_stream
@@ -430,7 +430,7 @@ auto UnrealLoader::load_mesh_actor_entities(
                   .indices[unreal_surface->first_index + i * 3 + 0]);
         }
 
-        // Surface.
+        // Surface
         const auto &material = unreal_mesh->materials[std::distance(
             unreal_mesh->surfaces.begin(), unreal_surface)];
 
@@ -450,12 +450,12 @@ auto UnrealLoader::load_mesh_actor_entities(
       }
     }
 
-    // Static mesh entity.
+    // Static mesh entity
     Entity entity{cached_mesh->second};
     place_actor(*mesh_actor, entity);
     entities.push_back(std::move(entity));
 
-    // Bounding box entity.
+    // Bounding box entity
     Entity bb_entity{cached_bb_mesh->second};
     bb_entity.wireframe = true;
     place_actor(*mesh_actor, bb_entity);
@@ -544,7 +544,7 @@ auto UnrealLoader::load_model_entity(const unreal::Model &model,
 
     const auto vertex_start = mesh->vertices.size();
 
-    // Vertices.
+    // Vertices
     for (auto i = 0; i < node.vertex_count; ++i) {
       const auto &position =
           model.points[model.vertices[node.vertex_pool_index + i].vertex_index];
@@ -566,7 +566,7 @@ auto UnrealLoader::load_model_entity(const unreal::Model &model,
       }
     }
 
-    // Indices.
+    // Indices
     for (auto i = 2; i < node.vertex_count; ++i) {
       mesh->indices.push_back(vertex_start);
       mesh->indices.push_back(vertex_start + i - 1);
@@ -586,7 +586,7 @@ auto UnrealLoader::load_model_entity(const unreal::Model &model,
     return {};
   }
 
-  // Surface.
+  // Surface
   Surface surface{};
   surface.type = SURFACE_CSG;
   surface.index_offset = 0;

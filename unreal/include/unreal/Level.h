@@ -12,25 +12,25 @@
 namespace unreal {
 
 struct URL {
-  // URL components.
-  std::string protocol; // Protocol, i.e. "unreal" or "http".
+  // URL components
+  std::string protocol; // Protocol, i.e. "unreal" or "http"
   std::string host;     // Optional hostname, i.e. "204.157.115.40" or
-                        // "unreal.epicgames.com", blank if local.
-  std::int32_t port;    // Optional host port.
-  std::string map;      // Map name, i.e. "SkyCity", default is "Index".
+                        // "unreal.epicgames.com", blank if local
+  std::int32_t port;    // Optional host port
+  std::string map;      // Map name, i.e. "SkyCity", default is "Index"
   std::vector<std::string> options;
-  std::string portal;               // Portal to enter through, default is "".
+  std::string portal; // Portal to enter through, default is ""
 
-  bool valid; // Whether parsed successfully.
+  bool valid; // Whether parsed successfully
 
   friend auto operator>>(Archive &archive, URL &url) -> Archive &;
 };
 
 enum ReachSpecFlags {
-  RS_WALK = 1, // Walking required.
-  RS_FLY = 2,  // Flying required.
-  RS_SWIM = 4, // Swimming required.
-  RS_JUMP = 8, // Jumping required.
+  RS_WALK = 1, // Walking required
+  RS_FLY = 2,  // Flying required
+  RS_SWIM = 4, // Swimming required
+  RS_JUMP = 8, // Jumping required
   RS_DOOR = 16,
   RS_SPECIAL = 32,
   RS_LADDER = 64,

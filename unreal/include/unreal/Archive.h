@@ -53,12 +53,12 @@ struct GenerationInfo {
 };
 
 enum PackageFlags {
-  PKG_AllowDownload = 0x0001,  // Allow downloading package.
-  PKG_ClientOptional = 0x0002, // Purely optional for clients.
-  PKG_ServerSideOnly = 0x0004, // Only needed on the server side.
-  PKG_BrokenLinks = 0x0008,    // Loaded from linker with broken import links.
-  PKG_Unsecure = 0x0010,       // Not trusted.
-  PKG_Need = 0x8000,           // Client needs to download this package.
+  PKG_AllowDownload = 0x0001,  // Allow downloading package
+  PKG_ClientOptional = 0x0002, // Purely optional for clients
+  PKG_ServerSideOnly = 0x0004, // Only needed on the server side
+  PKG_BrokenLinks = 0x0008,    // Loaded from linker with broken import links
+  PKG_Unsecure = 0x0010,       // Not trusted
+  PKG_Need = 0x8000,           // Client needs to download this package
 };
 
 struct PackageHeader {

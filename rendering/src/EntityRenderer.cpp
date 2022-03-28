@@ -16,7 +16,7 @@ void EntityRenderer::render(const EntityTree &tree,
   const auto view_matrix = m_camera.view_matrix();
   const auto frustum = m_camera.frustum();
 
-  // Surface type branch.
+  // Surface type branch
   for (const auto &type_branch : tree.tree()) {
     const auto surface_type = type_branch.first;
 
@@ -24,7 +24,7 @@ void EntityRenderer::render(const EntityTree &tree,
       continue;
     }
 
-    // Shader branch.
+    // Shader branch
     for (const auto &shader_branch : type_branch.second) {
       const auto &shader = shader_branch.first;
 
@@ -33,7 +33,7 @@ void EntityRenderer::render(const EntityTree &tree,
       shader->load_projection_matrix(projection_matrix);
       shader->load_view_matrix(view_matrix);
 
-      // Texture branch.
+      // Texture branch
       for (const auto &texture_branch : shader_branch.second) {
         const auto &texture = texture_branch.first;
 
@@ -45,15 +45,15 @@ void EntityRenderer::render(const EntityTree &tree,
           shader->load_color({});
         }
 
-        // Mesh branch.
+        // Mesh branch
         for (const auto &mesh_branch : texture_branch.second) {
           const auto &mesh = mesh_branch.first;
 
-          // Surfaces.
+          // Surfaces
           for (const auto &[entity, surface] : mesh_branch.second) {
             const auto &aabb = entity->aabb();
 
-            // Frustum culling.
+            // Frustum culling
             if (settings.culling && !aabb.is_zero() &&
                 !frustum.intersects(aabb)) {
 

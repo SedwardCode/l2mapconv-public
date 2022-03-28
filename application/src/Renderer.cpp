@@ -13,14 +13,14 @@ void Renderer::render_maps(const std::vector<Map> &maps) const {
       texture_cache;
 
   for (const auto &map : maps) {
-    // Set initial camera position.
+    // Set initial camera position
     if (!map.entities.empty()) {
       m_rendering_context.camera.set_position(
           {map.position.x + 256.0f * 64.0f, map.position.y, 0.0f});
     }
 
     for (const auto &entity : map.entities) {
-      // Load mesh if needed.
+      // Load mesh if needed
       auto cached_mesh = entity_mesh_cache.find(entity.mesh);
 
       if (cached_mesh == entity_mesh_cache.end()) {
@@ -38,14 +38,14 @@ void Renderer::render_maps(const std::vector<Map> &maps) const {
                     .first;
           }
 
-          // Add surface.
+          // Add surface
           surfaces.emplace_back(surface.type,
                                 rendering::Material{surface.material.color,
                                                     cached_texture->second},
                                 surface.index_offset, surface.index_count);
         }
 
-        // Add vertices.
+        // Add vertices
         std::vector<rendering::Vertex> vertices;
 
         for (const auto &vertex : entity.mesh->vertices) {

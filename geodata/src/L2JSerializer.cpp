@@ -132,27 +132,27 @@ auto L2JSerializer::read_complex_block_cell(std::istream &input,
 void L2JSerializer::write_complex_block_cell(std::ostream &output,
                                              const Cell &cell) const {
 
-  // Calculate NSWE.
+  // Calculate NSWE
   const std::uint8_t nswe =
       (cell.north ? DIRECTION_N : 0) | (cell.south ? DIRECTION_S : 0) |
       (cell.west ? DIRECTION_W : 0) | (cell.east ? DIRECTION_E : 0);
 
   std::int16_t z = cell.z;
   round_height(z);
-  z = (z << 1) | nswe; // Add NSWE.
+  z = (z << 1) | nswe; // add NSWE
 
   write(output, z);
 }
 
 void L2JSerializer::round_height(std::int16_t &height) const {
-  // Round cell height to fit 12 bits (other 4 bits for NSWE).
+  // Round cell height to fit 12 bits (other 4 bits for NSWE)
   if (height % CELL_HEIGHT != 0) {
     height = (height / CELL_HEIGHT) * CELL_HEIGHT;
   }
 }
 
 void L2JSerializer::write(std::ostream &output, std::int16_t value) const {
-  value = (value & 0x00ff) | (value & 0xff00); // Swap bytes.
+  value = (value & 0x00ff) | (value & 0xff00); // swap bytes
   output.write(reinterpret_cast<char *>(&value), sizeof(value));
 };
 

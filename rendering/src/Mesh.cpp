@@ -18,11 +18,11 @@ Mesh::Mesh(Context &context, std::size_t vertex_count,
   ASSERT(!vertex_buffers.empty(), "Rendering",
          "Mesh must have at least one vertex buffer");
 
-  // Create VAO.
+  // Create VAO
   GL_CALL(glGenVertexArrays(1, &m_vao));
   GL_CALL(glBindVertexArray(m_vao));
 
-  // Create VBOs.
+  // Create VBOs
   for (const auto &vertex_buffer : vertex_buffers) {
     unsigned int vbo = 0;
     GL_CALL(glGenBuffers(1, &vbo));
@@ -31,7 +31,7 @@ Mesh::Mesh(Context &context, std::size_t vertex_count,
                          vertex_buffer.data(), GL_STATIC_DRAW));
     m_vbos.push_back(vbo);
 
-    // Float attributes layout.
+    // Float attributes layout
     for (const auto &layout : vertex_buffer.float_layouts()) {
       GL_CALL(glEnableVertexAttribArray(layout.index));
       GL_CALL(glVertexAttribPointer(layout.index, layout.size, layout.type,
@@ -40,7 +40,7 @@ Mesh::Mesh(Context &context, std::size_t vertex_count,
       GL_CALL(glVertexAttribDivisor(layout.index, layout.divisor));
     }
 
-    // Int attributes layout.
+    // Int attributes layout
     for (const auto &layout : vertex_buffer.int_layouts()) {
       GL_CALL(glEnableVertexAttribArray(layout.index));
       GL_CALL(glVertexAttribIPointer(layout.index, layout.size, layout.type,
@@ -49,7 +49,7 @@ Mesh::Mesh(Context &context, std::size_t vertex_count,
     }
   }
 
-  // Create EBO.
+  // Create EBO
   if (m_index_count > 0) {
     unsigned int ebo = 0;
     GL_CALL(glGenBuffers(1, &ebo));
@@ -60,7 +60,7 @@ Mesh::Mesh(Context &context, std::size_t vertex_count,
     m_vbos.push_back(ebo);
   }
 
-  // Unbind VAO for safe VBO deletion.
+  // Unbind VAO for safe VBO deletion
   GL_CALL(glBindVertexArray(0));
 }
 

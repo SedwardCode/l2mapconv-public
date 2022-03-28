@@ -30,11 +30,11 @@ void WindowSystem::start() {
 void WindowSystem::frame_begin(Timestep /*frame_time*/) {
   glfwPollEvents();
 
-  // Window.
+  // Window
   glfwGetWindowSize(m_window, &m_window_context.window.size.width,
                     &m_window_context.window.size.height);
 
-  // Framebuffer.
+  // Framebuffer
   glfwGetFramebufferSize(m_window, &m_window_context.framebuffer.size.width,
                          &m_window_context.framebuffer.size.height);
 
@@ -60,7 +60,7 @@ void WindowSystem::frame_begin(Timestep /*frame_time*/) {
     glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
   }
 
-  // Keyboard.
+  // Keyboard
   m_window_context.keyboard.w = glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS;
   m_window_context.keyboard.a = glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS;
   m_window_context.keyboard.s = glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS;
@@ -72,7 +72,7 @@ void WindowSystem::frame_begin(Timestep /*frame_time*/) {
   m_window_context.keyboard.alt =
       glfwGetKey(m_window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS;
 
-  // Exit on Esc.
+  // Exit on Esc
   if (glfwWindowShouldClose(m_window) != 0 ||
       glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 
@@ -91,16 +91,16 @@ auto WindowSystem::create_window(const std::string &title, int width,
 
   ASSERT(glfwInit() == GLFW_TRUE, "App", "Can't initialize GLFW");
 
-  // OpenGL context.
+  // OpenGL context
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-  // Window properties.
+  // Window properties
   glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
-  // Create window.
+  // Create window
   auto *window =
       glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
   ASSERT(window != nullptr, "App", "Can't create window");

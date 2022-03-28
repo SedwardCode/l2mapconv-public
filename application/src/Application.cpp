@@ -19,9 +19,9 @@ void Application::preview(const std::filesystem::path &client_root,
                           const std::vector<std::string> &maps) const {
 
   // Make sure to remove systems & contexts before OpenGL context will be
-  // destroyed.
+  // destroyed
   {
-    // Initialize contexts.
+    // Initialize contexts
     ApplicationContext application_context{};
     WindowContext window_context{};
     UIContext ui_context{};
@@ -30,7 +30,7 @@ void Application::preview(const std::filesystem::path &client_root,
 
     Renderer renderer{rendering_context};
 
-    // Initialize systems.
+    // Initialize systems
     std::vector<std::unique_ptr<System>> systems;
 
     systems.push_back(std::make_unique<WindowSystem>(
@@ -46,7 +46,7 @@ void Application::preview(const std::filesystem::path &client_root,
     systems.push_back(std::make_unique<GeodataSystem>(geodata_context,
                                                       ui_context, &renderer));
 
-    // Run application.
+    // Run application
     application_context.running = true;
 
     for (const auto &system : systems) {
@@ -56,7 +56,7 @@ void Application::preview(const std::filesystem::path &client_root,
     auto last_frmae_time = 0.0f;
 
     while (application_context.running) {
-      // Shouldn't use glfwGetTime here, but it's the easiest way to get time.
+      // Shouldn't use glfwGetTime here, but it's the easiest way to get time
       const auto time = static_cast<float>(glfwGetTime());
       Timestep frame_time{time - last_frmae_time};
       last_frmae_time = time;

@@ -18,14 +18,14 @@ UISystem::UISystem(UIContext &ui_context, WindowContext &window_context,
 
   ImGui::StyleColorsDark();
 
-  // Default rendering settings.
+  // Default rendering settings
   m_ui_context.rendering.culling = true;
   m_ui_context.rendering.terrain = true;
   m_ui_context.rendering.static_meshes = true;
   m_ui_context.rendering.csg = true;
   m_ui_context.rendering.exported_geodata = true;
 
-  // Default geodata settings.
+  // Default geodata settings
   m_ui_context.geodata.set_defaults();
 }
 

@@ -19,12 +19,12 @@ LoadingSystem::LoadingSystem(GeodataContext &geodata_context,
   std::vector<Entity<GeodataMesh>> geodata_entities;
 
   for (const auto &map_name : map_names) {
-    // Load map entities.
+    // Load map entities
     auto map = unreal_loader.load_map(map_name);
     map.name = map_name;
     maps.push_back(map);
 
-    // Load geodata.
+    // Load geodata
     if (m_renderer == nullptr) {
       continue;
     }
@@ -66,7 +66,7 @@ void LoadingSystem::prebuild_maps(const std::vector<Map> &maps) const {
     geodata::Map geodata_map{map.name, map.bounding_box};
 
     for (const auto &entity : map.entities) {
-      // Load mesh if needed.
+      // Load mesh if needed
       auto cached_mesh = entity_mesh_cache.find(entity.mesh);
 
       if (cached_mesh == entity_mesh_cache.end()) {

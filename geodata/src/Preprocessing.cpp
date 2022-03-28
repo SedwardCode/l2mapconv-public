@@ -2,7 +2,7 @@
 
 #include "Preprocessing.h"
 
-// Оставь надежду всяк сюда смотрящий.
+// Оставь надежду всяк сюда смотрящий
 namespace geodata {
 
 static constexpr auto RC_FLAT_AREA = 1;

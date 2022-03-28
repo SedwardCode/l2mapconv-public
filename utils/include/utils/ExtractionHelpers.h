@@ -9,7 +9,7 @@
 
 namespace utils {
 
-// std::istream packed_endian_specific_integral extraction.
+// std::istream packed_endian_specific_integral extraction
 template <typename value_type, llvm::endianness endian, llvm::alignment align>
 auto operator>>(
     std::istream &input_stream,
@@ -21,7 +21,7 @@ auto operator>>(
   return input_stream;
 }
 
-// Single value extraction.
+// Single value extraction
 template <typename ExtractAsT, typename StoreToT> struct ExtractHelper {
   StoreToT &store_to;
   explicit ExtractHelper(StoreToT &store_to) : store_to{store_to} {}

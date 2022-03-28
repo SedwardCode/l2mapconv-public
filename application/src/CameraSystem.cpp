@@ -15,13 +15,13 @@ void CameraSystem::frame_begin(Timestep frame_time) {
   const auto &keyboard = m_window_context.keyboard;
   auto &camera = m_rendering_context.camera;
 
-  // Rotation.
+  // Rotation
   if (mouse.right) {
     camera.rotate(-mouse.position.dx * rotation_speed, camera.up());
     camera.rotate(-mouse.position.dy * rotation_speed, camera.right());
   }
 
-  // Translation.
+  // Translation
   const auto shift_modifier = keyboard.shift ? 10.0f : 1.0f;
   const auto alt_modifier = keyboard.alt ? 0.2f : 1.0f;
 

@@ -54,7 +54,7 @@ public:
   auto scale() const -> Vector;
   auto bounding_box() const -> Box;
 
-  // Broken terrain on HF map 12_24.
+  // Broken terrain on HF map 12_24
   auto broken_scale() const -> bool;
 };
 

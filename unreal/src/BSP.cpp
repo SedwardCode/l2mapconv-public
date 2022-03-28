@@ -17,7 +17,7 @@ auto operator>>(Archive &archive, BSPNode &node) -> Archive & {
       node.connectivity >> node.visibility >> node.zone[0] >> node.zone[1] >>
       node.vertex_count >> node.leaf[0] >> node.leaf[1];
 
-  // Skip 4 pointers (4*4 bytes) to projected textures.
+  // Skip 4 pointers (4*4 bytes) to projected textures
   static_cast<std::istream &>(archive).seekg(12, std::ios::cur);
 
   return archive;
@@ -29,7 +29,7 @@ auto operator>>(Archive &archive, BSPSurface &surface) -> Archive & {
       surface.brush_polygon >> surface.actor >> surface.plane >>
       surface.nodes[0];
 
-  // TODO: Clarify version.
+  // TODO: Clarify version
   if (archive.header.license_version > 20) {
     archive >> surface.nodes[1];
   }

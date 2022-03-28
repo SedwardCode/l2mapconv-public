@@ -56,7 +56,7 @@ struct Scale {
   friend auto operator>>(Archive &archive, Scale &scale) -> Archive &;
 };
 
-// A rectangular minimum bounding volume.
+// A rectangular minimum bounding volume
 struct Box {
   Vector min;
   Vector max;
@@ -78,7 +78,7 @@ struct Matrix {
   friend auto operator>>(Archive &archive, Matrix &matrix) -> Archive &;
 };
 
-// A coordinate system matrix.
+// A coordinate system matrix
 struct Coords {
   Vector origin;
   Vector x_axis;

@@ -89,9 +89,9 @@ class BitmapMaterial : public RenderedMaterial {
 public:
   std::uint8_t format;
   std::uint8_t u_clamp_mode, v_clamp_mode;
-  std::uint8_t u_bits, v_bits;   // # of bits in size, i.e. 8 for 256.
-  std::int32_t u_size, v_size;   // Size, must be power of 2.
-  std::int32_t u_clamp, v_clamp; // Clamped width, must be <= size.
+  std::uint8_t u_bits, v_bits;   // # of bits in size, i.e. 8 for 256
+  std::int32_t u_size, v_size;   // Size, must be power of 2
+  std::int32_t u_clamp, v_clamp; // Clamped width, must be <= size
 
   explicit BitmapMaterial(Archive &archive) : RenderedMaterial{archive} {}
 
@@ -108,10 +108,10 @@ public:
 };
 
 struct Mipmap {
-  std::int32_t unknown; // ??? Pointer to data, valid only when locked.
+  std::int32_t unknown; // ??? Pointer to data, valid only when locked
   std::vector<std::uint8_t> data;
-  std::int32_t u_size, v_size;    // Power of two tile dimensions.
-  std::int8_t u_bits, v_bits;     // Power of two tile bits.
+  std::int32_t u_size, v_size; // Power of two tile dimensions
+  std::int8_t u_bits, v_bits;  // Power of two tile bits
 
   template <typename T> auto as() const -> const T * {
     return reinterpret_cast<const T *>(data.data());
@@ -134,50 +134,50 @@ enum LODSet {
 
 class Texture : public BitmapMaterial {
 public:
-  // Palette.
-  ObjectRef<Palette> palette; // Palette if 8-bit palettized.
+  // Palette
+  ObjectRef<Palette> palette; // Palette if 8-bit palettized
 
-  // Detail texture.
-  ObjectRef<Material> detail; // Detail texture to apply.
-  float detail_scale;         // Detail texture scale.
+  // Detail texture
+  ObjectRef<Material> detail; // Detail texture to apply
+  float detail_scale;         // Detail texture scale
 
-  // Internal info.
-  Color mip_zero;          // Overall average color of texture.
-  Color max_color;         // Maximum color for normalization.
-  double last_update_time; // Last time texture was locked for rendering.
+  // Internal info
+  Color mip_zero;          // Overall average color of texture
+  Color max_color;         // Maximum color for normalization
+  double last_update_time; // Last time texture was locked for rendering
 
-  // Texture flags.
+  // Texture flags
   bool masked;
   bool alpha_texture;
   bool two_sided; // Texture should be rendered two sided when placed directly
-                  // on a surface.
-  bool high_color_quality;   // High color quality hint.
-  bool high_texture_quality; // High texture quality hint.
-  bool realtime;             // Texture changes in realtime.
-  bool parametric;           // Texture data need not be stored.
-  bool realtime_changed;     // Changed since last render.
+                  // on a surface
+  bool high_color_quality;   // High color quality hint
+  bool high_texture_quality; // High texture quality hint
+  bool realtime;             // Texture changes in realtime
+  bool parametric;           // Texture data need not be stored
+  bool realtime_changed;     // Changed since last render
 
-  // Level of detail.
+  // Level of detail
   std::uint8_t lod_set;
   int normal_lod;
   int min_lod;
   int max_lod;
 
-  // Animation.
+  // Animation
   ObjectRef<Texture>
-      animation_next; // Next texture in looped animation sequence.
-  ObjectRef<Texture> animation_current; // Current animation frame.
-  std::uint8_t prime_count;   // Priming total for algorithmic textures.
-  std::uint8_t prime_current; // Priming current for algorithmic textures.
-  float min_frame_rate;       // Minimum animation rate in fps.
-  float max_frame_rate;       // Maximum animation rate in fps.
-  float accumulator;          // Frame accumulator.
+      animation_next; // Next texture in looped animation sequence
+  ObjectRef<Texture> animation_current; // Current animation frame
+  std::uint8_t prime_count;   // Priming total for algorithmic textures
+  std::uint8_t prime_current; // Priming current for algorithmic textures
+  float min_frame_rate;       // Minimum animation rate in fps
+  float max_frame_rate;       // Maximum animation rate in fps
+  float accumulator;          // Frame accumulator
 
-  // Mipmaps.
-  std::vector<Mipmap> mips; // Mipmaps in native format.
+  // Mipmaps
+  std::vector<Mipmap> mips; // Mipmaps in native format
 
   bool has_compressed;             // Compressed version included?
-  TextureFormat compressed_format; // Compressed texture format.
+  TextureFormat compressed_format; // Compressed texture format
 
   explicit Texture(Archive &archive)
       : BitmapMaterial{archive}, detail_scale{8.0f}, mip_zero{64, 128, 64, 0},

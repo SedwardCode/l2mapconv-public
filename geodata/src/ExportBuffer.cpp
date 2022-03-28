@@ -23,7 +23,7 @@ void ExportBuffer::reset(const Geodata &geodata) {
   std::fill(m_columns.begin(), m_columns.end(), Column{});
   std::fill(m_cells.begin(), m_cells.end(), PackedCell{});
 
-  // Sort cells by Z for correct order of the layers.
+  // Sort cells by Z for correct order of the layers
   auto sorted_cells = geodata.cells;
   std::sort(sorted_cells.begin(), sorted_cells.end(),
             [](const auto &a, const auto &b) { return a.z < b.z; });
@@ -41,7 +41,7 @@ void ExportBuffer::reset(const Geodata &geodata) {
     column.layers++;
     m_cells[column_index * MAX_LAYERS + column.layers - 1] = pack_cell(cell);
 
-    ASSERT(column.layers < MAX_LAYERS - 1, "Geodata", // MAX_LAYERS - 1 is ok.
+    ASSERT(column.layers < MAX_LAYERS - 1, "Geodata", // MAX_LAYERS - 1 is ok
            "Too many layers in column: " << cell.x << " " << cell.y);
   }
 }

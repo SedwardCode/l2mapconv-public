@@ -30,7 +30,7 @@ void Level::deserialize() {
     objects.push_back(object_ref);
   }
 
-  // TODO: Clarify version.
+  // TODO: Clarify version
   if (archive.header.license_version > 20) {
     std::int32_t count2 = 0;
     archive >> count2 >> count2;
