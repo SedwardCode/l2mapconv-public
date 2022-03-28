@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.22)
 project(l2mapconv)
 
 set(INSTALL_DIR ${CMAKE_BINARY_DIR}/install)

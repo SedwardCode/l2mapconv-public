@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.22)
 project(utils)
 
 add_library(${PROJECT_NAME}
@@ -15,7 +15,7 @@ target_link_libraries(${PROJECT_NAME}
 
 # Compiler options
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    CXX_STANDARD 20
+    CXX_STANDARD 23
     CXX_STANDARD_REQUIRED ON
 )
 

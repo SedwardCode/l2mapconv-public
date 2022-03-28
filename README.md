@@ -46,7 +46,7 @@ Requirements:
 - Clang
 - Cmake
 - Ninja
-- MVS on Windows
+- MVS on Windows and Xcode on macOS (or standalone Clang)
 
 ### Windows
 
