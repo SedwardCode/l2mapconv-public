@@ -81,15 +81,14 @@ void Application::preview(const std::filesystem::path &root_path,
     // Initialize systems.
     std::vector<std::unique_ptr<System>> systems;
 
-    systems.push_back(
-        std::make_unique<WindowSystem>(window_context, application_context,
-                                       ui_context, "l2mapconv", 1440, 1000));
+    systems.push_back(std::make_unique<WindowSystem>(
+        window_context, application_context, "l2mapconv", 1440, 1000));
     systems.push_back(std::make_unique<UISystem>(ui_context, window_context,
                                                  rendering_context));
     systems.push_back(std::make_unique<RenderingSystem>(
         rendering_context, window_context, ui_context));
-    systems.push_back(std::make_unique<CameraSystem>(
-        rendering_context, window_context, ui_context));
+    systems.push_back(
+        std::make_unique<CameraSystem>(rendering_context, window_context));
     systems.push_back(std::make_unique<LoadingSystem>(
         geodata_context, &renderer, root_path, map_names));
     systems.push_back(std::make_unique<GeodataSystem>(geodata_context,

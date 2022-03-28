@@ -4,11 +4,10 @@
 
 WindowSystem::WindowSystem(WindowContext &window_context,
                            ApplicationContext &application_context,
-                           UIContext &ui_context, const std::string &title,
-                           int width, int height)
+                           const std::string &title, int width, int height)
     : m_window_context{window_context},
-      m_application_context{application_context},
-      m_ui_context{ui_context}, m_window{create_window(title, width, height)} {
+      m_application_context{application_context}, m_window{create_window(
+                                                      title, width, height)} {
 
   glfwSetWindowUserPointer(m_window, &m_window_context);
 

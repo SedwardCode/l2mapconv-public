@@ -43,15 +43,15 @@ Lineage II geodata builder.
 
 Requirements:
 
-- Clang 10+
-- Cmake 3.17+
-- Ninja 1.10+
-- MVS 2019 on Windows and Xcode on macOS (or standalone Clang)
+- Clang
+- Cmake
+- Ninja
+- MVS on Windows
 
 ### Windows
 
 ```sh
-> git clone --recurse-submodules -j8 git@github.com:madyanov/l2mapconv-public.git
+> git clone --recurse-submodules -j8 https://github.com/madyanov/l2mapconv-public.git
 > cd l2mapconv-public
 > cmake -H. -G Ninja -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="C:/Program Files/LLVM/bin/clang.exe" -DCMAKE_CXX_COMPILER="C:/Program Files/LLVM/bin/clang.exe"
 > cd build
@@ -69,7 +69,7 @@ Requirements:
 2. Clone and build project:
 
     ```sh
-    $ git clone --recurse-submodules -j8 git@github.com:madyanov/l2mapconv-public.git
+    $ git clone --recurse-submodules -j8 https://github.com/madyanov/l2mapconv-public.git
     $ cd l2mapconv-public
     $ cmake -H. -G Ninja -Bbuild -DCMAKE_BUILD_TYPE=Release
     $ cd build

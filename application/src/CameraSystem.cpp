@@ -3,9 +3,9 @@
 #include "CameraSystem.h"
 
 CameraSystem::CameraSystem(RenderingContext &rendering_context,
-                           WindowContext &window_context, UIContext &ui_context)
-    : m_rendering_context{rendering_context}, m_window_context{window_context},
-      m_ui_context{ui_context} {}
+                           WindowContext &window_context)
+    : m_rendering_context{rendering_context}, m_window_context{window_context} {
+}
 
 void CameraSystem::frame_begin(Timestep frame_time) {
   const auto rotation_speed = 0.002f;
