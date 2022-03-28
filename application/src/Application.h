@@ -6,17 +6,10 @@
 
 class Application {
 public:
-  explicit Application(const std::vector<std::string> &arguments);
+  explicit Application();
 
-  auto run() -> int;
-
-private:
-  const std::vector<std::string> m_arguments;
-
-  void usage() const;
-
-  void preview(const std::filesystem::path &root_path,
-               const std::vector<std::string> &map_names) const;
-  void build(const std::filesystem::path &root_path,
-             const std::vector<std::string> &map_names) const;
+  void preview(const std::filesystem::path &client_root,
+               const std::vector<std::string> &maps) const;
+  void build(const std::filesystem::path &client_root,
+             const std::vector<std::string> &maps) const;
 };

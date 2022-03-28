@@ -13,57 +13,10 @@
 #include "WindowContext.h"
 #include "WindowSystem.h"
 
-Application::Application(const std::vector<std::string> &arguments)
-    : m_arguments{arguments} {}
+Application::Application() {}
 
-auto Application::run() -> int {
-  if (m_arguments.size() < 3) {
-    usage();
-    return EXIT_FAILURE;
-  }
-
-  const auto command = m_arguments[0];
-  const auto root_path = m_arguments[1];
-
-  if (!std::filesystem::exists(root_path)) {
-    utils::Log(utils::LOG_ERROR)
-        << "L2 root path not found: " << root_path << std::endl;
-    return EXIT_FAILURE;
-  }
-
-  auto map_names = m_arguments;
-  map_names.erase(map_names.begin());
-  map_names.erase(map_names.begin());
-
-  if (map_names.empty()) {
-    usage();
-    return EXIT_FAILURE;
-  }
-
-  if (command == "preview") {
-    preview(root_path, map_names);
-  } else if (command == "build") {
-    build(root_path, map_names);
-  } else {
-    usage();
-    return EXIT_FAILURE;
-  }
-
-  return EXIT_SUCCESS;
-}
-
-void Application::usage() const {
-  std::cout << "Usage:" << std::endl;
-  std::cout << "\tl2mapconv <command> <L2 root path> [<map package name>]"
-            << std::endl
-            << std::endl;
-  std::cout << "Available commands:" << std::endl;
-  std::cout << "\tpreview" << std::endl;
-  std::cout << "\tbuild" << std::endl;
-}
-
-void Application::preview(const std::filesystem::path &root_path,
-                          const std::vector<std::string> &map_names) const {
+void Application::preview(const std::filesystem::path &client_root,
+                          const std::vector<std::string> &maps) const {
 
   // Make sure to remove systems & contexts before OpenGL context will be
   // destroyed.
@@ -89,7 +42,7 @@ void Application::preview(const std::filesystem::path &root_path,
     systems.push_back(
         std::make_unique<CameraSystem>(rendering_context, window_context));
     systems.push_back(std::make_unique<LoadingSystem>(
-        geodata_context, &renderer, root_path, map_names));
+        geodata_context, &renderer, client_root, maps));
     systems.push_back(std::make_unique<GeodataSystem>(geodata_context,
                                                       ui_context, &renderer));
 
@@ -123,15 +76,14 @@ void Application::preview(const std::filesystem::path &root_path,
   }
 }
 
-void Application::build(const std::filesystem::path &root_path,
-                        const std::vector<std::string> &map_names) const {
+void Application::build(const std::filesystem::path &client_root,
+                        const std::vector<std::string> &maps) const {
 
-  for (const auto &map_name : map_names) {
+  for (const auto &map : maps) {
     UIContext ui_context{};
     GeodataContext geodata_context{};
 
-    LoadingSystem loading_system{
-        geodata_context, nullptr, root_path, {map_name}};
+    LoadingSystem loading_system{geodata_context, nullptr, client_root, {map}};
     GeodataSystem geodata_system{geodata_context, ui_context, nullptr};
 
     ui_context.geodata.set_defaults();

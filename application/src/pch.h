@@ -51,6 +51,8 @@
 
 #include <llvm/Endian.h>
 
+#include <cxxopts.hpp>
+
 #include <cstddef>
 #include <filesystem>
 #include <fstream>

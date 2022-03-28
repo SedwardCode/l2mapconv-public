@@ -17,27 +17,16 @@ Lineage II geodata builder.
 
 ## Usage
 
-### Geodata preview
-
-1. Place L2J geodata files in the `geodata` directory for preview.
-2. Run `l2mapconv.exe preview` providing path to the client and the map names:
-
 ```sh
-> l2mapconv.exe preview "C:/Path/To/L2" 19_21 20_21
+l2mapconv.exe --preview/build --client-root <path> -- [maps...]
+
+    --preview          Preview maps
+    --build            Build maps (see results in the `output` directory)
+    --client-root arg  Path to the Lineage II client
+    --log-level arg    Log level (0 - none, 1 - fatal, 2 - error, 3 -
+                       warn, 4 - info, 5 - debug, 6 - all) (default: 3)
+    --help             Print help
 ```
-
-3. Use WASD, RMB, Shift and Alt to control camera.
-4. *Optional*. Press Build button to build geodata, see results in the `output` directory.
-
-### Geodata building
-
-1. Run `l2mapconv.exe build` providing path to the client and the map names:
-
-```sh
-> l2mapconv.exe build "C:/Path/To/L2" 19_21 20_21
-```
-
-2. See results in the `output` directory.
 
 ## Project building
 
@@ -60,21 +49,14 @@ Requirements:
 
 ### macOS
 
-1. *Optional*. Install dependencies using [Brew](https://brew.sh/):
 
-    ```sh
-    $ brew install cmake ninja
-    ```
-
-2. Clone and build project:
-
-    ```sh
-    $ git clone --recurse-submodules -j8 https://github.com/madyanov/l2mapconv-public.git
-    $ cd l2mapconv-public
-    $ cmake -H. -G Ninja -Bbuild -DCMAKE_BUILD_TYPE=Release
-    $ cd build
-    $ ninja
-    ```
+```sh
+$ git clone --recurse-submodules -j8 https://github.com/madyanov/l2mapconv-public.git
+$ cd l2mapconv-public
+$ cmake -H. -G Ninja -Bbuild -DCMAKE_BUILD_TYPE=Release
+$ cd build
+$ ninja
+```
 
 ## Credits
 

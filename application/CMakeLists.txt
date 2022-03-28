@@ -32,6 +32,7 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE libglew_static
     PRIVATE glm
     PRIVATE imgui
+    PRIVATE cxxopts
 )
 
 # Compiler options
