@@ -23,15 +23,13 @@ Mesh::Mesh(Context &context, std::size_t vertex_count,
   GL_CALL(glBindVertexArray(m_vao));
 
   // Create VBOs.
-  std::vector<unsigned int> vbos;
-
   for (const auto &vertex_buffer : vertex_buffers) {
     unsigned int vbo = 0;
     GL_CALL(glGenBuffers(1, &vbo));
     GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, vbo));
     GL_CALL(glBufferData(GL_ARRAY_BUFFER, vertex_buffer.size(),
                          vertex_buffer.data(), GL_STATIC_DRAW));
-    vbos.push_back(vbo);
+    m_vbos.push_back(vbo);
 
     // Float attributes layout.
     for (const auto &layout : vertex_buffer.float_layouts()) {
@@ -59,14 +57,11 @@ Mesh::Mesh(Context &context, std::size_t vertex_count,
     GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER,
                          indices.size() * sizeof(indices[0]), indices.data(),
                          GL_STATIC_DRAW));
-    vbos.push_back(ebo);
+    m_vbos.push_back(ebo);
   }
 
   // Unbind VAO for safe VBO deletion.
   GL_CALL(glBindVertexArray(0));
-
-  // Delete buffers.
-  GL_CALL(glDeleteBuffers(vbos.size(), vbos.data()));
 }
 
 Mesh::~Mesh() {
@@ -74,6 +69,7 @@ Mesh::~Mesh() {
     m_context.mesh.vao = 0;
   }
 
+  GL_CALL(glDeleteBuffers(m_vbos.size(), m_vbos.data()))
   GL_CALL(glDeleteVertexArrays(1, &m_vao));
 }
 

@@ -68,7 +68,6 @@ void Application::preview(const std::filesystem::path &root_path,
   // Make sure to remove systems & contexts before OpenGL context will be
   // destroyed.
   {
-
     // Initialize contexts.
     ApplicationContext application_context{};
     WindowContext window_context{};

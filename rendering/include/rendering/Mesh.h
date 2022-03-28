@@ -32,6 +32,7 @@ private:
   std::size_t m_vertex_count;
   std::size_t m_index_count;
   unsigned int m_vao;
+  std::vector<unsigned int> m_vbos;
 };
 
 } // namespace rendering

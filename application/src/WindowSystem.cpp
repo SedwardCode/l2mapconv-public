@@ -83,7 +83,6 @@ void WindowSystem::frame_begin(Timestep /*frame_time*/) {
 void WindowSystem::frame_end(Timestep /*frame_time*/) {
   m_window_context.keyboard = {};
 
-  //  GL_CALL(glFlush());
   glfwSwapBuffers(m_window);
 }
 
@@ -100,8 +99,6 @@ auto WindowSystem::create_window(const std::string &title, int width,
 
   // Window properties.
   glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
-  //  glfwWindowHint(GLFW_DOUBLEBUFFER, GL_FALSE);
-  glfwWindowHint(GLFW_SAMPLES, 4);
 
   // Create window.
   auto *window =
