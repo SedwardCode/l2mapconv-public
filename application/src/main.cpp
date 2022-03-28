@@ -40,7 +40,7 @@ auto main(int argc, char **argv) -> int {
   utils::Log::level = log_level;
   utils::Log::colored = false;
 
-  // Command
+  // Commands
   auto preview = false;
   auto build = false;
   if (input.count("preview") > 0) {
@@ -48,7 +48,7 @@ auto main(int argc, char **argv) -> int {
   } else if (input.count("build") > 0) {
     build = true;
   } else {
-    utils::Log(utils::LOG_ERROR) << "Invalid command" << std::endl;
+    utils::Log(utils::LOG_ERROR) << "Unspecified command" << std::endl;
     std::cout << options.help() << std::endl;
     return EXIT_FAILURE;
   }
@@ -75,8 +75,7 @@ auto main(int argc, char **argv) -> int {
   }
 
   // Run application
-  Application application;
-
+  const Application application;
   if (preview) {
     application.preview(client_root, maps);
   } else if (build) {

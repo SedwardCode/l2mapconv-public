@@ -49,7 +49,6 @@ Requirements:
 
 ### macOS
 
-
 ```sh
 $ git clone --recurse-submodules -j8 https://github.com/madyanov/l2mapconv-public.git
 $ cd l2mapconv-public

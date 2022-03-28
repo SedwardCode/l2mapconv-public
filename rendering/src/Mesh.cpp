@@ -69,6 +69,7 @@ Mesh::~Mesh() {
     m_context.mesh.vao = 0;
   }
 
+  // Delete VBO and VAO
   GL_CALL(glDeleteBuffers(m_vbos.size(), m_vbos.data()))
   GL_CALL(glDeleteVertexArrays(1, &m_vao));
 }
