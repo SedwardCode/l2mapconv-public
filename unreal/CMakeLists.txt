@@ -51,7 +51,7 @@ add_executable(${PROJECT_NAME}_test src/main.cpp)
 target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
 
 set_target_properties(${PROJECT_NAME}_test PROPERTIES
-    CXX_STANDARD 23
+    CXX_STANDARD 20
     CXX_STANDARD_REQUIRED ON
 )
 
