@@ -35,7 +35,7 @@ void main() {
     int nswe = v_block[0].w >> 16;
 
     float scale = type == 0 ? cell_size * 4.0f - 1.0f : cell_size / 2.0f - 1.0f;
-    vec3 center = vec3(x * cell_size + scale, y * cell_size + scale, z - 16.0f);
+    vec3 center = vec3(x * cell_size + scale, y * cell_size + scale, z);
 
     if ((nswe & 0x1) != 0) {
         uvs[0].x += 0.5f;

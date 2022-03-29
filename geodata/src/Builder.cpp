@@ -8,7 +8,7 @@
 namespace geodata {
 
 static constexpr auto cell_size = 16.0f;
-static constexpr auto cell_height = 1.0f;
+static constexpr auto cell_height = 8.0f;
 static constexpr auto walkable_height = static_cast<int>(48.0f / cell_height);
 static constexpr auto walkable_angle = 45.0f;
 
@@ -58,7 +58,8 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
   // Convert heightfield to geodata
   Geodata geodata;
 
-  const auto depth = static_cast<int>((bb_max[2] - bb_min[2]) / cell_height);
+  const auto depth =
+      static_cast<int>((bb_max[2] - bb_min[2]) / cell_height) / 2;
 
   std::vector<int> columns(hf->width * hf->height);
   auto black_holes = 0;
@@ -79,13 +80,12 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
           black_holes++;
         }
 
-        const auto z = static_cast<int>(span->smax) - depth / 2 + 1;
+        const auto z = static_cast<int>(span->smax) - depth;
 
         geodata.cells.push_back({
             static_cast<std::int16_t>(x),
             static_cast<std::int16_t>(y),
-            static_cast<std::int16_t>(static_cast<float>(z) * cell_height +
-                                      28), // TODO: Fucking magic
+            static_cast<std::int16_t>(static_cast<float>(z) * cell_height),
             BLOCK_MULTILAYER,
             (nswe & DIRECTION_N) != 0,
             (nswe & DIRECTION_W) != 0,
