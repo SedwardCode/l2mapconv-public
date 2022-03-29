@@ -23,7 +23,7 @@ UISystem::UISystem(UIContext &ui_context, WindowContext &window_context,
   m_ui_context.rendering.terrain = true;
   m_ui_context.rendering.static_meshes = true;
   m_ui_context.rendering.csg = true;
-  m_ui_context.rendering.exported_geodata = true;
+  m_ui_context.rendering.generated_geodata = true;
 
   // Default geodata settings
   m_ui_context.geodata.set_defaults();
@@ -71,7 +71,8 @@ void UISystem::rendering_window(Timestep frame_time) const {
   ImGui::Checkbox("CSG", &m_ui_context.rendering.csg);
   ImGui::Checkbox("Bounding Boxes", &m_ui_context.rendering.bounding_boxes);
   ImGui::Checkbox("Imported Geodata", &m_ui_context.rendering.imported_geodata);
-  ImGui::Checkbox("Exported Geodata", &m_ui_context.rendering.exported_geodata);
+  ImGui::Checkbox("Generated Geodata",
+                  &m_ui_context.rendering.generated_geodata);
   ImGui::End();
 }
 

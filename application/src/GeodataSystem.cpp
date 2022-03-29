@@ -27,7 +27,7 @@ void GeodataSystem::build() const {
   GeodataEntityFactory geodata_entity_factory;
 
   if (m_renderer != nullptr) {
-    m_renderer->remove(SURFACE_EXPORTED_GEODATA);
+    m_renderer->remove(SURFACE_GENERATED_GEODATA);
   }
 
   for (const auto &map : m_geodata_context.maps) {
@@ -36,7 +36,7 @@ void GeodataSystem::build() const {
 
     const auto geodata = geodata_builder.build(map, settings);
     const auto geodata_entity = geodata_entity_factory.make_entity(
-        geodata, map.bounding_box(), SURFACE_EXPORTED_GEODATA);
+        geodata, map.bounding_box(), SURFACE_GENERATED_GEODATA);
 
     if (m_renderer != nullptr) {
       m_renderer->render_geodata({geodata_entity});

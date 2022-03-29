@@ -13,7 +13,7 @@ struct UIContext {
     bool csg;
     bool bounding_boxes;
     bool imported_geodata;
-    bool exported_geodata;
+    bool generated_geodata;
   } rendering;
 
   struct {

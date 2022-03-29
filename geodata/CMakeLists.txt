@@ -8,6 +8,7 @@ add_library(${PROJECT_NAME}
     src/Exporter.cpp
     src/Map.cpp
     src/Builder.cpp
+    src/RecastRasterization.cpp
     src/RecastHelpers.cpp
     src/ExportBuffer.cpp
     src/Optimizer.cpp

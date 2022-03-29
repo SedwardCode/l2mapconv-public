@@ -59,8 +59,8 @@ void RenderingSystem::frame_end(Timestep /*frame_time*/) {
     settings.surface_filter |= SURFACE_IMPORTED_GEODATA;
   }
 
-  if (m_ui_context.rendering.exported_geodata) {
-    settings.surface_filter |= SURFACE_EXPORTED_GEODATA;
+  if (m_ui_context.rendering.generated_geodata) {
+    settings.surface_filter |= SURFACE_GENERATED_GEODATA;
   }
 
   if (settings.wireframe) {

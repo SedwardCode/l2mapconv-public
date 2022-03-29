@@ -1,6 +1,7 @@
 #include "pch.h"
 
-#include "Preprocessing.h"
+#include "RecastHelpers.h"
+#include "RecastRasterization.h"
 
 #include <geodata/Builder.h>
 
@@ -42,17 +43,17 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
 
   // Rasterize triangles
   std::vector<unsigned char> areas(triangle_count);
-  mark_triangles(walkable_angle, vertices, triangles, triangle_count,
-                 &areas.front());
-  rcRasterizeTriangles(&context, vertices, vertex_count, triangles,
-                       &areas.front(), triangle_count, *hf, 0);
+  mark_walkable_triangles(walkable_angle, vertices, triangles, triangle_count,
+                          &areas.front());
+  rasterize_triangles_with_sphere_collision(&context, vertices, vertex_count,
+                                            triangles, &areas.front(),
+                                            triangle_count, *hf, 0);
 
   // Filter low height spans
   rcFilterWalkableLowHeightSpans(&context, walkable_height, *hf);
 
   // Calculate NSWE
-  calculate_nswe(*destination_hf, walkable_height, min_walkable_climb,
-                 max_walkable_climb);
+  // TODO
 
   // Convert heightfield to geodata
   Geodata geodata;
