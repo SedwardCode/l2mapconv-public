@@ -26,6 +26,7 @@ LoadingSystem::LoadingSystem(GeodataContext &geodata_context,
 
     // Load geodata
     if (m_renderer == nullptr) {
+      // We are in a CLI mode
       continue;
     }
 

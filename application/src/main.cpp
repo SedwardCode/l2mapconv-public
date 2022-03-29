@@ -6,23 +6,23 @@ auto main(int argc, char **argv) -> int {
   // Define options
   cxxopts::Options options{argv[0]};
 
-  options                                                               //
-      .custom_help("--preview/build --client-root <path> -- [maps...]") //
-      .allow_unrecognised_options()                                     //
-      .add_options()                                                    //
-
-      ("preview", "Preview maps") //
-
-      ("build", "Build maps (see results in the `output` directory)") //
-
-      ("client-root", "Path to the Lineage II client",
-       cxxopts::value<std::filesystem::path>()) //
-
-      ("log-level",
-       "Log level (0 - none, 1 - fatal, 2 - error, 3 - warn, 4 - info, 5 - "
-       "debug, 6 - all)",
-       cxxopts::value<unsigned int>()->default_value("3")) //
-
+  options                                                                    //
+      .custom_help("--preview/build --client-root <path> -- [maps...]")      //
+      .allow_unrecognised_options()                                          //
+      .add_options()                                                         //
+                                                                             //
+      ("preview", "Preview maps")                                            //
+                                                                             //
+      ("build", "Build maps (see results in the `output` directory)")        //
+                                                                             //
+      ("client-root", "Path to the Lineage II client",                       //
+       cxxopts::value<std::filesystem::path>())                              //
+                                                                             //
+      ("log-level",                                                          //
+       "Log level (0 - none, 1 - fatal, 2 - error, 3 - warn, 4 - info, 5 - " //
+       "debug, 6 - all)",                                                    //
+       cxxopts::value<unsigned int>()->default_value("3"))                   //
+                                                                             //
       ("help", "Print help");
 
   // Parse options
