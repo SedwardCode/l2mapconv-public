@@ -9,7 +9,7 @@ namespace geodata {
 
 static constexpr auto cell_size = 16.0f;
 static constexpr auto cell_height = 8.0f;
-static constexpr auto walkable_height = static_cast<int>(48.0f / cell_height);
+static constexpr auto walkable_height = 48.0f;
 static constexpr auto walkable_angle = 45.0f;
 
 auto Builder::build(const Map &map, const BuilderSettings &settings) const
@@ -50,7 +50,8 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
                                             triangle_count, *hf, 0);
 
   // Filter low height spans
-  rcFilterWalkableLowHeightSpans(&context, walkable_height, *hf);
+  rcFilterWalkableLowHeightSpans(
+      &context, static_cast<int>(walkable_height / cell_height), *hf);
 
   // Calculate NSWE
   // TODO
