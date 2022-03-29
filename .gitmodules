@@ -7,9 +7,6 @@
 [submodule "libs/glew"]
 	path = libs/glew
 	url = https://github.com/Perlmint/glew-cmake.git
-[submodule "libs/recast"]
-	path = libs/recast
-	url = https://github.com/madyanov/recastnavigation.git
 [submodule "libs/stb/stb"]
 	path = libs/stb/stb
 	url = https://github.com/nothings/stb.git
@@ -19,3 +16,6 @@
 [submodule "libs/cxxopts"]
 	path = libs/cxxopts
 	url = https://github.com/jarro2783/cxxopts.git
+[submodule "libs/recast"]
+	path = libs/recast
+	url = https://github.com/recastnavigation/recastnavigation.git
