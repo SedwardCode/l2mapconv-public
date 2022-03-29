@@ -70,17 +70,7 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
       for (auto *span = hf->spans[x + y * hf->width]; span != nullptr;
            span = span->next) {
 
-        const auto area = static_cast<int>(span->area) & 0xf;
-        const auto nswe = static_cast<int>(span->area) >> 4;
-
-        if (area == RC_NULL_AREA) {
-          continue;
-        }
-
-        if (nswe == 0) {
-          black_holes++;
-        }
-
+        const auto area = span->area;
         const auto z = static_cast<int>(span->smax) - depth;
 
         geodata.cells.push_back({
@@ -88,10 +78,10 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
             static_cast<std::int16_t>(y),
             static_cast<std::int16_t>(static_cast<float>(z) * cell_height),
             BLOCK_MULTILAYER,
-            (nswe & DIRECTION_N) != 0,
-            (nswe & DIRECTION_W) != 0,
-            (nswe & DIRECTION_E) != 0,
-            (nswe & DIRECTION_S) != 0,
+            area == RC_WALKABLE_AREA,
+            area == RC_WALKABLE_AREA,
+            area == RC_WALKABLE_AREA,
+            area == RC_WALKABLE_AREA,
         });
 
         columns[y * hf->width + x]++;

@@ -4,9 +4,6 @@
 
 namespace geodata {
 
-static constexpr auto RC_FLAT_AREA = 1;
-static constexpr auto RC_STEEP_AREA = 2;
-
 void mark_walkable_triangles(float walkable_angle, const float *vertices,
                              const int *triangles, std::size_t triangle_count,
                              unsigned char *areas) {
@@ -21,9 +18,9 @@ void mark_walkable_triangles(float walkable_angle, const float *vertices,
                             glm::make_vec3(&vertices[triangle[2] * 3]));
 
     if (normal.y < walkable_angle_radians) {
-      areas[i] = RC_STEEP_AREA;
+      areas[i] = RC_NULL_AREA;
     } else {
-      areas[i] = RC_FLAT_AREA;
+      areas[i] = RC_WALKABLE_AREA;
     }
   }
 }

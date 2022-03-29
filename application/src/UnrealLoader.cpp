@@ -180,7 +180,7 @@ auto UnrealLoader::load_terrain_entities(
     }
   }
 
-  // South.
+  // South
   const auto south_terrain =
       load_side_terrain(terrain.map_x, terrain.map_y + 1);
 
