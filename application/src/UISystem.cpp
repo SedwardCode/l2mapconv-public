@@ -83,7 +83,6 @@ void UISystem::geodata_window() const {
   ImGui::InputFloat("Cell Size", &m_ui_context.geodata.cell_size);
   ImGui::InputFloat("Cell Height", &m_ui_context.geodata.cell_height);
   ImGui::InputFloat("Walkable Height", &m_ui_context.geodata.walkable_height);
-  ImGui::InputFloat("Wall Angle", &m_ui_context.geodata.wall_angle);
   ImGui::InputFloat("Walkable Angle", &m_ui_context.geodata.walkable_angle);
   ImGui::InputFloat("Min Walkable Climb",
                     &m_ui_context.geodata.min_walkable_climb);

@@ -20,7 +20,6 @@ struct UIContext {
     float cell_size;
     float cell_height;
     float walkable_height;
-    float wall_angle;
     float walkable_angle;
     float min_walkable_climb;
     float max_walkable_climb;
@@ -29,12 +28,11 @@ struct UIContext {
     bool export_;
 
     void set_defaults() {
-      cell_size = 8.0f;
-      cell_height = 1.0f;
-      walkable_height = 46.0f;
-      wall_angle = 87.5f;
+      cell_size = 16.0f;
+      cell_height = 8.0f;
+      walkable_height = 48.0f;
       walkable_angle = 45.0f;
-      min_walkable_climb = 12.0f;
+      min_walkable_climb = 8.0f;
       max_walkable_climb = 16.0f;
     }
   } geodata;

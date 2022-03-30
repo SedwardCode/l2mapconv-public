@@ -17,7 +17,6 @@ void GeodataSystem::build() const {
   settings.cell_size = m_ui_context.geodata.cell_size;
   settings.cell_height = m_ui_context.geodata.cell_height;
   settings.walkable_height = m_ui_context.geodata.walkable_height;
-  settings.wall_angle = m_ui_context.geodata.wall_angle;
   settings.walkable_angle = m_ui_context.geodata.walkable_angle;
   settings.min_walkable_climb = m_ui_context.geodata.min_walkable_climb;
   settings.max_walkable_climb = m_ui_context.geodata.max_walkable_climb;

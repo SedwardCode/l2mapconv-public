@@ -1,16 +1,10 @@
 #include "pch.h"
 
 #include "RecastHelpers.h"
-#include "RecastRasterization.h"
 
 #include <geodata/Builder.h>
 
 namespace geodata {
-
-static constexpr auto cell_size = 16.0f;
-static constexpr auto cell_height = 8.0f;
-static constexpr auto walkable_height = 48.0f;
-static constexpr auto walkable_angle = 45.0f;
 
 auto Builder::build(const Map &map, const BuilderSettings &settings) const
     -> Geodata {
@@ -25,15 +19,15 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
   auto width = 0;
   auto height = 0;
   rcCalcGridSize(static_cast<float *>(bb_min), static_cast<float *>(bb_max),
-                 cell_size, &width, &height);
+                 settings.cell_size, &width, &height);
 
   rcContext context{};
 
   // Create heightfield
   auto *hf = rcAllocHeightfield();
-  rcCreateHeightfield(&context, *hf, width, height,
-                      static_cast<float *>(bb_min),
-                      static_cast<float *>(bb_max), cell_size, cell_height);
+  rcCreateHeightfield(
+      &context, *hf, width, height, static_cast<float *>(bb_min),
+      static_cast<float *>(bb_max), settings.cell_size, settings.cell_height);
 
   // Prepare geometry data
   const auto *vertices = glm::value_ptr(map.vertices().front());
@@ -43,24 +37,22 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
 
   // Rasterize triangles
   std::vector<unsigned char> areas(triangle_count);
-  mark_walkable_triangles(walkable_angle, vertices, triangles, triangle_count,
-                          &areas.front());
-  rasterize_triangles_with_sphere_collision(&context, vertices, vertex_count,
-                                            triangles, &areas.front(),
-                                            triangle_count, *hf, 0);
-
-  // Filter low height spans
-  rcFilterWalkableLowHeightSpans(
-      &context, static_cast<int>(walkable_height / cell_height), *hf);
+  mark_walkable_triangles(settings.walkable_angle, vertices, triangles,
+                          triangle_count, &areas.front());
+  rcRasterizeTriangles(&context, vertices, vertex_count, triangles,
+                       &areas.front(), triangle_count, *hf, 0);
 
   // Calculate NSWE
-  // TODO
+  calculate_nswe(
+      *hf, static_cast<int>(settings.walkable_height / settings.cell_height),
+      static_cast<int>(settings.min_walkable_climb / settings.cell_height),
+      static_cast<int>(settings.max_walkable_climb / settings.cell_height));
 
   // Convert heightfield to geodata
   Geodata geodata;
 
   const auto depth =
-      static_cast<int>((bb_max[2] - bb_min[2]) / cell_height) / 2;
+      static_cast<int>((bb_max[2] - bb_min[2]) / settings.cell_height) / 2;
 
   std::vector<int> columns(hf->width * hf->height);
   auto black_holes = 0;
@@ -70,18 +62,29 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
       for (auto *span = hf->spans[x + y * hf->width]; span != nullptr;
            span = span->next) {
 
-        const auto area = span->area;
+        const auto area = unpack_area(span->area);
+        const auto nswe = unpack_nswe(span->area);
+
+        if (area == RC_NULL_AREA) {
+          continue;
+        }
+
+        if (nswe == 0) {
+          black_holes++;
+        }
+
         const auto z = static_cast<int>(span->smax) - depth;
 
         geodata.cells.push_back({
             static_cast<std::int16_t>(x),
             static_cast<std::int16_t>(y),
-            static_cast<std::int16_t>(static_cast<float>(z) * cell_height),
+            static_cast<std::int16_t>(static_cast<float>(z) *
+                                      settings.cell_height),
             BLOCK_MULTILAYER,
-            area == RC_WALKABLE_AREA,
-            area == RC_WALKABLE_AREA,
-            area == RC_WALKABLE_AREA,
-            area == RC_WALKABLE_AREA,
+            (nswe & DIRECTION_N) != 0,
+            (nswe & DIRECTION_W) != 0,
+            (nswe & DIRECTION_E) != 0,
+            (nswe & DIRECTION_S) != 0,
         });
 
         columns[y * hf->width + x]++;

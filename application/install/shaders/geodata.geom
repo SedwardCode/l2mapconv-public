@@ -34,7 +34,7 @@ void main() {
     int type = v_block[0].w & 0xff;
     int nswe = v_block[0].w >> 16;
 
-    float scale = type == 0 ? cell_size * 4.0f - 1.0f : cell_size / 2.0f - 1.0f;
+    float scale = type == 0 ? cell_size * 4.0f - 0.25f : cell_size / 2.0f - 0.25f;
     vec3 center = vec3(x * cell_size + scale, y * cell_size + scale, z);
 
     if ((nswe & 0x1) != 0) {
