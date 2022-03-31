@@ -19,6 +19,7 @@ namespace rendering {
 
 class EntityTree : public utils::NonCopyable {
 public:
+  // TODO: May be optimized using BVH
   using Tree = std::map<
       std::uint64_t,
       std::map<std::shared_ptr<const EntityShader>,
