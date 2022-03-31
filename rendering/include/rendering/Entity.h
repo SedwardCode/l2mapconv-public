@@ -4,7 +4,7 @@
 #include "EntityMesh.h"
 #include "EntityShader.h"
 
-#include <math/Box.h>
+#include <geometry/Box.h>
 
 #include <glm/glm.hpp>
 
@@ -21,14 +21,14 @@ public:
   auto mesh() const -> const std::shared_ptr<DrawableMesh> &;
   auto shader() const -> const std::shared_ptr<EntityShader> &;
   auto model_matrix() const -> const glm::mat4 &;
-  auto aabb() const -> const math::Box &;
+  auto aabb() const -> const geometry::Box &;
   auto wireframe() const -> bool;
 
 private:
   std::shared_ptr<DrawableMesh> m_mesh;
   std::shared_ptr<EntityShader> m_shader;
   glm::mat4 m_model_matrix;
-  math::Box m_aabb;
+  geometry::Box m_aabb;
   bool m_wireframe;
 };
 

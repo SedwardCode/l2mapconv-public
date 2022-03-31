@@ -7,7 +7,7 @@ namespace rendering {
 GeodataMesh::GeodataMesh(Context &context,
                          const std::vector<GeodataCell> &cells,
                          const MeshSurface &surface,
-                         const math::Box &bounding_box)
+                         const geometry::Box &bounding_box)
     : m_mesh{context, cells.size(), {vertex_buffer(cells)}, {}},
       m_surfaces{surface}, m_bounding_box{bounding_box} {
 
@@ -18,7 +18,7 @@ auto GeodataMesh::surfaces() const -> const std::vector<MeshSurface> & {
   return m_surfaces;
 }
 
-auto GeodataMesh::bounding_box() const -> const math::Box & {
+auto GeodataMesh::bounding_box() const -> const geometry::Box & {
   return m_bounding_box;
 }
 

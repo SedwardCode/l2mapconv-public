@@ -2,7 +2,7 @@
 
 #include "Entity.h"
 
-#include <math/Box.h>
+#include <geometry/Box.h>
 
 #include <geodata/Geodata.h>
 
@@ -12,7 +12,7 @@
 class GeodataEntityFactory {
 public:
   auto make_entity(const geodata::Geodata &geodata,
-                   const math::Box &bounding_box,
+                   const geometry::Box &bounding_box,
                    const std::uint64_t surface_type) const
       -> Entity<GeodataMesh>;
 };

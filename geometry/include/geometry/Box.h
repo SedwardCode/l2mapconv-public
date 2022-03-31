@@ -4,7 +4,7 @@
 
 #include <vector>
 
-namespace math {
+namespace geometry {
 
 class Box {
 public:
@@ -36,4 +36,4 @@ private:
   bool m_valid;
 };
 
-} // namespace math
+} // namespace geometry

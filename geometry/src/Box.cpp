@@ -1,10 +1,10 @@
-#include <math/Box.h>
+#include <geometry/Box.h>
 
 #include <utils/Assert.h>
 
 #include <algorithm>
 
-namespace math {
+namespace geometry {
 
 Box::Box() : m_min{}, m_max{}, m_valid{false} {}
 
@@ -14,7 +14,7 @@ Box::Box(const glm::vec3 &min, const glm::vec3 &max)
 Box::Box(const std::vector<glm::vec3> &vertices, const glm::mat4 &model_matrix)
     : Box{} {
 
-  ASSERT(!vertices.empty(), "Math", "Vertices must not be empty");
+  ASSERT(!vertices.empty(), "Geometry", "Vertices must not be empty");
 
   for (const auto &vertex : vertices) {
     *this += model_matrix * glm::vec4{vertex, 1.0f};
@@ -68,4 +68,4 @@ auto Box::contains(const glm::vec3 &point) const -> bool {
          point.x < m_max.x && point.y < m_max.y && point.z < m_max.z;
 }
 
-} // namespace math
+} // namespace geometry

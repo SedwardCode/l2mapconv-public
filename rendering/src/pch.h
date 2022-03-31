@@ -5,9 +5,9 @@
 
 #include <rendering/ErrorHandling.h>
 
-#include <math/Box.h>
-#include <math/Frustum.h>
-#include <math/Transformation.h>
+#include <geometry/Box.h>
+#include <geometry/Frustum.h>
+#include <geometry/Transformation.h>
 
 #include <utils/Assert.h>
 #include <utils/Log.h>

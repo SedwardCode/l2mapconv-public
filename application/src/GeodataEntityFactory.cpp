@@ -3,15 +3,15 @@
 #include "GeodataEntityFactory.h"
 
 auto GeodataEntityFactory::make_entity(const geodata::Geodata &geodata,
-                                       const math::Box &bounding_box,
+                                       const geometry::Box &bounding_box,
                                        std::uint64_t surface_type) const
     -> Entity<GeodataMesh> {
 
   const auto mesh = std::make_shared<GeodataMesh>();
 
   mesh->cells = geodata.cells;
-  mesh->bounding_box = math::Box{{0.0f, 0.0f, bounding_box.min().z},
-                                 bounding_box.max() - bounding_box.min()};
+  mesh->bounding_box = geometry::Box{{0.0f, 0.0f, bounding_box.min().z},
+                                     bounding_box.max() - bounding_box.min()};
 
   mesh->surface.type = surface_type;
   mesh->surface.material.color = {0.0f, 1.0f, 1.0f};

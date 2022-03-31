@@ -6,7 +6,7 @@
 
 #include <array>
 
-namespace math {
+namespace geometry {
 
 class Frustum {
 public:
@@ -19,4 +19,4 @@ private:
   std::array<glm::vec4, 6> m_planes;
 };
 
-} // namespace math
+} // namespace geometry

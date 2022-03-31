@@ -10,7 +10,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${INSTALL_DIR})
 add_subdirectory(libs)
 
 add_subdirectory(utils)
-add_subdirectory(math)
+add_subdirectory(geometry)
 add_subdirectory(unreal)
 add_subdirectory(rendering)
 add_subdirectory(geodata)

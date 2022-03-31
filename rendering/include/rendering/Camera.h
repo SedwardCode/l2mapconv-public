@@ -2,7 +2,7 @@
 
 #include "Context.h"
 
-#include <math/Frustum.h>
+#include <geometry/Frustum.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -29,7 +29,7 @@ public:
   auto view_matrix() const -> glm::mat4;
   auto projection_matrix() const -> glm::mat4;
 
-  auto frustum() const -> math::Frustum;
+  auto frustum() const -> geometry::Frustum;
 
 private:
   const glm::vec3 m_up = {0.0f, 0.0f, 1.0f};

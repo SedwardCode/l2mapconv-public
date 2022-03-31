@@ -37,8 +37,8 @@
 #include <utils/Log.h>
 #include <utils/NonCopyable.h>
 
-#include <math/Box.h>
-#include <math/Transformation.h>
+#include <geometry/Box.h>
+#include <geometry/Transformation.h>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>

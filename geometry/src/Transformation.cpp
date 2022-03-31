@@ -1,9 +1,9 @@
-#include <math/Transformation.h>
+#include <geometry/Transformation.h>
 
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/transform.hpp>
 
-namespace math {
+namespace geometry {
 
 auto transformation_matrix(const glm::mat4 &identity, const glm::vec3 &position,
                            const glm::vec3 &rotation, const glm::vec3 &scale)
@@ -16,4 +16,4 @@ auto transformation_matrix(const glm::mat4 &identity, const glm::vec3 &position,
   return matrix;
 }
 
-} // namespace math
+} // namespace geometry

@@ -2,8 +2,8 @@
 
 #include <geodata/Geodata.h>
 
-#include <math/Box.h>
-#include <math/Transformation.h>
+#include <geometry/Box.h>
+#include <geometry/Transformation.h>
 
 #include <glm/glm.hpp>
 
@@ -59,13 +59,13 @@ struct EntityMesh {
   std::vector<unsigned int> indices;
   std::vector<Surface> surfaces;
   std::vector<glm::mat4> instance_matrices;
-  math::Box bounding_box;
+  geometry::Box bounding_box;
 };
 
 struct GeodataMesh {
   std::vector<geodata::Cell> cells;
   Surface surface;
-  math::Box bounding_box;
+  geometry::Box bounding_box;
 };
 
 template <typename T> struct Entity {
@@ -79,8 +79,8 @@ template <typename T> struct Entity {
       : mesh{mesh}, position{}, rotation{}, scale{1.0f}, wireframe{false} {}
 
   auto model_matrix() const -> glm::mat4 {
-    return math::transformation_matrix(glm::mat4{1.0f}, position, rotation,
-                                       scale);
+    return geometry::transformation_matrix(glm::mat4{1.0f}, position, rotation,
+                                           scale);
   }
 
   auto instance_matrices() const -> std::vector<glm::mat4> {

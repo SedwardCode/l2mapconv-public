@@ -10,7 +10,7 @@
 
 #include <utils/NonCopyable.h>
 
-#include <math/Box.h>
+#include <geometry/Box.h>
 
 #include <glm/glm.hpp>
 
@@ -25,10 +25,10 @@ public:
                       const std::vector<std::uint32_t> &indices,
                       const std::vector<MeshSurface> &surfaces,
                       const std::vector<glm::mat4> &instance_matrices,
-                      const math::Box &bounding_box);
+                      const geometry::Box &bounding_box);
 
   virtual auto surfaces() const -> const std::vector<MeshSurface> & override;
-  virtual auto bounding_box() const -> const math::Box & override;
+  virtual auto bounding_box() const -> const geometry::Box & override;
 
   virtual void draw(const MeshSurface &surface) const override;
 
@@ -36,7 +36,7 @@ private:
   Mesh m_mesh;
   std::vector<MeshSurface> m_surfaces;
   std::size_t m_instances;
-  math::Box m_bounding_box;
+  geometry::Box m_bounding_box;
 
   auto vertex_buffers(const std::vector<Vertex> &vertices,
                       const std::vector<glm::mat4> &instance_matrices)

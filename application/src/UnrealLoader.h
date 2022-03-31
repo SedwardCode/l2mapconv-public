@@ -11,7 +11,7 @@
 #include <unreal/StaticMesh.h>
 #include <unreal/Terrain.h>
 
-#include <math/Box.h>
+#include <geometry/Box.h>
 
 #include <filesystem>
 #include <memory>
@@ -45,14 +45,14 @@ private:
   auto load_mesh_actor_entities(const unreal::Package &package) const
       -> std::vector<Entity<EntityMesh>>;
   auto load_bsp_entities(const unreal::Package &package,
-                         const math::Box &map_bounding_box) const
+                         const geometry::Box &map_bounding_box) const
       -> std::vector<Entity<EntityMesh>>;
   auto load_volume_entities(const unreal::Package &package,
-                            const math::Box &map_bounding_box) const
+                            const geometry::Box &map_bounding_box) const
       -> std::vector<Entity<EntityMesh>>;
 
   auto load_model_entity(const unreal::Model &model,
-                         const math::Box &map_bounding_box,
+                         const geometry::Box &map_bounding_box,
                          bool check_bounds = true) const
       -> std::optional<Entity<EntityMesh>>;
 
@@ -62,10 +62,11 @@ private:
   auto collides(const unreal::StaticMeshActor &mesh_actor,
                 const unreal::StaticMeshMaterial &material) const -> bool;
 
-  auto bounding_box_mesh(std::uint64_t type, const math::Box &box) const
+  auto bounding_box_mesh(std::uint64_t type, const geometry::Box &box) const
       -> std::shared_ptr<EntityMesh>;
 
   auto check_bsp_node_bounds(const unreal::Model &model,
                              const unreal::BSPNode &node,
-                             const math::Box &map_bounding_box) const -> bool;
+                             const geometry::Box &map_bounding_box) const
+      -> bool;
 };

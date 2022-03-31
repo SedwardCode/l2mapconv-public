@@ -26,9 +26,9 @@ auto UnrealLoader::load_map(const std::string &name) const -> Map {
 
   map.position = to_vec3(terrain->position());
   const auto scale = to_vec3(terrain->scale());
-  map.bounding_box =
-      math::Box{to_vec3(terrain->bounding_box().min) * scale + map.position,
-                to_vec3(terrain->bounding_box().max) * scale + map.position};
+  map.bounding_box = geometry::Box{
+      to_vec3(terrain->bounding_box().min) * scale + map.position,
+      to_vec3(terrain->bounding_box().max) * scale + map.position};
 
   if (!terrain->broken_scale()) {
     const auto terrain_entities = load_terrain_entities(*terrain);
@@ -133,8 +133,8 @@ auto UnrealLoader::load_terrain_entities(
     const auto bounding_box = terrain.bounding_box();
 
     mesh->bounding_box =
-        math::Box{to_vec3(bounding_box.min) * scale + position,
-                  to_vec3(bounding_box.max) * scale + position};
+        geometry::Box{to_vec3(bounding_box.min) * scale + position,
+                      to_vec3(bounding_box.max) * scale + position};
 
     // Vertices
     for (auto y = 0; y < height; ++y) {
@@ -465,8 +465,8 @@ auto UnrealLoader::load_mesh_actor_entities(
   return entities;
 }
 
-auto UnrealLoader::load_bsp_entities(const unreal::Package &package,
-                                     const math::Box &map_bounding_box) const
+auto UnrealLoader::load_bsp_entities(
+    const unreal::Package &package, const geometry::Box &map_bounding_box) const
     -> std::vector<Entity<EntityMesh>> {
 
   std::vector<Entity<EntityMesh>> entities;
@@ -486,8 +486,8 @@ auto UnrealLoader::load_bsp_entities(const unreal::Package &package,
   return entities;
 }
 
-auto UnrealLoader::load_volume_entities(const unreal::Package &package,
-                                        const math::Box &map_bounding_box) const
+auto UnrealLoader::load_volume_entities(
+    const unreal::Package &package, const geometry::Box &map_bounding_box) const
     -> std::vector<Entity<EntityMesh>> {
 
   std::vector<Entity<EntityMesh>> entities;
@@ -515,7 +515,7 @@ auto UnrealLoader::load_volume_entities(const unreal::Package &package,
 }
 
 auto UnrealLoader::load_model_entity(const unreal::Model &model,
-                                     const math::Box &map_bounding_box,
+                                     const geometry::Box &map_bounding_box,
                                      bool check_bounds) const
     -> std::optional<Entity<EntityMesh>> {
 
@@ -621,7 +621,7 @@ auto UnrealLoader::collides(const unreal::StaticMeshActor &mesh_actor,
 }
 
 auto UnrealLoader::bounding_box_mesh(std::uint64_t type,
-                                     const math::Box &box) const
+                                     const geometry::Box &box) const
     -> std::shared_ptr<EntityMesh> {
 
   const auto &min = box.min();
@@ -672,7 +672,7 @@ auto UnrealLoader::bounding_box_mesh(std::uint64_t type,
 
 auto UnrealLoader::check_bsp_node_bounds(
     const unreal::Model &model, const unreal::BSPNode &node,
-    const math::Box &map_bounding_box) const -> bool {
+    const geometry::Box &map_bounding_box) const -> bool {
 
   for (auto i = 0; i < node.vertex_count; ++i) {
     const auto &position =

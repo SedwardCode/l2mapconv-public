@@ -9,7 +9,7 @@ EntityMesh::EntityMesh(Context &context, const std::vector<Vertex> &vertices,
                        const std::vector<std::uint32_t> &indices,
                        const std::vector<MeshSurface> &surfaces,
                        const std::vector<glm::mat4> &instance_matrices,
-                       const math::Box &bounding_box)
+                       const geometry::Box &bounding_box)
     : m_mesh{context, vertices.size(),
              vertex_buffers(vertices, instance_matrices), indices},
       m_surfaces{surfaces}, m_instances{instance_matrices.size()},
@@ -43,7 +43,7 @@ auto EntityMesh::surfaces() const -> const std::vector<MeshSurface> & {
   return m_surfaces;
 }
 
-auto EntityMesh::bounding_box() const -> const math::Box & {
+auto EntityMesh::bounding_box() const -> const geometry::Box & {
   return m_bounding_box;
 }
 

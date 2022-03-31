@@ -4,7 +4,7 @@
 
 #include <utils/NonCopyable.h>
 
-#include <math/Box.h>
+#include <geometry/Box.h>
 
 #include <glm/glm.hpp>
 
@@ -17,7 +17,7 @@ namespace geodata {
 
 class Map : public utils::NonCopyable {
 public:
-  explicit Map(const std::string &name, const math::Box &bounding_box)
+  explicit Map(const std::string &name, const geometry::Box &bounding_box)
       : m_name{name}, m_bounding_box{bounding_box} {}
 
   Map(Map &&other) noexcept
@@ -33,13 +33,13 @@ public:
   auto vertices() const -> const std::vector<glm::vec3> &;
   auto indices() const -> const std::vector<unsigned int> &;
 
-  auto bounding_box() const -> const math::Box &;
+  auto bounding_box() const -> const geometry::Box &;
 
 private:
   std::string m_name;
   std::vector<glm::vec3> m_vertices;
   std::vector<unsigned int> m_indices;
-  math::Box m_bounding_box;
+  geometry::Box m_bounding_box;
 };
 
 } // namespace geodata

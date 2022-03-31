@@ -35,8 +35,8 @@ auto Camera::projection_matrix() const -> glm::mat4 {
   return glm::infinitePerspective(glm::radians(m_fov), ratio, m_near);
 }
 
-auto Camera::frustum() const -> math::Frustum {
-  return math::Frustum{projection_matrix(), view_matrix()};
+auto Camera::frustum() const -> geometry::Frustum {
+  return geometry::Frustum{projection_matrix(), view_matrix()};
 }
 
 } // namespace rendering

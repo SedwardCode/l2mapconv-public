@@ -64,6 +64,8 @@ auto Map::indices() const -> const std::vector<unsigned int> & {
   return m_indices;
 }
 
-auto Map::bounding_box() const -> const math::Box & { return m_bounding_box; }
+auto Map::bounding_box() const -> const geometry::Box & {
+  return m_bounding_box;
+}
 
 } // namespace geodata

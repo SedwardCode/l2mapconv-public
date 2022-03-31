@@ -1,6 +1,6 @@
-#include <math/Frustum.h>
+#include <geometry/Frustum.h>
 
-namespace math {
+namespace geometry {
 
 Frustum::Frustum(const glm::mat4 &projection_matrix,
                  const glm::mat4 &view_matrix)
@@ -33,4 +33,4 @@ auto Frustum::intersects(const Box &box) const -> bool {
   return true;
 }
 
-} // namespace math
+} // namespace geometry

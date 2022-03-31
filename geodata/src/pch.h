@@ -4,8 +4,8 @@
 #include <utils/ExtractionHelpers.h>
 #include <utils/Log.h>
 
-#include <math/Box.h>
-#include <math/Transformation.h>
+#include <geometry/Box.h>
+#include <geometry/Transformation.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_inverse.hpp>
