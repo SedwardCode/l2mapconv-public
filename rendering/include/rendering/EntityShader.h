@@ -23,7 +23,7 @@ public:
   void unbind() const;
 
 private:
-  Shader m_shader;
+  const Shader m_shader;
 };
 
 } // namespace rendering

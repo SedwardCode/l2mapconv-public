@@ -10,5 +10,5 @@ public:
   auto milliseconds() const -> float { return m_time * 1000.0f; }
 
 private:
-  float m_time;
+  const float m_time;
 };

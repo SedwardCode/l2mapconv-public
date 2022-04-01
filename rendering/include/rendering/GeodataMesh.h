@@ -26,9 +26,9 @@ public:
   virtual void draw(const MeshSurface &surface) const override;
 
 private:
-  Mesh m_mesh;
-  std::vector<MeshSurface> m_surfaces;
-  geometry::Box m_bounding_box;
+  const Mesh m_mesh;
+  const std::vector<MeshSurface> m_surfaces;
+  const geometry::Box m_bounding_box;
 
   auto vertex_buffer(const std::vector<GeodataCell> &cells) -> VertexBuffer;
 };

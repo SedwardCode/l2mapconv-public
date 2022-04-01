@@ -28,8 +28,8 @@ public:
 
 private:
   RenderingContext &m_rendering_context;
-  rendering::ShaderLoader m_shader_loader;
-  rendering::TextureLoader m_texture_loader;
+  const rendering::ShaderLoader m_shader_loader;
+  const rendering::TextureLoader m_texture_loader;
 
   auto load_texture(const Texture &texture) const
       -> std::shared_ptr<rendering::Texture>;

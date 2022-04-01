@@ -15,7 +15,7 @@ public:
   auto load_geodata(const std::string &name) const -> const Geodata *;
 
 private:
-  std::filesystem::path m_root_path;
+  const std::filesystem::path m_root_path;
 
   mutable std::unordered_map<std::string, Geodata> m_geodata;
 

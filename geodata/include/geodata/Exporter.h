@@ -16,7 +16,7 @@ public:
                           const Geodata &geodata) const;
 
 private:
-  std::filesystem::path m_root_path;
+  const std::filesystem::path m_root_path;
 
   mutable ExportBuffer m_export_buffer;
 };

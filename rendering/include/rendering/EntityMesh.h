@@ -33,10 +33,10 @@ public:
   virtual void draw(const MeshSurface &surface) const override;
 
 private:
-  Mesh m_mesh;
-  std::vector<MeshSurface> m_surfaces;
-  std::size_t m_instances;
-  geometry::Box m_bounding_box;
+  const Mesh m_mesh;
+  const std::vector<MeshSurface> m_surfaces;
+  const std::size_t m_instances;
+  const geometry::Box m_bounding_box;
 
   auto vertex_buffers(const std::vector<Vertex> &vertices,
                       const std::vector<glm::mat4> &instance_matrices)

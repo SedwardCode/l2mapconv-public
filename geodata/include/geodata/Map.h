@@ -36,10 +36,10 @@ public:
   auto bounding_box() const -> const geometry::Box &;
 
 private:
-  std::string m_name;
+  const std::string m_name;
   std::vector<glm::vec3> m_vertices;
   std::vector<unsigned int> m_indices;
-  geometry::Box m_bounding_box;
+  const geometry::Box m_bounding_box;
 };
 
 } // namespace geodata

@@ -13,9 +13,9 @@ public:
   auto radius() const -> float;
 
 private:
-  glm::vec3 m_base;
-  glm::vec3 m_tip;
-  float m_radius;
+  const glm::vec3 m_base;
+  const glm::vec3 m_tip;
+  const float m_radius;
 };
 
 } // namespace geometry

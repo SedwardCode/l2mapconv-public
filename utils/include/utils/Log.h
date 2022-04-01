@@ -59,8 +59,8 @@ private:
     BrightWhite = 97,
   };
 
-  LogLevel m_log_level;
-  std::string m_space;
+  const LogLevel m_log_level;
+  const std::string m_space;
   std::ostream &m_output;
 
   auto log_level_prefix() const -> std::string;

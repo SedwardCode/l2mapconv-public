@@ -22,7 +22,7 @@ private:
   WindowContext &m_window_context;
   UIContext &m_ui_context;
 
-  rendering::EntityRenderer m_entity_renderer;
+  const rendering::EntityRenderer m_entity_renderer;
 
   void resize() const;
   void clear() const;

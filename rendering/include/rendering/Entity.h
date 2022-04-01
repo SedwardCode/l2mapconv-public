@@ -25,11 +25,11 @@ public:
   auto wireframe() const -> bool;
 
 private:
-  std::shared_ptr<DrawableMesh> m_mesh;
-  std::shared_ptr<EntityShader> m_shader;
-  glm::mat4 m_model_matrix;
-  geometry::Box m_bounding_box;
-  bool m_wireframe;
+  const std::shared_ptr<DrawableMesh> m_mesh;
+  const std::shared_ptr<EntityShader> m_shader;
+  const glm::mat4 m_model_matrix;
+  const geometry::Box m_bounding_box;
+  const bool m_wireframe;
 };
 
 } // namespace rendering

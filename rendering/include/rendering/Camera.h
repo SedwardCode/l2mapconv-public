@@ -36,8 +36,8 @@ private:
 
   Context &m_context;
 
-  float m_fov;
-  float m_near;
+  const float m_fov;
+  const float m_near;
 
   glm::vec3 m_position;
   glm::quat m_orientation;
