@@ -31,7 +31,6 @@ EntityMesh::EntityMesh(Context &context, const std::vector<Vertex> &vertices,
     ASSERT(surface.index_count >= 3, "Rendering",
            "Surface must have at least 3 indices");
 
-    surface.m_mesh = this;
     index_count += surface.index_count;
   }
 
@@ -48,7 +47,6 @@ auto EntityMesh::bounding_box() const -> const geometry::Box & {
 }
 
 void EntityMesh::draw(const MeshSurface &surface) const {
-  ASSERT(surface.m_mesh == this, "Rendering", "Surface doesn't belong to mesh");
   m_mesh.draw(GL_TRIANGLES, m_instances, surface.index_offset,
               surface.index_count);
 }
