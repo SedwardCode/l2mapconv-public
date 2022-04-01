@@ -7,8 +7,8 @@ namespace rendering {
 EntityRenderer::EntityRenderer(Context &context, const Camera &camera)
     : m_context{context}, m_camera{camera} {}
 
-void EntityRenderer::render(const EntityTree &tree,
-                            const FrameSettings &settings, int &draws) const {
+void EntityRenderer::render(const Scene &scene, const FrameSettings &settings,
+                            int &draws) const {
 
   //  utils::Timer timer{__func__};
 
@@ -17,7 +17,7 @@ void EntityRenderer::render(const EntityTree &tree,
   const auto frustum = m_camera.frustum();
 
   // Surface type branch
-  for (const auto &type_branch : tree.tree()) {
+  for (const auto &type_branch : scene.tree()) {
     const auto surface_type = type_branch.first;
 
     if ((settings.surface_filter & surface_type) != surface_type) {

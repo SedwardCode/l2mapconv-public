@@ -15,7 +15,7 @@
 #include <rendering/EntityMesh.h>
 #include <rendering/EntityRenderer.h>
 #include <rendering/EntityShader.h>
-#include <rendering/EntityTree.h>
+#include <rendering/Scene.h>
 #include <rendering/ErrorHandling.h>
 #include <rendering/FrameSettings.h>
 #include <rendering/GeodataCell.h>

@@ -66,7 +66,7 @@ void Renderer::render_maps(const std::vector<Map> &maps) const {
           entity.wireframe,
       };
 
-      m_rendering_context.entity_tree.add(rendering_entity);
+      m_rendering_context.scene.add(rendering_entity);
     }
   }
 }
@@ -108,12 +108,12 @@ void Renderer::render_geodata(
         false,
     };
 
-    m_rendering_context.entity_tree.add(rendering_entity);
+    m_rendering_context.scene.add(rendering_entity);
   }
 }
 
 void Renderer::remove(std::uint64_t surface_filter) const {
-  m_rendering_context.entity_tree.remove(surface_filter);
+  m_rendering_context.scene.remove(surface_filter);
 }
 
 auto Renderer::load_texture(const Texture &texture) const

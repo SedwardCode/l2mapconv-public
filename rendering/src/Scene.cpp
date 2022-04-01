@@ -1,10 +1,10 @@
 #include "pch.h"
 
-#include <rendering/EntityTree.h>
+#include <rendering/Scene.h>
 
 namespace rendering {
 
-void EntityTree::add(const Entity &entity) {
+void Scene::add(const Entity &entity) {
   ASSERT(entity.mesh() != nullptr, "Rendering", "Entity must have mesh");
 
   m_entities.push_front(entity);
@@ -17,7 +17,7 @@ void EntityTree::add(const Entity &entity) {
   }
 }
 
-void EntityTree::remove(std::uint64_t surface_filter) {
+void Scene::remove(std::uint64_t surface_filter) {
   for (auto it = m_tree.cbegin(); it != m_tree.cend();) {
     if ((it->first & surface_filter) == it->first) {
       m_tree.erase(it++);
@@ -37,6 +37,6 @@ void EntityTree::remove(std::uint64_t surface_filter) {
   });
 }
 
-auto EntityTree::tree() const -> const Tree & { return m_tree; }
+auto Scene::tree() const -> const Tree & { return m_tree; }
 
 } // namespace rendering

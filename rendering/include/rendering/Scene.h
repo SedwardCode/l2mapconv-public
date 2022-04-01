@@ -17,7 +17,7 @@
 
 namespace rendering {
 
-class EntityTree : public utils::NonCopyable {
+class Scene : public utils::NonCopyable {
 public:
   // TODO: May be optimized using BVH
   using Tree = std::map<

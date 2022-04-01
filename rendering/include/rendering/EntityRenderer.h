@@ -4,8 +4,8 @@
 #include "Context.h"
 #include "Entity.h"
 #include "EntityShader.h"
-#include "EntityTree.h"
 #include "FrameSettings.h"
+#include "Scene.h"
 
 #include <vector>
 
@@ -15,7 +15,7 @@ class EntityRenderer {
 public:
   explicit EntityRenderer(Context &context, const Camera &camera);
 
-  void render(const EntityTree &tree, const FrameSettings &settings,
+  void render(const Scene &scene, const FrameSettings &settings,
               int &draws) const;
 
 private:

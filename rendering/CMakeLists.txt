@@ -14,8 +14,9 @@ add_library(${PROJECT_NAME}
     src/EntityMesh.cpp
     src/EntityShader.cpp
     src/Entity.cpp
-    src/EntityTree.cpp
     src/EntityRenderer.cpp
+
+    src/Scene.cpp
 
     src/GeodataMesh.cpp
 

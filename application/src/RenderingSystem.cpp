@@ -71,7 +71,7 @@ void RenderingSystem::frame_end(Timestep /*frame_time*/) {
 
   m_ui_context.rendering.draws = 0;
 
-  m_entity_renderer.render(m_rendering_context.entity_tree, settings,
+  m_entity_renderer.render(m_rendering_context.scene, settings,
                            m_ui_context.rendering.draws);
 }
 
