@@ -14,6 +14,14 @@ struct UIContext {
     bool bounding_boxes;
     bool imported_geodata;
     bool generated_geodata;
+
+    void set_defaults() {
+      culling = true;
+      terrain = true;
+      static_meshes = true;
+      csg = true;
+      generated_geodata = true;
+    }
   } rendering;
 
   struct {
@@ -25,7 +33,7 @@ struct UIContext {
     float max_walkable_climb;
 
     std::function<void()> build_handler;
-    bool export_;
+    bool should_export;
 
     void set_defaults() {
       cell_size = 16.0f;

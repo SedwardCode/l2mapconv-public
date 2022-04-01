@@ -41,7 +41,7 @@ void GeodataSystem::build() const {
       m_renderer->render_geodata({geodata_entity});
     }
 
-    if (m_ui_context.geodata.export_) {
+    if (m_ui_context.geodata.should_export) {
       utils::Log(utils::LOG_INFO, "App")
           << "Exporting geodata for map: " << map.name() << std::endl;
 

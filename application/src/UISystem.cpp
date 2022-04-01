@@ -19,11 +19,7 @@ UISystem::UISystem(UIContext &ui_context, WindowContext &window_context,
   ImGui::StyleColorsDark();
 
   // Default rendering settings
-  m_ui_context.rendering.culling = true;
-  m_ui_context.rendering.terrain = true;
-  m_ui_context.rendering.static_meshes = true;
-  m_ui_context.rendering.csg = true;
-  m_ui_context.rendering.generated_geodata = true;
+  m_ui_context.rendering.set_defaults();
 
   // Default geodata settings
   m_ui_context.geodata.set_defaults();
@@ -107,7 +103,7 @@ void UISystem::geodata_window() const {
 
   ImGui::SameLine();
 
-  ImGui::Checkbox("Export", &m_ui_context.geodata.export_);
+  ImGui::Checkbox("Export", &m_ui_context.geodata.should_export);
 
   ImGui::End();
 }

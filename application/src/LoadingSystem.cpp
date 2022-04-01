@@ -24,12 +24,12 @@ LoadingSystem::LoadingSystem(GeodataContext &geodata_context,
     map.name = map_name;
     maps.push_back(map);
 
-    // Load geodata
     if (m_renderer == nullptr) {
       // We are in a CLI mode
       continue;
     }
 
+    // Load geodata
     const auto *geodata = geodata_loader.load_geodata(map_name);
 
     if (geodata == nullptr) {

@@ -88,7 +88,7 @@ void Application::build(const std::filesystem::path &client_root,
 
     ui_context.geodata.set_defaults();
 
-    ui_context.geodata.export_ = true;
+    ui_context.geodata.should_export = true;
     ui_context.geodata.build_handler();
   }
 
