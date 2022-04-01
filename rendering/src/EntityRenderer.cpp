@@ -51,11 +51,11 @@ void EntityRenderer::render(const Scene &scene, const FrameSettings &settings,
 
           // Surfaces
           for (const auto &[entity, surface] : mesh_branch.second) {
-            const auto &aabb = entity->aabb();
+            const auto &bounding_box = entity->bounding_box();
 
             // Frustum culling
-            if (settings.culling && !aabb.is_zero() &&
-                !frustum.intersects(aabb)) {
+            if (settings.culling && !bounding_box.is_zero() &&
+                !frustum.intersects(bounding_box)) {
 
               continue;
             }

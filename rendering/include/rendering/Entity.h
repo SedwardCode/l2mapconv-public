@@ -21,14 +21,14 @@ public:
   auto mesh() const -> const std::shared_ptr<DrawableMesh> &;
   auto shader() const -> const std::shared_ptr<EntityShader> &;
   auto model_matrix() const -> const glm::mat4 &;
-  auto aabb() const -> const geometry::Box &;
+  auto bounding_box() const -> const geometry::Box &;
   auto wireframe() const -> bool;
 
 private:
   std::shared_ptr<DrawableMesh> m_mesh;
   std::shared_ptr<EntityShader> m_shader;
   glm::mat4 m_model_matrix;
-  geometry::Box m_aabb;
+  geometry::Box m_bounding_box;
   bool m_wireframe;
 };
 
