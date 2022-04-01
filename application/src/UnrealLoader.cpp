@@ -1,6 +1,6 @@
 #include "pch.h"
 
-#include "Conversion.h"
+#include "UnrealConverters.h"
 #include "UnrealLoader.h"
 
 UnrealLoader::UnrealLoader(const std::filesystem::path &root_path)
@@ -419,15 +419,13 @@ auto UnrealLoader::load_mesh_actor_entities(
 
         // Indices
         for (auto i = 0; i < unreal_surface->triangle_max; ++i) {
-          mesh->indices.push_back(
-              unreal_mesh->index_stream
-                  .indices[unreal_surface->first_index + i * 3 + 2]);
-          mesh->indices.push_back(
-              unreal_mesh->index_stream
-                  .indices[unreal_surface->first_index + i * 3 + 1]);
-          mesh->indices.push_back(
-              unreal_mesh->index_stream
-                  .indices[unreal_surface->first_index + i * 3 + 0]);
+          const auto *indices =
+              &unreal_mesh->index_stream
+                   .indices[unreal_surface->first_index + i * 3];
+
+          mesh->indices.push_back(indices[2]);
+          mesh->indices.push_back(indices[1]);
+          mesh->indices.push_back(indices[0]);
         }
 
         // Surface
@@ -647,18 +645,14 @@ auto UnrealLoader::bounding_box_mesh(std::uint64_t type,
   mesh->vertices.push_back(
       {{min.x, max.y, min.z}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}});
 
-  mesh->indices = {// front
-                   0, 1, 2, 2, 3, 0,
-                   // right
-                   1, 5, 6, 6, 2, 1,
-                   // back
-                   7, 6, 5, 5, 4, 7,
-                   // left
-                   4, 0, 3, 3, 7, 4,
-                   // bottom
-                   4, 5, 1, 1, 0, 4,
-                   // top
-                   3, 2, 6, 6, 7, 3};
+  mesh->indices = {
+      0, 1, 2, 2, 3, 0, // front
+      1, 5, 6, 6, 2, 1, // right
+      7, 6, 5, 5, 4, 7, // back
+      4, 0, 3, 3, 7, 4, // left
+      4, 5, 1, 1, 0, 4, // botton
+      3, 2, 6, 6, 7, 3, // top
+  };
 
   Surface surface{};
   surface.type = type | SURFACE_BOUNDING_BOX;
