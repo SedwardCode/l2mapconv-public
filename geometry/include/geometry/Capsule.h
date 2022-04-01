@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Box.h"
-
 #include <glm/glm.hpp>
 
 namespace geometry {
@@ -10,7 +8,9 @@ class Capsule {
 public:
   explicit Capsule(const glm::vec3 &base, const glm::vec3 &tip, float radius);
 
-  auto intersects(const Box &box) const -> bool;
+  auto base() const -> const glm::vec3 &;
+  auto tip() const -> const glm::vec3 &;
+  auto radius() const -> float;
 
 private:
   glm::vec3 m_base;

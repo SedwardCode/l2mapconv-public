@@ -39,6 +39,27 @@ Box::Box(const glm::vec3 &min, const glm::vec3 &max,
 Box::Box(const Box &box, const glm::mat4 &model_matrix)
     : Box{box.min(), box.max(), model_matrix} {}
 
+Box::Box(const Capsule &capsule) : Box{} {
+  static const glm::vec3 corners[8] = {
+      {-1.0f, -1.0f, -1.0f}, //
+      {1.0f, -1.0f, -1.0f},  //
+      {-1.0f, -1.0f, 1.0f},  //
+      {1.0f, -1.0f, 1.0f},   //
+
+      {-1.0f, 1.0f, -1.0f}, //
+      {1.0f, 1.0f, -1.0f},  //
+      {-1.0f, 1.0f, 1.0f},  //
+      {1.0f, 1.0f, 1.0f},   //
+  };
+
+  Box bounding_box{};
+
+  for (auto i = 0; i < 8; ++i) {
+    *this += capsule.base() + corners[i] * capsule.radius();
+    *this += capsule.tip() + corners[i] * capsule.radius();
+  }
+}
+
 auto Box::min() const -> const glm::vec3 & { return m_min; }
 auto Box::max() const -> const glm::vec3 & { return m_max; }
 
