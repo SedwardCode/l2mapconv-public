@@ -4,11 +4,11 @@
 
 namespace geodata {
 
-inline int allow_direction(int area, int direction) {
+inline auto allow_direction(int area, int direction) -> int {
   return area | 1 << (direction + 2);
 }
 
-inline int change_area(int area, int new_area) {
+inline auto change_area(int area, int new_area) -> int {
   return new_area | unpack_nswe(area) << 2;
 }
 

@@ -27,6 +27,7 @@ public:
 
   auto is_zero() const -> bool;
   auto contains(const glm::vec3 &point) const -> bool;
+  auto intersects(const Box &box) const -> bool;
 
   auto operator+=(const glm::vec3 &point) -> Box &;
 

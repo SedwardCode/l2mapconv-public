@@ -2,8 +2,6 @@
 
 #include <utils/Assert.h>
 
-#include <algorithm>
-
 namespace geometry {
 
 Box::Box() : m_min{}, m_max{}, m_valid{false} {}
@@ -64,8 +62,14 @@ auto Box::operator+=(const glm::vec3 &point) -> Box & {
 }
 
 auto Box::contains(const glm::vec3 &point) const -> bool {
-  return point.x > m_min.x && point.y > m_min.y && point.z > m_min.z &&
-         point.x < m_max.x && point.y < m_max.y && point.z < m_max.z;
+  return point.x >= m_min.x && point.y >= m_min.y && point.z >= m_min.z &&
+         point.x <= m_max.x && point.y <= m_max.y && point.z <= m_max.z;
+}
+
+auto Box::intersects(const Box &box) const -> bool {
+  return box.m_max.x >= m_min.x && box.m_min.x <= m_max.x &&
+         box.m_max.y >= m_min.y && box.m_min.y <= m_max.y &&
+         box.m_max.z >= m_min.z && box.m_min.z <= m_max.z;
 }
 
 } // namespace geometry

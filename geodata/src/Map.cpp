@@ -8,7 +8,7 @@ void Map::add(const Entity &entity) {
   ASSERT(entity.mesh != nullptr, "Geodata", "Entity must have mesh");
 
   // Swap Y-up with Z-up for Recast
-  const auto identity = glm::mat4{
+  static const auto identity = glm::mat4{
       {1.0f, 0.0f, 0.0f, 0.0f},
       {0.0f, 0.0f, 1.0f, 0.0f},
       {0.0f, 1.0f, 0.0f, 0.0f},
