@@ -38,7 +38,8 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
           continue;
         }
 
-        const auto &triangles = map.triangles_intersects(map.bounding_box());
+        const auto &triangles =
+            map.triangles_that_intersects(map.bounding_box());
       }
     }
   }
