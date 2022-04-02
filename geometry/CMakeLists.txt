@@ -6,6 +6,7 @@ add_library(${PROJECT_NAME}
     src/Frustum.cpp
     src/Sphere.cpp
     src/Capsule.cpp
+    src/Triangle.cpp
     src/Transformation.cpp
 )
 

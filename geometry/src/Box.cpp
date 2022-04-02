@@ -67,9 +67,9 @@ auto Box::contains(const glm::vec3 &point) const -> bool {
 }
 
 auto Box::intersects(const Box &box) const -> bool {
-  return box.m_max.x >= m_min.x && box.m_min.x <= m_max.x &&
-         box.m_max.y >= m_min.y && box.m_min.y <= m_max.y &&
-         box.m_max.z >= m_min.z && box.m_min.z <= m_max.z;
+  return box.m_max.x > m_min.x && box.m_min.x < m_max.x &&
+         box.m_max.y > m_min.y && box.m_min.y < m_max.y &&
+         box.m_max.z > m_min.z && box.m_min.z < m_max.z;
 }
 
 } // namespace geometry

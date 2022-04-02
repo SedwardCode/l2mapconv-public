@@ -16,7 +16,7 @@ public:
 
   auto bounding_box() const -> Box;
 
-  auto closest_point(const glm::vec3 &point) const -> glm::vec3;
+  auto closest_point_to(const glm::vec3 &point) const -> glm::vec3;
 };
 
 } // namespace geometry

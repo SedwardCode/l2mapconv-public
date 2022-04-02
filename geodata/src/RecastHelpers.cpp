@@ -4,12 +4,51 @@
 
 namespace geodata {
 
+void mark_walkable_triangles(float walkable_angle, const float *vertices,
+                             const int *triangles, std::size_t triangle_count,
+                             unsigned char *areas);
+
 inline auto allow_direction(int area, int direction) -> int {
   return area | 1 << (direction + 2);
 }
 
 inline auto change_area(int area, int new_area) -> int {
   return new_area | unpack_nswe(area) << 2;
+}
+
+void build_heightfield(rcHeightfield &hf, const Map &map, float cell_size,
+                       float cell_height, float walkable_angle) {
+
+  // Flip bounding box for Recast (Y <-> Z)
+  const auto *source_bb_min = glm::value_ptr(map.bounding_box().min());
+  const auto *source_bb_max = glm::value_ptr(map.bounding_box().max());
+  float bb_min[3] = {source_bb_min[0], source_bb_min[2], source_bb_min[1]};
+  float bb_max[3] = {source_bb_max[0], source_bb_max[2], source_bb_max[1]};
+
+  // Grid size
+  auto width = 0;
+  auto height = 0;
+  rcCalcGridSize(static_cast<float *>(bb_min), static_cast<float *>(bb_max),
+                 cell_size, &width, &height);
+
+  rcContext context{};
+
+  // Create heightfield
+  rcCreateHeightfield(&context, hf, width, height, static_cast<float *>(bb_min),
+                      static_cast<float *>(bb_max), cell_size, cell_height);
+
+  // Prepare geometry data
+  const auto *vertices = glm::value_ptr(map.vertices().front());
+  const auto vertex_count = map.vertices().size();
+  const auto *triangles = reinterpret_cast<const int *>(map.indices().data());
+  const auto triangle_count = map.indices().size() / 3;
+
+  // Rasterize triangles
+  std::vector<unsigned char> areas(triangle_count);
+  mark_walkable_triangles(walkable_angle, vertices, triangles, triangle_count,
+                          &areas.front());
+  rcRasterizeTriangles(&context, vertices, vertex_count, triangles,
+                       &areas.front(), triangle_count, hf, 0);
 }
 
 void mark_walkable_triangles(float walkable_angle, const float *vertices,

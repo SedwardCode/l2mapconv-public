@@ -5,7 +5,9 @@
 #include <utils/Log.h>
 
 #include <geometry/Box.h>
+#include <geometry/Sphere.h>
 #include <geometry/Transformation.h>
+#include <geometry/Triangle.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_inverse.hpp>
@@ -23,7 +25,6 @@
 #include <fstream>
 #include <iostream>
 #include <limits>
-#include <span>
 #include <sstream>
 #include <string>
 #include <unordered_map>

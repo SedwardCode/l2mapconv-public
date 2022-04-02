@@ -30,7 +30,7 @@ auto Sphere::bounding_box() const -> Box {
 auto Sphere::intersects(const Triangle &triangle,
                         Intersection &intersection) const -> bool {
 
-  const auto closest_point = triangle.closest_point(m_center);
+  const auto closest_point = triangle.closest_point_to(m_center);
   const auto vector = closest_point - m_center;
   const auto length = glm::length(vector);
 

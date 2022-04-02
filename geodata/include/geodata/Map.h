@@ -5,11 +5,11 @@
 #include <utils/NonCopyable.h>
 
 #include <geometry/Box.h>
+#include <geometry/Triangle.h>
 
 #include <glm/glm.hpp>
 
 #include <cstdint>
-#include <span>
 #include <string>
 #include <utility>
 #include <vector>
@@ -31,18 +31,21 @@ public:
   void add(const Entity &entity);
 
   auto name() const -> const std::string &;
+  auto bounding_box() const -> const geometry::Box &;
 
   auto vertices() const -> const std::vector<glm::vec3> &;
   auto indices() const -> const std::vector<unsigned int> &;
 
-  auto bounding_box() const -> const geometry::Box &;
+  auto triangles_that_intersects(const geometry::Box &bounding_box) const
+      -> const std::vector<geometry::Triangle>;
 
 private:
   struct EntityView {
-    std::span<unsigned int> indices;
+    std::size_t start_index;
+    std::size_t index_count;
     geometry::Box bounding_box;
 
-    explicit EntityView() : indices{}, bounding_box{} {}
+    explicit EntityView() : start_index{}, index_count{}, bounding_box{} {}
   };
 
   const std::string m_name;

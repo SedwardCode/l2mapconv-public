@@ -7,7 +7,8 @@ Triangle::Triangle(const glm::vec3 &a, const glm::vec3 &b, const glm::vec3 &c)
 
 auto Triangle::bounding_box() const -> Box { return Box{{a, b, c}}; }
 
-auto Triangle::closest_point(const glm::vec3 &point) const -> glm::vec3 {
+// Copy-pasted from the Real-Time Collision Detection book
+auto Triangle::closest_point_to(const glm::vec3 &point) const -> glm::vec3 {
   // Check if P in vertex region outside A
   const auto ab = b - a;
   const auto ac = c - a;
