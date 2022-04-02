@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Capsule.h"
-
 #include <glm/glm.hpp>
 
 #include <vector>
@@ -23,8 +21,6 @@ public:
   explicit Box(const Box &box, const glm::mat4 &model_matrix);
 
   explicit Box(const std::vector<glm::vec3> &vertices);
-
-  explicit Box(const Capsule &vertices);
 
   auto min() const -> const glm::vec3 &;
   auto max() const -> const glm::vec3 &;

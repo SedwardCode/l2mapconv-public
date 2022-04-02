@@ -4,7 +4,9 @@ project(geometry)
 add_library(${PROJECT_NAME}
     src/Box.cpp
     src/Frustum.cpp
+    src/Sphere.cpp
     src/Capsule.cpp
+    src/Transformation.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC include)
