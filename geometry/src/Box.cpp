@@ -62,8 +62,8 @@ auto Box::operator+=(const glm::vec3 &point) -> Box & {
 }
 
 auto Box::contains(const glm::vec3 &point) const -> bool {
-  return point.x >= m_min.x && point.y >= m_min.y && point.z >= m_min.z &&
-         point.x <= m_max.x && point.y <= m_max.y && point.z <= m_max.z;
+  return point.x > m_min.x && point.y > m_min.y && point.z > m_min.z &&
+         point.x < m_max.x && point.y < m_max.y && point.z < m_max.z;
 }
 
 auto Box::intersects(const Box &box) const -> bool {
