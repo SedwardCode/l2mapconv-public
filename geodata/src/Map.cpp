@@ -18,17 +18,28 @@ void Map::add(const Entity &entity) {
   std::vector<glm::vec3> normals;
 
   for (const auto &instance_matrix : entity.mesh->instance_matrices) {
+    EntityView entity_view{};
+
     const auto vertex_count = m_vertices.size();
+
     const auto model_matrix = identity * entity.model_matrix * instance_matrix;
     const auto normal_matrix = glm::inverseTranspose(glm::mat3{model_matrix});
 
     for (const auto &vertex : entity.mesh->vertices) {
-      m_vertices.emplace_back(model_matrix * glm::vec4{vertex.position, 1.0f});
+      const auto transformed_vertex =
+          model_matrix * glm::vec4{vertex.position, 1.0f};
+
+      m_vertices.emplace_back(transformed_vertex);
       normals.emplace_back(glm::normalize(normal_matrix * vertex.normal));
+
+      entity_view.bounding_box += transformed_vertex;
     }
 
+    const auto start_index = m_indices.data();
+    std::size_t index_count = 0;
+
     for (std::size_t index = 0; index < entity.mesh->indices.size();
-         index += 3) {
+         index += 3, index_count += 3) {
 
       const auto *indices = &entity.mesh->indices[index];
       const auto *vertices = &m_vertices[vertex_count];
@@ -51,6 +62,9 @@ void Map::add(const Entity &entity) {
         m_indices.push_back(vertex_count + indices[2]);
       }
     }
+
+    entity_view.indices = std::span{start_index, index_count};
+    m_entities.emplace_back(entity_view);
   }
 }
 
