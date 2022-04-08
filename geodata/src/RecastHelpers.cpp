@@ -19,23 +19,18 @@ inline auto change_area(int area, int new_area) -> int {
 void build_heightfield(rcHeightfield &hf, const Map &map, float cell_size,
                        float cell_height, float walkable_angle) {
 
-  // Flip bounding box for Recast (Y <-> Z)
-  const auto *source_bb_min = glm::value_ptr(map.bounding_box().min());
-  const auto *source_bb_max = glm::value_ptr(map.bounding_box().max());
-  float bb_min[3] = {source_bb_min[0], source_bb_min[2], source_bb_min[1]};
-  float bb_max[3] = {source_bb_max[0], source_bb_max[2], source_bb_max[1]};
+  const auto *bb_min = glm::value_ptr(map.flipped_bounding_box().min());
+  const auto *bb_max = glm::value_ptr(map.flipped_bounding_box().max());
 
   // Grid size
   auto width = 0;
   auto height = 0;
-  rcCalcGridSize(static_cast<float *>(bb_min), static_cast<float *>(bb_max),
-                 cell_size, &width, &height);
-
-  rcContext context{};
+  rcCalcGridSize(bb_min, bb_max, cell_size, &width, &height);
 
   // Create heightfield
-  rcCreateHeightfield(&context, hf, width, height, static_cast<float *>(bb_min),
-                      static_cast<float *>(bb_max), cell_size, cell_height);
+  rcContext context{};
+  rcCreateHeightfield(&context, hf, width, height, bb_min, bb_max, cell_size,
+                      cell_height);
 
   // Prepare geometry data
   const auto *vertices = glm::value_ptr(map.vertices().front());

@@ -15,10 +15,7 @@
 
 class Renderer : public utils::NonCopyable {
 public:
-  explicit Renderer(RenderingContext &rendering_context)
-      : m_rendering_context{rendering_context},
-        m_shader_loader{m_rendering_context.context, "shaders"},
-        m_texture_loader{m_rendering_context.context, "textures"} {}
+  explicit Renderer(RenderingContext &rendering_context);
 
   void render_maps(const std::vector<Map> &maps) const;
   void render_geodata(

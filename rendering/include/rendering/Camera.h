@@ -12,9 +12,7 @@ namespace rendering {
 class Camera {
 public:
   explicit Camera(Context &context, float fov, float near,
-                  const glm::vec3 &position)
-      : m_context{context}, m_fov{fov}, m_near{near}, m_position{position},
-        m_orientation{glm::quatLookAt({0.0f, 1.0f, 0.0f}, m_up)} {}
+                  const glm::vec3 &position);
 
   void translate(const glm::vec3 &direction);
   void set_position(const glm::vec3 &position);

@@ -9,8 +9,7 @@ namespace rendering {
 
 class EntityMesh;
 
-class MeshSurface {
-public:
+struct MeshSurface {
   const std::uint64_t type;
   const Material material;
   const std::size_t index_offset;

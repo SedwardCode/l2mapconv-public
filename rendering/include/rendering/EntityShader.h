@@ -10,7 +10,7 @@ namespace rendering {
 
 class EntityShader : public utils::NonCopyable {
 public:
-  explicit EntityShader(Shader &&shader) : m_shader{std::move(shader)} {}
+  explicit EntityShader(Shader &&shader);
 
   void load_projection_matrix(const glm::mat4 &projection) const;
   void load_view_matrix(const glm::mat4 &view) const;

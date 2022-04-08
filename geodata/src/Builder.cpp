@@ -27,22 +27,24 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
                        settings.cell_height) /
       2;
 
-  for (auto y = 0; y < hf->height; ++y) {
-    for (auto x = 0; x < hf->width; ++x) {
-      for (auto *span = hf->spans[x + y * hf->width]; span != nullptr;
-           span = span->next) {
+  const auto &triangles = map.triangles_that_intersects(map.bounding_box());
 
-        const auto area = unpack_area(span->area);
+  //  for (auto y = 0; y < hf->height; ++y) {
+  //    for (auto x = 0; x < hf->width; ++x) {
+  //      for (auto *span = hf->spans[x + y * hf->width]; span != nullptr;
+  //           span = span->next) {
 
-        if (area != RC_COMPLEX_AREA) {
-          continue;
-        }
+  //        const auto area = unpack_area(span->area);
 
-        const auto &triangles =
-            map.triangles_that_intersects(map.bounding_box());
-      }
-    }
-  }
+  //        if (area != RC_COMPLEX_AREA) {
+  //          continue;
+  //        }
+
+  //        const auto &triangles =
+  //            map.triangles_that_intersects(map.bounding_box());
+  //      }
+  //    }
+  //  }
 
   // Convert heightfield to geodata
   Geodata geodata;

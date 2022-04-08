@@ -4,6 +4,8 @@
 
 namespace rendering {
 
+EntityShader::EntityShader(Shader &&shader) : m_shader{std::move(shader)} {}
+
 void EntityShader::load_projection_matrix(const glm::mat4 &projection) const {
   m_shader.load("u_projection", projection);
 }

@@ -4,6 +4,11 @@
 
 namespace rendering {
 
+Camera::Camera(Context &context, float fov, float near,
+               const glm::vec3 &position)
+    : m_context{context}, m_fov{fov}, m_near{near}, m_position{position},
+      m_orientation{glm::quatLookAt({0.0f, 1.0f, 0.0f}, m_up)} {}
+
 void Camera::translate(const glm::vec3 &direction) { m_position += direction; }
 
 void Camera::set_position(const glm::vec3 &position) { m_position = position; }

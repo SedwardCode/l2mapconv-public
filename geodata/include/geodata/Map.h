@@ -18,25 +18,20 @@ namespace geodata {
 
 class Map : public utils::NonCopyable {
 public:
-  explicit Map(const std::string &name, const geometry::Box &bounding_box)
-      : m_name{name}, m_bounding_box{bounding_box} {}
-
-  Map(Map &&other) noexcept
-      : m_name{std::move(other.m_name)}, m_bounding_box{std::move(
-                                             other.m_bounding_box)},
-        m_vertices{std::move(other.m_vertices)}, m_indices{std::move(
-                                                     other.m_indices)},
-        m_entities{std::move(other.m_entities)} {}
+  explicit Map(const std::string &name, const geometry::Box &bounding_box);
+  Map(Map &&other) noexcept;
 
   void add(const Entity &entity);
 
   auto name() const -> const std::string &;
-  auto bounding_box() const -> const geometry::Box &;
+  auto bounding_box() const -> geometry::Box;
+
+  auto flipped_bounding_box() const -> const geometry::Box &;
 
   auto vertices() const -> const std::vector<glm::vec3> &;
   auto indices() const -> const std::vector<unsigned int> &;
 
-  auto triangles_that_intersects(const geometry::Box &bounding_box) const
+  auto triangles_that_intersects(const geometry::Box &source_bb) const
       -> const std::vector<geometry::Triangle>;
 
 private:

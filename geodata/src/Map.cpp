@@ -4,10 +4,26 @@
 
 namespace geodata {
 
+auto swap_y_with_z(const geometry::Box &box) -> geometry::Box {
+  const glm::vec3 min = {box.min().x, box.min().z, box.min().y};
+  const glm::vec3 max = {box.max().x, box.max().z, box.max().y};
+  return geometry::Box{min, max};
+}
+
+Map::Map(const std::string &name, const geometry::Box &bounding_box)
+    : m_name{name}, m_bounding_box{swap_y_with_z(bounding_box)} {}
+
+Map::Map(Map &&other) noexcept
+    : m_name{std::move(other.m_name)}, m_bounding_box{std::move(
+                                           other.m_bounding_box)},
+      m_vertices{std::move(other.m_vertices)}, m_indices{std::move(
+                                                   other.m_indices)},
+      m_entities{std::move(other.m_entities)} {}
+
 void Map::add(const Entity &entity) {
   ASSERT(entity.mesh != nullptr, "Geodata", "Entity must have mesh");
 
-  // Swap Y-up with Z-up for Recast
+  // Swap Y-up with Z-up
   static const auto identity = glm::mat4{
       {1.0f, 0.0f, 0.0f, 0.0f},
       {0.0f, 0.0f, 1.0f, 0.0f},
@@ -67,7 +83,11 @@ void Map::add(const Entity &entity) {
 
 auto Map::name() const -> const std::string & { return m_name; }
 
-auto Map::bounding_box() const -> const geometry::Box & {
+auto Map::bounding_box() const -> geometry::Box {
+  return swap_y_with_z(m_bounding_box);
+}
+
+auto Map::flipped_bounding_box() const -> const geometry::Box & {
   return m_bounding_box;
 }
 
@@ -79,9 +99,10 @@ auto Map::indices() const -> const std::vector<unsigned int> & {
   return m_indices;
 }
 
-auto Map::triangles_that_intersects(const geometry::Box &bounding_box) const
+auto Map::triangles_that_intersects(const geometry::Box &source_bb) const
     -> const std::vector<geometry::Triangle> {
 
+  const auto bounding_box = swap_y_with_z(source_bb);
   std::vector<geometry::Triangle> triangles;
 
   for (const auto &entity_view : m_entities) {

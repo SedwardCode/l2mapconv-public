@@ -10,6 +10,8 @@ static constexpr auto BLOCK_WIDTH_CELLS = 8;
 static constexpr auto BLOCK_HEIGHT_CELLS = 8;
 static constexpr auto SIMPLE_BLOCK_MAX_HEIGHT_DIFFERENCE = 32;
 
+Optimizer::Optimizer(ExportBuffer &buffer) : m_buffer{buffer} {}
+
 void Optimizer::optimize() {
   for (auto x = 0; x < MAP_WIDTH_BLOCKS; ++x) {
     for (auto y = 0; y < MAP_HEIGHT_BLOCKS; ++y) {

@@ -8,7 +8,7 @@ namespace geodata {
 
 class Optimizer {
 public:
-  explicit Optimizer(ExportBuffer &buffer) : m_buffer{buffer} {}
+  explicit Optimizer(ExportBuffer &buffer);
 
   void optimize();
 
