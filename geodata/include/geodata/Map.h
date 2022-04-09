@@ -16,6 +16,7 @@
 
 namespace geodata {
 
+// Input coordinate system is converted from Z-up to Y-up
 class Map : public utils::NonCopyable {
 public:
   explicit Map(const std::string &name, const geometry::Box &bounding_box);

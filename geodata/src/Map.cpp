@@ -4,6 +4,7 @@
 
 namespace geodata {
 
+// Use this function to every input/output geometry::Box
 auto swap_y_with_z(const geometry::Box &box) -> geometry::Box {
   const glm::vec3 min = {box.min().x, box.min().z, box.min().y};
   const glm::vec3 max = {box.max().x, box.max().z, box.max().y};
