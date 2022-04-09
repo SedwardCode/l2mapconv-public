@@ -34,8 +34,9 @@ Requirements:
 
 - Clang
 - Cmake
-- Ninja
+- Ninja or another build system
 - MVS on Windows and Xcode on macOS (or standalone Clang)
+- Git to apply the [Recast patch](libs/patches/recast.patch)
 
 ### Windows
 

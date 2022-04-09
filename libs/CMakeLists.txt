@@ -14,6 +14,13 @@ option(RECASTNAVIGATION_EXAMPLES "Build examples" ON)
 set(RECASTNAVIGATION_EXAMPLES OFF)
 add_subdirectory(recast)
 
+# Apply Recast patch
+find_package(Git REQUIRED)
+execute_process(
+    COMMAND ${GIT_EXECUTABLE} apply ${CMAKE_CURRENT_SOURCE_DIR}/patches/recast.patch
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/recast
+)
+
 # Other libs
 add_subdirectory(llvm)
 add_subdirectory(glfw)
