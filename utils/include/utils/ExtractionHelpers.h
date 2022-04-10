@@ -54,7 +54,7 @@ struct ExtractArrayHelper {
     input_stream >> size_value;
     const std::int32_t size = size_value;
 
-    ASSERT(size >= 0, "Utils", "Size can't be negative");
+    ASSERT(size >= 0, "Utils", "Size can't be negative: " << size);
     store_to.reserve(size);
 
     for (auto i = 0; i < size; ++i) {
@@ -77,7 +77,7 @@ struct ExtractArrayHelper<ExtractSizeAsT, llvm::ulittle8_t, StoreToT> {
     input_stream >> size_value;
     const std::int32_t size = size_value;
 
-    ASSERT(size >= 0, "Utils", "Size can't be negative");
+    ASSERT(size >= 0, "Utils", "Size can't be negative: " << size);
     store_to.resize(size);
 
     if (size > 0) {
@@ -104,7 +104,7 @@ struct ExtractArrayHelper<
     input_stream >> size_value;
     const std::int32_t size = size_value;
 
-    ASSERT(size >= 0, "Utils", "Size can't be negative");
+    ASSERT(size >= 0, "Utils", "Size can't be negative: " << size);
     store_to.resize(size);
 
     if (size > 0) {

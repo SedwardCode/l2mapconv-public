@@ -75,7 +75,7 @@ enum TextureFormat {
   TEXF_DXT3 = 0x07,
   TEXF_DXT5 = 0x08,
   TEXF_L8 = 0x09,
-  TEXF_G16 = 0x0A,
+  TEXF_G16 = 0x0A, // heightmap
   TEXF_RRRGGGBBB = 0x0B,
   TEXF_MAX = 0xFF,
 };

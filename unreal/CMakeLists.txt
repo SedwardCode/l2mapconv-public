@@ -28,7 +28,6 @@ add_library(${PROJECT_NAME}
     src/Material.cpp
     src/Actor.cpp
     src/Terrain.cpp
-    src/MaterialDeserializer.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC include)

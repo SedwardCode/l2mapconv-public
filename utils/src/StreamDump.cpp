@@ -76,7 +76,7 @@ void dump(std::istream &input, int line_count, int line_length) {
       if (isprint(character) != 0) {
         printf(" %c ", character);
       } else {
-        printf(" ■ ");
+        printf(" * ");
       }
     }
 
@@ -89,7 +89,7 @@ void dump(std::istream &input, int line_count, int line_length) {
       if (isprint(character) != 0) {
         printf("%c", character);
       } else {
-        printf("■");
+        printf("*");
       }
     }
 

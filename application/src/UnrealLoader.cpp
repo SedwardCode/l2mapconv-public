@@ -767,20 +767,16 @@ auto UnrealLoader::load_texture(std::shared_ptr<unreal::Texture> unreal_texture)
   switch (unreal_texture->format) {
   case unreal::TextureFormat::TEXF_DXT1: {
     format = TEXTURE_DXT1;
-    break;
-  }
+  } break;
   case unreal::TextureFormat::TEXF_DXT3: {
     format = TEXTURE_DXT3;
-    break;
-  }
+  } break;
   case unreal::TextureFormat::TEXF_DXT5: {
     format = TEXTURE_DXT5;
-    break;
-  }
+  } break;
   case unreal::TextureFormat::TEXF_RGBA8: {
     format = TEXTURE_RGBA;
-    break;
-  }
+  } break;
   default: {
     utils::Log(utils::LOG_WARN, "App")
         << "Unknown texture format: "

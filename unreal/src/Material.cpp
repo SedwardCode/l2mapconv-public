@@ -2,8 +2,6 @@
 
 #include <unreal/Material.h>
 
-#include "MaterialDeserializer.h"
-
 namespace unreal {
 
 auto Modifier::set_property(const Property &property) -> bool {
@@ -119,10 +117,51 @@ auto operator>>(Archive &archive, Mipmap &mipmap) -> Archive & {
 void Texture::deserialize() {
   BitmapMaterial::deserialize();
 
-  MaterialDeserializer deserializer;
-  deserializer.deserialize(archive);
+  if (format != TEXF_DXT1 && format != TEXF_DXT3 && format != TEXF_DXT5 &&
+      format != TEXF_RGBA8 && format != TEXF_G16) {
+    return;
+  }
 
-  archive >> mips;
+  auto block_size = 8;
+
+  switch (format) {
+  case TEXF_DXT1: {
+    block_size = 8;
+  } break;
+  case TEXF_DXT3:
+  case TEXF_DXT5: {
+    block_size = 16;
+  } break;
+  case TEXF_G16: {
+    block_size = 32;
+  } break;
+  case TEXF_RGBA8: {
+    block_size = 64;
+  } break;
+  }
+
+  const auto exprected_size = (u_size / 4) * (v_size / 4) * block_size;
+
+  Index size{};
+
+  // Ugly workaround, but seems to work.
+  // Search until we found some integer that looks like expected mipmap size in
+  // bytes, then read that number of bytes, pretending it's an actual mipmap.
+  while (size != exprected_size) {
+    archive >> size;
+  }
+
+  Mipmap mip{};
+  mip.u_size = u_size;
+  mip.v_size = v_size;
+
+  for (auto i = 0; i < size; ++i) {
+    std::uint8_t byte;
+    archive >> byte;
+    mip.data.push_back(byte);
+  }
+
+  mips.push_back(mip);
 }
 
 auto Texture::set_property(const Property &property) -> bool {

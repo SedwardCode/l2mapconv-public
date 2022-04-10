@@ -147,7 +147,7 @@ public:
     }
   }
 
-  void dump(int line_count = 64, int line_length = 24);
+  void dump(int line_count = 32, int line_length = 16);
 
   friend auto operator<<(std::ostream &output, const Archive &archive)
       -> std::ostream &;
