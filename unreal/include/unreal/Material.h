@@ -20,9 +20,19 @@ public:
   explicit Material(Archive &archive) : Object{archive} {}
 };
 
+class Combiner : public Material {
+public:
+  ObjectRef<Material, ObjectRefRequirement::Optional> material1;
+  ObjectRef<Material, ObjectRefRequirement::Optional> material2;
+
+  explicit Combiner(Archive &archive) : Material{archive} {}
+
+  virtual auto set_property(const Property &property) -> bool override;
+};
+
 class Modifier : public Material {
 public:
-  ObjectRef<Material> material;
+  ObjectRef<Material, ObjectRefRequirement::Optional> material;
 
   explicit Modifier(Archive &archive) : Material{archive} {}
 

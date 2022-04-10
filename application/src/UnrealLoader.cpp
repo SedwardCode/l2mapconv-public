@@ -740,12 +740,19 @@ auto UnrealLoader::load_material(
       material.texture = *texture;
       return material;
     }
-
   } else if (std::shared_ptr<unreal::FinalBlend> unreal_final_blend =
                  std::dynamic_pointer_cast<unreal::FinalBlend>(
                      unreal_material)) {
 
     return load_material(unreal_final_blend->material);
+  } else if (std::shared_ptr<unreal::Modifier> unreal_modifier =
+                 std::dynamic_pointer_cast<unreal::Modifier>(unreal_material)) {
+
+    return load_material(unreal_modifier->material);
+  } else if (std::shared_ptr<unreal::Combiner> unreal_combiner =
+                 std::dynamic_pointer_cast<unreal::Combiner>(unreal_material)) {
+
+    return load_material(unreal_combiner->material1);
   }
 
   return {};

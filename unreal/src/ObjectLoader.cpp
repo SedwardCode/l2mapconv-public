@@ -81,6 +81,17 @@ auto ObjectLoader::export_object(ObjectExport &object_export) const
     object = std::make_shared<Model>(m_archive);
   } else if (object_export.class_name == "Texture") {
     object = std::make_shared<Texture>(m_archive);
+  } else if (object_export.class_name == "TexModifier" ||
+             object_export.class_name == "TexPanner" ||
+             object_export.class_name == "TexPannerTriggered" ||
+             object_export.class_name == "TexOscillator" ||
+             object_export.class_name == "TexOscillatorTriggered" ||
+             object_export.class_name == "TexRotator" ||
+             object_export.class_name == "TexCoordSource" ||
+             object_export.class_name == "TexScaler") {
+    object = std::make_shared<Modifier>(m_archive);
+  } else if (object_export.class_name == "Combiner") {
+    object = std::make_shared<Combiner>(m_archive);
   } else if (object_export.class_name == "FinalBlend") {
     object = std::make_shared<FinalBlend>(m_archive);
   } else if (object_export.class_name == "Shader") {

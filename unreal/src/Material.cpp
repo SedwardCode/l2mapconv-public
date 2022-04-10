@@ -2,7 +2,27 @@
 
 #include <unreal/Material.h>
 
+#include "MaterialDeserializer.h"
+
 namespace unreal {
+
+auto Combiner::set_property(const Property &property) -> bool {
+  if (Material::set_property(property)) {
+    return true;
+  }
+
+  if (property.name == "Material1") {
+    material1.from_property(property, archive);
+    return true;
+  }
+
+  if (property.name == "Material2") {
+    material2.from_property(property, archive);
+    return true;
+  }
+
+  return false;
+}
 
 auto Modifier::set_property(const Property &property) -> bool {
   if (Material::set_property(property)) {
@@ -119,6 +139,11 @@ void Texture::deserialize() {
 
   if (format != TEXF_DXT1 && format != TEXF_DXT3 && format != TEXF_DXT5 &&
       format != TEXF_RGBA8 && format != TEXF_G16) {
+
+    MaterialDeserializer deserializer;
+    deserializer.deserialize(archive);
+
+    archive >> mips;
     return;
   }
 
