@@ -59,6 +59,9 @@ void UISystem::rendering_window(Timestep frame_time) const {
   ImGui::Text("\tx: %d", static_cast<int>(camera_position.x));
   ImGui::Text("\ty: %d", static_cast<int>(camera_position.y));
   ImGui::Text("\tz: %d", static_cast<int>(camera_position.z));
+#ifdef LOAD_TEXTURES
+  ImGui::Checkbox("Textures", &m_ui_context.rendering.textures);
+#endif
   ImGui::Checkbox("Culling", &m_ui_context.rendering.culling);
   ImGui::Checkbox("Wireframe", &m_ui_context.rendering.wireframe);
   ImGui::Checkbox("Passable", &m_ui_context.rendering.passable);

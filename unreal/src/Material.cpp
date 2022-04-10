@@ -137,13 +137,12 @@ auto operator>>(Archive &archive, Mipmap &mipmap) -> Archive & {
 void Texture::deserialize() {
   BitmapMaterial::deserialize();
 
-  if (format != TEXF_DXT1 && format != TEXF_DXT3 && format != TEXF_DXT5 &&
-      format != TEXF_RGBA8 && format != TEXF_G16) {
+  if (format != TEXF_DXT1 &&  //
+      format != TEXF_DXT3 &&  //
+      format != TEXF_DXT5 &&  //
+      format != TEXF_RGBA8 && //
+      format != TEXF_G16) {
 
-    MaterialDeserializer deserializer;
-    deserializer.deserialize(archive);
-
-    archive >> mips;
     return;
   }
 
@@ -174,6 +173,9 @@ void Texture::deserialize() {
   // bytes, then read that number of bytes, pretending it's an actual mipmap.
   while (size != exprected_size) {
     archive >> size;
+
+    ASSERT(!static_cast<std::istream &>(archive).eof(), "Unreal",
+           "Unexpected EOF while deserializing texture");
   }
 
   Mipmap mip{};

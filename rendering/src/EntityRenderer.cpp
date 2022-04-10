@@ -37,7 +37,9 @@ void EntityRenderer::render(const Scene &scene, const FrameSettings &settings,
       for (const auto &texture_branch : shader_branch.second) {
         const auto &texture = texture_branch.first;
 
-        if (texture == nullptr) {
+        if (texture == nullptr ||
+            (settings.surface_textures & surface_type) != surface_type) {
+
           unbind_current_texture();
         } else {
           texture->bind(0);
@@ -64,7 +66,9 @@ void EntityRenderer::render(const Scene &scene, const FrameSettings &settings,
               GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
             }
 
-            if (texture == nullptr) {
+            if (texture == nullptr ||
+                (settings.surface_textures & surface_type) != surface_type) {
+
               shader->load_color(surface->material.color);
             }
 

@@ -69,6 +69,15 @@ void RenderingSystem::frame_end(Timestep /*frame_time*/) {
     GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
   }
 
+  if (m_ui_context.rendering.textures) {
+    settings.surface_textures |= SURFACE_STATIC_MESH;
+    settings.surface_textures |= SURFACE_TERRAIN;
+    settings.surface_textures |= SURFACE_CSG;
+  }
+
+  settings.surface_textures |= SURFACE_IMPORTED_GEODATA;
+  settings.surface_textures |= SURFACE_GENERATED_GEODATA;
+
   m_ui_context.rendering.draws = 0;
 
   m_entity_renderer.render(m_rendering_context.scene, settings,
