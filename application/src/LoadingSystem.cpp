@@ -19,6 +19,9 @@ LoadingSystem::LoadingSystem(GeodataContext &geodata_context,
   std::vector<Entity<GeodataMesh>> geodata_entities;
 
   for (const auto &map_name : map_names) {
+    utils::Log(utils::LOG_INFO, "App")
+        << "Loading map: " << map_name << std::endl;
+
     // Load map entities
     auto map = unreal_loader.load_map(map_name);
     map.name = map_name;

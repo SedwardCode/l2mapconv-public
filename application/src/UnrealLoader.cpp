@@ -444,9 +444,11 @@ auto UnrealLoader::load_mesh_actor_entities(
           surface.material.color = {0.7f, 1.0f, 0.7f};
         }
 
+#ifdef LOAD_TEXTURES
         if (const auto material = load_material(unreal_material.material)) {
           surface.material.texture = material->texture;
         }
+#endif
 
         mesh->surfaces.push_back(surface);
       }
@@ -546,15 +548,19 @@ auto UnrealLoader::load_model_entity(const unreal::Model &model,
     const auto v_vector = to_vec3(model.vectors[unreal_surface.v_index]);
     const auto base = to_vec3(model.points[unreal_surface.base_index]);
 
+#ifdef LOAD_TEXTURES
     const auto material = load_material(unreal_surface.material);
+#endif
 
     auto u_size = 64.0f;
     auto v_size = 64.0f;
 
+#ifdef LOAD_TEXTURES
     if (material) {
       u_size = material->texture.width;
       v_size = material->texture.height;
     }
+#endif
 
     // Vertices
     for (auto i = 0; i < node.vertex_count; ++i) {
@@ -610,9 +616,11 @@ auto UnrealLoader::load_model_entity(const unreal::Model &model,
     surface.index_count = mesh->indices.size() - index_offset;
     surface.material.color = {1.0f, 1.0f, 0.7f};
 
+#ifdef LOAD_TEXTURES
     if (material) {
       surface.material.texture = material->texture;
     }
+#endif
 
     mesh->surfaces.push_back(surface);
   }
@@ -777,6 +785,7 @@ auto UnrealLoader::load_texture(std::shared_ptr<unreal::Texture> unreal_texture)
     utils::Log(utils::LOG_WARN, "App")
         << "Unknown texture format: "
         << static_cast<int>(unreal_texture->format) << std::endl;
+    return {};
   }
   }
 

@@ -50,3 +50,9 @@ add_custom_target(copy-resources ALL
         $<TARGET_FILE_DIR:${PROJECT_NAME}>
     DEPENDS ${PROJECT_NAME}
 )
+
+# CMake options
+option(LOAD_TEXTURES "Load textures" OFF)
+if(LOAD_TEXTURES)
+  add_definitions(-DLOAD_TEXTURES)
+endif()
