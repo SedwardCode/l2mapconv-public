@@ -73,7 +73,7 @@ struct StaticMeshIndexStream {
 };
 
 struct StaticMeshMaterial {
-  ObjectRef<Material, ObjectRefConstraint::Optional> material;
+  ObjectRef<Material, ObjectRefRequirement::Optional> material;
   bool enable_collision;
 };
 
@@ -85,7 +85,7 @@ public:
   StaticMeshColorStream color_stream, alpha_stream;
   std::vector<StaticMeshUVStream> uv_stream;
   StaticMeshIndexStream index_stream, wireframe_index_stream;
-  ObjectRef<Model, ObjectRefConstraint::Optional> collision_model;
+  ObjectRef<Model, ObjectRefRequirement::Optional> collision_model;
 
   std::vector<StaticMeshMaterial> materials;
   bool use_simple_line_collision;

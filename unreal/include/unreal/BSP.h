@@ -134,7 +134,7 @@ enum BSPPolygonFlags {
 };
 
 struct BSPSurface {
-  ObjectRef<Material> material;
+  ObjectRef<Material, ObjectRefRequirement::Optional> material;
   std::uint32_t polygon_flags;
   Index base_index;   // Polygon & texture base point index (where U,V==0,0)
   Index normal_index; // Index to polygon normal

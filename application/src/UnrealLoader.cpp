@@ -429,7 +429,7 @@ auto UnrealLoader::load_mesh_actor_entities(
         }
 
         // Surface
-        const auto &material = unreal_mesh->materials[std::distance(
+        const auto &unreal_material = unreal_mesh->materials[std::distance(
             unreal_mesh->surfaces.begin(), unreal_surface)];
 
         Surface surface{};
@@ -437,11 +437,15 @@ auto UnrealLoader::load_mesh_actor_entities(
         surface.index_offset = unreal_surface->first_index;
         surface.index_count = unreal_surface->triangle_max * 3;
 
-        if (collides(*mesh_actor, material)) {
+        if (collides(*mesh_actor, unreal_material)) {
           surface.material.color = {1.0f, 0.6f, 0.6f};
         } else {
           surface.type |= SURFACE_PASSABLE;
           surface.material.color = {0.7f, 1.0f, 0.7f};
+        }
+
+        if (const auto material = load_material(unreal_material.material)) {
+          surface.material.texture = material->texture;
         }
 
         mesh->surfaces.push_back(surface);
@@ -532,15 +536,16 @@ auto UnrealLoader::load_model_entity(const unreal::Model &model,
       continue;
     }
 
-    const auto &surface = model.surfaces[node.surface_index];
+    const auto &unreal_surface = model.surfaces[node.surface_index];
 
-    if ((surface.polygon_flags & unreal::PF_Passable) != 0) {
+    if ((unreal_surface.polygon_flags & unreal::PF_Passable) != 0) {
       continue;
     }
 
-    const auto &normal = model.vectors[surface.normal_index];
+    const auto &normal = model.vectors[unreal_surface.normal_index];
 
     const auto vertex_start = mesh->vertices.size();
+    const auto index_start = mesh->indices.size();
 
     // Vertices
     for (auto i = 0; i < node.vertex_count; ++i) {
@@ -553,7 +558,7 @@ auto UnrealLoader::load_model_entity(const unreal::Model &model,
           {to_vec3(position), to_vec3(normal), {0.0f, 0.0f}});
     }
 
-    if ((surface.polygon_flags & unreal::PF_TwoSided) != 0) {
+    if ((unreal_surface.polygon_flags & unreal::PF_TwoSided) != 0) {
       for (auto i = 0; i < node.vertex_count; ++i) {
         const auto &position =
             model.points[model.vertices[node.vertex_pool_index + i]
@@ -571,27 +576,31 @@ auto UnrealLoader::load_model_entity(const unreal::Model &model,
       mesh->indices.push_back(vertex_start + i);
     }
 
-    if ((surface.polygon_flags & unreal::PF_TwoSided) != 0) {
+    if ((unreal_surface.polygon_flags & unreal::PF_TwoSided) != 0) {
       for (auto i = 2; i < node.vertex_count; ++i) {
         mesh->indices.push_back(vertex_start);
         mesh->indices.push_back(vertex_start + i);
         mesh->indices.push_back(vertex_start + i - 1);
       }
     }
+
+    // Surface
+    Surface surface{};
+    surface.type = SURFACE_CSG;
+    surface.index_offset = index_start;
+    surface.index_count = mesh->indices.size() - index_start;
+    surface.material.color = {1.0f, 1.0f, 0.7f};
+
+    if (const auto material = load_material(unreal_surface.material)) {
+      surface.material.texture = material->texture;
+    }
+
+    mesh->surfaces.push_back(surface);
   }
 
   if (mesh->vertices.empty()) {
     return {};
   }
-
-  // Surface
-  Surface surface{};
-  surface.type = SURFACE_CSG;
-  surface.index_offset = 0;
-  surface.index_count = mesh->indices.size();
-  surface.material.color = {1.0f, 1.0f, 0.7f};
-
-  mesh->surfaces.push_back(surface);
 
   return Entity{mesh};
 }
@@ -678,4 +687,86 @@ auto UnrealLoader::check_bsp_node_bounds(
   }
 
   return false;
+}
+
+auto UnrealLoader::load_material(
+    std::shared_ptr<unreal::Material> unreal_material) const
+    -> std::optional<Material> {
+
+  if (unreal_material == nullptr) {
+    return {};
+  }
+
+  Material material{};
+
+  if (std::shared_ptr<unreal::Texture> unreal_texture =
+          std::dynamic_pointer_cast<unreal::Texture>(unreal_material)) {
+
+    if (const auto texture = load_texture(unreal_texture)) {
+      material.texture = *texture;
+      return material;
+    }
+  } else if (std::shared_ptr<unreal::Shader> unreal_shader =
+                 std::dynamic_pointer_cast<unreal::Shader>(unreal_material)) {
+
+    if (const auto texture = load_texture(unreal_shader->diffuse)) {
+      material.texture = *texture;
+      return material;
+    }
+
+  } else if (std::shared_ptr<unreal::FinalBlend> unreal_final_blend =
+                 std::dynamic_pointer_cast<unreal::FinalBlend>(
+                     unreal_material)) {
+
+    return load_material(unreal_final_blend->material);
+  }
+
+  return {};
+}
+
+auto UnrealLoader::load_texture(std::shared_ptr<unreal::Texture> unreal_texture)
+    const -> std::optional<Texture> {
+
+  if (unreal_texture == nullptr) {
+    return {};
+  }
+
+  if (unreal_texture->mips.empty()) {
+    return {};
+  }
+
+  TextureFormat format = TEXTURE_DXT1;
+
+  switch (unreal_texture->format) {
+  case unreal::TextureFormat::TEXF_DXT1: {
+    format = TEXTURE_DXT1;
+    break;
+  }
+  case unreal::TextureFormat::TEXF_DXT3: {
+    format = TEXTURE_DXT3;
+    break;
+  }
+  case unreal::TextureFormat::TEXF_DXT5: {
+    format = TEXTURE_DXT5;
+    break;
+  }
+  case unreal::TextureFormat::TEXF_RGBA8: {
+    format = TEXTURE_RGBA;
+    break;
+  }
+  default: {
+    utils::Log(utils::LOG_WARN, "App")
+        << "Unknown texture format: "
+        << static_cast<int>(unreal_texture->format) << std::endl;
+  }
+  }
+
+  const auto *mip = &unreal_texture->mips[0];
+
+  return Texture{
+      format,
+      static_cast<std::size_t>(mip->u_size),
+      static_cast<std::size_t>(mip->v_size),
+      mip->data.data(),
+  };
 }

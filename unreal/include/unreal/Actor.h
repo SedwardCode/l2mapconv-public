@@ -15,7 +15,7 @@ public:
   float draw_scale;
   Vector draw_scale_3d;
   Vector pre_pivot;
-  ObjectRef<StaticMesh, ObjectRefConstraint::Optional> static_mesh;
+  ObjectRef<StaticMesh, ObjectRefRequirement::Optional> static_mesh;
   bool delete_me;
   bool hidden;
   bool collide_actors;
@@ -44,7 +44,7 @@ public:
 
 class BrushActor : public Actor {
 public:
-  ObjectRef<Model, ObjectRefConstraint::Optional> brush;
+  ObjectRef<Model, ObjectRefRequirement::Optional> brush;
 
   explicit BrushActor(Archive &archive) : Actor{archive} {}
 

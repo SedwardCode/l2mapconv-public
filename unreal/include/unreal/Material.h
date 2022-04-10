@@ -202,7 +202,7 @@ enum OutputBlending {
 class Shader : public RenderedMaterial {
 public:
   std::uint8_t output_blending;
-  ObjectRef<Texture, ObjectRefConstraint::Optional> diffuse;
+  ObjectRef<Texture, ObjectRefRequirement::Optional> diffuse;
   ObjectRef<Texture> opacity;
   ObjectRef<Texture> specular;
   ObjectRef<Texture> specular_mask;

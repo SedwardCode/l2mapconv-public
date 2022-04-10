@@ -36,6 +36,4 @@ private:
   const ArchiveLoader &m_archive_loader;
 };
 
-#include "Archive.h"
-
 } // namespace unreal

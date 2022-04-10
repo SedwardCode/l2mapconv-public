@@ -25,7 +25,7 @@ void main() {
 
     float light_intensity = max(0.0f, dot(normal, light_direction));
     vec3 diffuse = color * light_intensity;
-    vec3 ambient = texture * 1.5f + u_color * 0.25f;
+    vec3 ambient = texture * 1.25 + u_color * 0.25f;
 
     out_color = vec4(color * (ambient + diffuse), 1.0f);
 }

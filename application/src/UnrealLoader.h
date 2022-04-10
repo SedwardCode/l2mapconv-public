@@ -69,4 +69,10 @@ private:
                              const unreal::BSPNode &node,
                              const geometry::Box &map_bounding_box) const
       -> bool;
+
+  auto load_material(std::shared_ptr<unreal::Material> unreal_material) const
+      -> std::optional<Material>;
+
+  auto load_texture(std::shared_ptr<unreal::Texture> unreal_texture) const
+      -> std::optional<Texture>;
 };

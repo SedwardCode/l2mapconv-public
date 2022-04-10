@@ -58,8 +58,13 @@ void Renderer::render_maps(const std::vector<Map> &maps) const {
         }
 
         const auto mesh = std::make_shared<rendering::EntityMesh>(
-            m_rendering_context.context, vertices, entity.mesh->indices,
-            surfaces, entity.instance_matrices(), entity.mesh->bounding_box);
+            m_rendering_context.context, //
+            vertices,                    //
+            entity.mesh->indices,        //
+            surfaces,                    //
+            entity.instance_matrices(),  //
+            entity.mesh->bounding_box    //
+        );
 
         cached_mesh = entity_mesh_cache.insert({entity.mesh, mesh}).first;
       }

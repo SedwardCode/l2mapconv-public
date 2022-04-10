@@ -11,13 +11,13 @@
 
 namespace unreal {
 
-enum class ObjectRefConstraint {
+enum class ObjectRefRequirement {
   Required,
   Optional,
 };
 
 template <typename T,
-          ObjectRefConstraint constraint = ObjectRefConstraint::Required>
+          ObjectRefRequirement requirement = ObjectRefRequirement::Required>
 class ObjectRef {
 public:
   ObjectRef() : m_index{}, m_object_loader{nullptr}, m_object{nullptr} {}
@@ -56,7 +56,7 @@ private:
   mutable std::shared_ptr<T> m_object;
 
   template <typename U> auto load_object() const -> std::shared_ptr<U> {
-    if (constraint == ObjectRefConstraint::Optional && m_index == 0) {
+    if (requirement == ObjectRefRequirement::Optional && m_index == 0) {
       return nullptr;
     }
 
