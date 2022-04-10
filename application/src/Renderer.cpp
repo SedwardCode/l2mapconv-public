@@ -139,17 +139,22 @@ auto Renderer::load_texture(const Texture &texture) const
   case TEXTURE_RGBA: {
     format = rendering::Texture::Format::RGBA;
   } break;
+  case TEXTURE_DXT1: {
+    format = rendering::Texture::Format::DXT1;
+  } break;
   case TEXTURE_DXT3: {
     format = rendering::Texture::Format::DXT3;
   } break;
   case TEXTURE_DXT5: {
     format = rendering::Texture::Format::DXT5;
   } break;
-  case TEXTURE_DXT1:
-    break;
   }
 
-  return std::make_shared<rendering::Texture>(m_rendering_context.context,
-                                              format, texture.width,
-                                              texture.height, texture.data);
+  return std::make_shared<rendering::Texture>( //
+      m_rendering_context.context,             //
+      format,                                  //
+      texture.width,                           //
+      texture.height,                          //
+      texture.data                             //
+  );
 }

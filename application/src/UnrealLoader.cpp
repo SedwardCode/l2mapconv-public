@@ -142,7 +142,7 @@ auto UnrealLoader::load_terrain_entities(
         mesh->vertices.push_back(
             {glm::vec3{x, y, heightmap[y * width + x]} * scale + position,
              {0.0f, 0.0f, 0.0f},
-             {x, y}});
+             {0.0f, 0.0f}});
 
         heights[y * full_width + x] = heightmap[y * width + x];
       }
@@ -200,7 +200,7 @@ auto UnrealLoader::load_terrain_entities(
         mesh->vertices.push_back(
             {glm::vec3{x, y, heightmap[x]} * scale + position,
              {0.0f, 0.0f, 0.0f},
-             {x, y}});
+             {0.0f, 0.0f}});
 
         heights[y * full_width + x] = heightmap[x];
 
@@ -240,7 +240,7 @@ auto UnrealLoader::load_terrain_entities(
         mesh->vertices.push_back(
             {glm::vec3{x, y, heightmap[y * width]} * scale + position,
              {0.0f, 0.0f, 0.0f},
-             {x, y}});
+             {0.0f, 0.0f}});
 
         heights[y * full_width + x] = heightmap[y * width];
 
@@ -281,7 +281,7 @@ auto UnrealLoader::load_terrain_entities(
       mesh->vertices.push_back(
           {glm::vec3{x, y, heightmap[0]} * scale + position,
            {0.0f, 0.0f, 0.0f},
-           {x, y}});
+           {0.0f, 0.0f}});
 
       heights[y * full_width + x] = heightmap[0];
 
@@ -478,10 +478,8 @@ auto UnrealLoader::load_bsp_entities(
   ASSERT(!levels.empty(), "App", "No levels in package");
 
   for (const auto &level : levels) {
-    const auto entity = load_model_entity(level->model, map_bounding_box);
-
-    if (entity.has_value()) {
-      entities.push_back(entity.value());
+    if (const auto entity = load_model_entity(level->model, map_bounding_box)) {
+      entities.push_back(*entity);
     }
   }
 
@@ -503,13 +501,10 @@ auto UnrealLoader::load_volume_entities(
       continue;
     }
 
-    const auto optional_entity =
-        load_model_entity(volume->brush, map_bounding_box, false);
-
-    if (optional_entity.has_value()) {
-      auto entity = optional_entity.value();
-      place_actor(*volume, entity);
-      entities.push_back(entity);
+    if (auto entity =
+            load_model_entity(volume->brush, map_bounding_box, false)) {
+      place_actor(*volume, *entity);
+      entities.push_back(*entity);
     }
   }
 
@@ -543,55 +538,79 @@ auto UnrealLoader::load_model_entity(const unreal::Model &model,
     }
 
     const auto &normal = model.vectors[unreal_surface.normal_index];
+    const auto vertex_offset = mesh->vertices.size();
+    const auto index_offset = mesh->indices.size();
 
-    const auto vertex_start = mesh->vertices.size();
-    const auto index_start = mesh->indices.size();
+    // UVs
+    const auto u_vector = to_vec3(model.vectors[unreal_surface.u_index]);
+    const auto v_vector = to_vec3(model.vectors[unreal_surface.v_index]);
+    const auto base = to_vec3(model.vectors[unreal_surface.base_index]);
+
+    const auto material = load_material(unreal_surface.material);
+
+    auto u_size = 64.0f;
+    auto v_size = 64.0f;
+
+    if (material) {
+      u_size = material->texture.width;
+      v_size = material->texture.height;
+    }
 
     // Vertices
     for (auto i = 0; i < node.vertex_count; ++i) {
-      const auto &position =
-          model.points[model.vertices[node.vertex_pool_index + i].vertex_index];
+      const auto index =
+          model.vertices[node.vertex_pool_index + i].vertex_index;
+      const auto &position = to_vec3(model.points[index]);
 
-      mesh->bounding_box += to_vec3(position);
+      const auto distance = position - base;
+      const auto texture = glm::vec2{glm::dot(distance, u_vector) / u_size,
+                                     glm::dot(distance, v_vector) / v_size};
+
+      mesh->bounding_box += position;
 
       mesh->vertices.push_back(
-          {to_vec3(position), to_vec3(normal), {0.0f, 0.0f}});
+          {position, to_vec3(normal), {texture.x, texture.y}});
     }
 
     if ((unreal_surface.polygon_flags & unreal::PF_TwoSided) != 0) {
       for (auto i = 0; i < node.vertex_count; ++i) {
-        const auto &position =
-            model.points[model.vertices[node.vertex_pool_index + i]
-                             .vertex_index];
+        const auto index =
+            model.vertices[node.vertex_pool_index + i].vertex_index;
+        const auto &position = to_vec3(model.points[index]);
 
-        mesh->vertices.push_back(
-            {to_vec3(position), {normal.x, normal.y, -normal.z}, {0.0f, 0.0f}});
+        const auto distance = position - base;
+        const auto texture = glm::vec2{glm::dot(distance, u_vector) / u_size,
+                                       glm::dot(distance, v_vector) / v_size};
+
+        mesh->vertices.push_back({position,
+                                  {normal.x, normal.y, -normal.z},
+                                  {texture.x, texture.y}});
       }
     }
 
     // Indices
     for (auto i = 2; i < node.vertex_count; ++i) {
-      mesh->indices.push_back(vertex_start);
-      mesh->indices.push_back(vertex_start + i - 1);
-      mesh->indices.push_back(vertex_start + i);
+      mesh->indices.push_back(vertex_offset);
+      mesh->indices.push_back(vertex_offset + i - 1);
+      mesh->indices.push_back(vertex_offset + i);
     }
 
     if ((unreal_surface.polygon_flags & unreal::PF_TwoSided) != 0) {
       for (auto i = 2; i < node.vertex_count; ++i) {
-        mesh->indices.push_back(vertex_start);
-        mesh->indices.push_back(vertex_start + i);
-        mesh->indices.push_back(vertex_start + i - 1);
+        mesh->indices.push_back(vertex_offset);
+        mesh->indices.push_back(vertex_offset + i);
+        mesh->indices.push_back(vertex_offset + i - 1);
       }
     }
 
     // Surface
     Surface surface{};
     surface.type = SURFACE_CSG;
-    surface.index_offset = index_start;
-    surface.index_count = mesh->indices.size() - index_start;
+    surface.index_offset = index_offset;
+    surface.index_count = mesh->indices.size() - index_offset;
     surface.material.color = {1.0f, 1.0f, 0.7f};
 
-    if (const auto material = load_material(unreal_surface.material)) {
+    if (material) {
       surface.material.texture = material->texture;
     }
 
@@ -765,8 +784,8 @@ auto UnrealLoader::load_texture(std::shared_ptr<unreal::Texture> unreal_texture)
 
   return Texture{
       format,
-      static_cast<std::size_t>(mip->u_size),
-      static_cast<std::size_t>(mip->v_size),
+      mip->u_size,
+      mip->v_size,
       mip->data.data(),
   };
 }

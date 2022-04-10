@@ -31,8 +31,8 @@ enum TextureFormat {
 
 struct Texture {
   TextureFormat format;
-  std::size_t width;
-  std::size_t height;
+  int width;
+  int height;
   const unsigned char *data;
 };
 
