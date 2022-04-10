@@ -544,7 +544,7 @@ auto UnrealLoader::load_model_entity(const unreal::Model &model,
     // UVs
     const auto u_vector = to_vec3(model.vectors[unreal_surface.u_index]);
     const auto v_vector = to_vec3(model.vectors[unreal_surface.v_index]);
-    const auto base = to_vec3(model.vectors[unreal_surface.base_index]);
+    const auto base = to_vec3(model.points[unreal_surface.base_index]);
 
     const auto material = load_material(unreal_surface.material);
 
@@ -560,7 +560,7 @@ auto UnrealLoader::load_model_entity(const unreal::Model &model,
     for (auto i = 0; i < node.vertex_count; ++i) {
       const auto index =
           model.vertices[node.vertex_pool_index + i].vertex_index;
-      const auto &position = to_vec3(model.points[index]);
+      const auto position = to_vec3(model.points[index]);
 
       const auto distance = position - base;
       const auto texture = glm::vec2{glm::dot(distance, u_vector) / u_size,
@@ -576,7 +576,7 @@ auto UnrealLoader::load_model_entity(const unreal::Model &model,
       for (auto i = 0; i < node.vertex_count; ++i) {
         const auto index =
             model.vertices[node.vertex_pool_index + i].vertex_index;
-        const auto &position = to_vec3(model.points[index]);
+        const auto position = to_vec3(model.points[index]);
 
         const auto distance = position - base;
         const auto texture = glm::vec2{glm::dot(distance, u_vector) / u_size,
