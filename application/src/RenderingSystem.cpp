@@ -97,6 +97,6 @@ void RenderingSystem::resize() const {
 }
 
 void RenderingSystem::clear() const {
-  GL_CALL(glClearColor(0.5f, 0.8f, 0.9f, 1.0f));
+  GL_CALL(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
   GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
