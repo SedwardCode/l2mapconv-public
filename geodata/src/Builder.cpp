@@ -12,7 +12,7 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
   // Build heightfield
   auto *hf = rcAllocHeightfield();
   build_heightfield(*hf, map, settings.cell_size, settings.cell_height,
-                    settings.walkable_angle);
+                    settings.walkable_height, settings.walkable_angle);
 
   // Calculate NSWE
   calculate_nswe(

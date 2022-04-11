@@ -14,7 +14,8 @@ inline auto unpack_area(int area) -> int { return area & 0x3; }
 inline auto unpack_nswe(int area) -> int { return area >> 2; }
 
 void build_heightfield(rcHeightfield &hf, const Map &map, float cell_size,
-                       float cell_height, float walkable_angle);
+                       float cell_height, float walkable_height,
+                       float walkable_angle);
 
 void calculate_nswe(const rcHeightfield &hf, int walkable_height,
                     int min_walkable_climb, int max_walkable_climb);

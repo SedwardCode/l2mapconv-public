@@ -178,8 +178,10 @@ void Texture::deserialize() {
   while (size != exprected_size) {
     archive >> size;
 
-    ASSERT(!static_cast<std::istream &>(archive).eof(), "Unreal",
-           "Unexpected EOF while deserializing texture");
+    if (static_cast<std::istream &>(archive).eof()) {
+      ASSERT(false, "Unreal", "Unexpected EOF while deserializing texture");
+      return;
+    }
   }
 
   Mipmap mip{};

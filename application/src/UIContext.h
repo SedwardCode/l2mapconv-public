@@ -17,7 +17,6 @@ struct UIContext {
     bool generated_geodata;
 
     void set_defaults() {
-      textures = true;
       culling = true;
       terrain = true;
       static_meshes = true;

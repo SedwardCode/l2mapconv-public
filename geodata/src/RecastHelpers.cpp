@@ -17,7 +17,8 @@ inline auto change_area(int area, int new_area) -> int {
 }
 
 void build_heightfield(rcHeightfield &hf, const Map &map, float cell_size,
-                       float cell_height, float walkable_angle) {
+                       float cell_height, float walkable_height,
+                       float walkable_angle) {
 
   const auto *bb_min = glm::value_ptr(map.flipped_bounding_box().min());
   const auto *bb_max = glm::value_ptr(map.flipped_bounding_box().max());
@@ -44,6 +45,10 @@ void build_heightfield(rcHeightfield &hf, const Map &map, float cell_size,
                           &areas.front());
   rcRasterizeTriangles(&context, vertices, vertex_count, triangles,
                        &areas.front(), triangle_count, hf, 0);
+
+  // Filter spans
+  rcFilterWalkableLowHeightSpans(
+      &context, static_cast<int>(walkable_height / cell_height), hf);
 }
 
 void mark_walkable_triangles(float walkable_angle, const float *vertices,
@@ -78,6 +83,12 @@ void calculate_nswe(const rcHeightfield &hf, int walkable_height,
     for (auto x = 0; x < hf.width; ++x) {
       for (auto *span = hf.spans[x + y * hf.width]; span != nullptr;
            span = span->next) {
+
+        const auto area = unpack_area(span->area);
+
+        if (area == RC_NULL_AREA) {
+          continue;
+        }
 
         const auto bottom = static_cast<int>(span->smax);
         const auto top = span->next != nullptr
