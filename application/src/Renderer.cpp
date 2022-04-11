@@ -32,7 +32,7 @@ void Renderer::render_maps(const std::vector<Map> &maps) const {
         std::vector<rendering::MeshSurface> surfaces;
 
         for (const auto &surface : entity.mesh->surfaces) {
-          // Load texture if needed.
+          // Load texture if needed
           auto cached_texture =
               texture_cache.find(surface.material.texture.data);
 
@@ -57,13 +57,13 @@ void Renderer::render_maps(const std::vector<Map> &maps) const {
           vertices.push_back({vertex.position, vertex.normal, vertex.uv});
         }
 
-        const auto mesh = std::make_shared<rendering::EntityMesh>(
-            m_rendering_context.context, //
-            vertices,                    //
-            entity.mesh->indices,        //
-            surfaces,                    //
-            entity.instance_matrices(),  //
-            entity.mesh->bounding_box    //
+        const auto mesh = std::make_shared<rendering::EntityMesh>( //
+            m_rendering_context.context,                           //
+            vertices,                                              //
+            entity.mesh->indices,                                  //
+            surfaces,                                              //
+            entity.instance_matrices(),                            //
+            entity.mesh->bounding_box                              //
         );
 
         cached_mesh = entity_mesh_cache.insert({entity.mesh, mesh}).first;
@@ -106,10 +106,16 @@ void Renderer::render_geodata(
     rendering::MeshSurface surface{
         entity.mesh->surface.type,
         rendering::Material{entity.mesh->surface.material.color, nswe_texture},
-        0, 0};
+        0,
+        0,
+    };
 
-    const auto mesh = std::make_shared<rendering::GeodataMesh>(
-        m_rendering_context.context, cells, surface, entity.mesh->bounding_box);
+    const auto mesh = std::make_shared<rendering::GeodataMesh>( //
+        m_rendering_context.context,                            //
+        cells,                                                  //
+        surface,                                                //
+        entity.mesh->bounding_box                               //
+    );
 
     rendering::Entity rendering_entity{
         mesh,

@@ -21,9 +21,13 @@ execute_process(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/recast
 )
 
+# GLFW
+option(GLFW_BUILD_DOCS "Build docs" OFF)
+set(GLFW_BUILD_DOCS OFF)
+add_subdirectory(glfw)
+
 # Other libs
 add_subdirectory(llvm)
-add_subdirectory(glfw)
 add_subdirectory(glm)
 add_subdirectory(imgui)
 add_subdirectory(stb)

@@ -137,12 +137,16 @@ auto operator>>(Archive &archive, Mipmap &mipmap) -> Archive & {
 void Texture::deserialize() {
   BitmapMaterial::deserialize();
 
+  MaterialDeserializer deserializer{};
+  deserializer.deserialize(archive);
+
   if (format != TEXF_DXT1 &&  //
       format != TEXF_DXT3 &&  //
       format != TEXF_DXT5 &&  //
       format != TEXF_RGBA8 && //
       format != TEXF_G16) {
 
+    archive >> mips;
     return;
   }
 
