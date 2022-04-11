@@ -38,7 +38,7 @@ void EntityRenderer::render(const Scene &scene, const FrameSettings &settings,
         const auto &texture = texture_branch.first;
 
         if (texture == nullptr ||
-            (settings.surface_textures & surface_type) != surface_type) {
+            (settings.surface_textures & surface_type) == 0) {
 
           unbind_current_texture();
         } else {
@@ -67,7 +67,7 @@ void EntityRenderer::render(const Scene &scene, const FrameSettings &settings,
             }
 
             if (texture == nullptr ||
-                (settings.surface_textures & surface_type) != surface_type) {
+                (settings.surface_textures & surface_type) == 0) {
 
               shader->load_color(surface->material.color);
             }
