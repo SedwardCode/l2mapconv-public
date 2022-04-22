@@ -6,9 +6,10 @@
 
 namespace geodata {
 
-static const unsigned char RC_STEEP_AREA = 0x1;
-static const unsigned char RC_FLAT_AREA = 0x2;
-static const unsigned char RC_COMPLEX_AREA = 0x3; // 0x3 - max possible value
+static constexpr unsigned char RC_STEEP_AREA = 0x1;
+static constexpr unsigned char RC_FLAT_AREA = 0x2;
+static constexpr unsigned char RC_COMPLEX_AREA =
+    0x3; // 0x3 - max possible value
 
 inline auto unpack_area(int area) -> int { return area & 0x3; }
 inline auto unpack_nswe(int area) -> int { return area >> 2; }

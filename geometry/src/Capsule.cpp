@@ -6,7 +6,7 @@ Capsule::Capsule(const glm::vec3 &base, const glm::vec3 &tip, float radius)
     : m_base{base}, m_tip{tip}, m_radius{radius} {}
 
 auto Capsule::bounding_box() const -> Box {
-  static const glm::vec3 corners[8] = {
+  static constexpr glm::vec3 corners[8] = {
       {-1.0f, -1.0f, -1.0f}, //
       {1.0f, -1.0f, -1.0f},  //
       {-1.0f, -1.0f, 1.0f},  //

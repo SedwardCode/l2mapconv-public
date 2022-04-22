@@ -4,14 +4,6 @@
 
 namespace geodata {
 
-// Swap Y-up with Z-up
-constexpr auto identity = glm::mat4{
-    {1.0f, 0.0f, 0.0f, 0.0f},
-    {0.0f, 0.0f, 1.0f, 0.0f},
-    {0.0f, 1.0f, 0.0f, 0.0f},
-    {0.0f, 0.0f, 0.0f, 1.0f},
-};
-
 // Use this function to every input/output geometry::Box
 auto swap_y_with_z(const geometry::Box &box) -> geometry::Box {
   const glm::vec3 min = {box.min().x, box.min().z, box.min().y};
@@ -31,6 +23,14 @@ Map::Map(Map &&other) noexcept
 
 void Map::add(const Entity &entity) {
   ASSERT(entity.mesh != nullptr, "Geodata", "Entity must have mesh");
+
+  // Swap Y-up with Z-up
+  static constexpr auto identity = glm::mat4{
+      {1.0f, 0.0f, 0.0f, 0.0f},
+      {0.0f, 0.0f, 1.0f, 0.0f},
+      {0.0f, 1.0f, 0.0f, 0.0f},
+      {0.0f, 0.0f, 0.0f, 1.0f},
+  };
 
   std::vector<glm::vec3> normals;
 
@@ -99,6 +99,9 @@ auto Map::vertices() const -> const std::vector<glm::vec3> & {
 auto Map::indices() const -> const std::vector<unsigned int> & {
   return m_indices;
 }
+
+auto Map::intersects(const geometry::Sphere &sphere,
+                     geometry::Intersection &intersection) const -> bool {}
 
 auto Map::triangles_that_intersects(const geometry::Box &source_bb) const
     -> const std::vector<geometry::Triangle> {

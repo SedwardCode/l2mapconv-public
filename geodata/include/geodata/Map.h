@@ -5,7 +5,8 @@
 #include <utils/NonCopyable.h>
 
 #include <geometry/Box.h>
-#include <geometry/Triangle.h>
+#include <geometry/Intersection.h>
+#include <geometry/Sphere.h>
 
 #include <glm/glm.hpp>
 
@@ -27,14 +28,13 @@ public:
   auto name() const -> const std::string &;
   auto bounding_box() const -> geometry::Box;
 
-  // Output coordinate system is converted backwards from Y-up to Z-up
   auto flipped_bounding_box() const -> const geometry::Box &;
 
   auto vertices() const -> const std::vector<glm::vec3> &;
   auto indices() const -> const std::vector<unsigned int> &;
 
-  auto triangles_that_intersects(const geometry::Box &source_bb) const
-      -> const std::vector<geometry::Triangle>;
+  auto intersects(const geometry::Sphere &sphere,
+                  geometry::Intersection &intersection) const -> bool;
 
 private:
   struct EntityView {

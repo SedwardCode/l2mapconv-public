@@ -6,7 +6,7 @@ Sphere::Sphere(const glm::vec3 &center, float radius)
     : m_center{center}, m_radius{radius} {}
 
 auto Sphere::bounding_box() const -> Box {
-  static const glm::vec3 corners[8] = {
+  static constexpr glm::vec3 corners[8] = {
       {-1.0f, -1.0f, -1.0f}, //
       {1.0f, -1.0f, -1.0f},  //
       {-1.0f, -1.0f, 1.0f},  //

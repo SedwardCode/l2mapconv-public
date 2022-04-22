@@ -18,7 +18,8 @@ void Compressor::compress() {
       if (is_multilayer_block(x, y)) {
         m_buffer.set_block_type(x, y, BLOCK_MULTILAYER);
       } else {
-        const auto [is_simple, new_z] = is_simple_block(x, y);
+        std::int16_t new_z = 0;
+        const auto is_simple = is_simple_block(x, y, new_z);
 
         if (is_simple) {
           m_buffer.set_block_type(x, y, BLOCK_SIMPLE);
@@ -50,8 +51,8 @@ auto Compressor::is_multilayer_block(int x, int y) const -> bool {
   return false;
 }
 
-auto Compressor::is_simple_block(int x, int y) const
-    -> std::pair<bool, std::int16_t> {
+auto Compressor::is_simple_block(int x, int y, std::int16_t &new_z) const
+    -> bool {
 
   auto min_z = std::numeric_limits<std::int16_t>::max();
   auto max_z = std::numeric_limits<std::int16_t>::min();
@@ -61,19 +62,20 @@ auto Compressor::is_simple_block(int x, int y) const
       const auto cell = m_buffer.cell(x, y, cx, cy);
 
       if (!cell.north || !cell.south || !cell.west || !cell.east) {
-        return {false, 0};
+        return false;
       }
 
       min_z = std::min(min_z, cell.z);
       max_z = std::max(max_z, cell.z);
 
       if (max_z - min_z > SIMPLE_BLOCK_MAX_HEIGHT_DIFFERENCE) {
-        return {false, 0};
+        return false;
       }
     }
   }
 
-  return {true, max_z};
-}
+  new_z = max_z;
+  return true;
+};
 
 } // namespace geodata
