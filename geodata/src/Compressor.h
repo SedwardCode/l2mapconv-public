@@ -6,11 +6,11 @@
 
 namespace geodata {
 
-class Optimizer {
+class Compressor {
 public:
-  explicit Optimizer(ExportBuffer &buffer);
+  explicit Compressor(ExportBuffer &buffer);
 
-  void optimize();
+  void compress();
 
 private:
   ExportBuffer &m_buffer;

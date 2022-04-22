@@ -1,7 +1,7 @@
 #include "pch.h"
 
+#include "Compressor.h"
 #include "L2JSerializer.h"
-#include "Optimizer.h"
 
 namespace geodata {
 
@@ -9,7 +9,6 @@ static constexpr auto MAP_WIDTH_BLOCKS = 256;
 static constexpr auto MAP_HEIGHT_BLOCKS = 256;
 static constexpr auto BLOCK_WIDTH_CELLS = 8;
 static constexpr auto BLOCK_HEIGHT_CELLS = 8;
-static constexpr auto CELL_HEIGHT = 8;
 
 auto L2JSerializer::deserialize(std::istream &input) const -> Geodata {
   Geodata geodata;
@@ -62,7 +61,7 @@ auto L2JSerializer::deserialize(std::istream &input) const -> Geodata {
   return geodata;
 }
 
-void L2JSerializer::serialize(ExportBuffer &buffer,
+void L2JSerializer::serialize(const ExportBuffer &buffer,
                               std::ostream &output) const {
 
   for (auto x = 0; x < MAP_WIDTH_BLOCKS; ++x) {
@@ -73,10 +72,7 @@ void L2JSerializer::serialize(ExportBuffer &buffer,
 
       if (block.type == BLOCK_SIMPLE) {
         const auto cell = buffer.cell(x, y);
-
         std::int16_t z = cell.z;
-        round_height(z);
-
         write(output, z);
       } else if (block.type == BLOCK_COMPLEX) {
         for (auto cx = 0; cx < BLOCK_WIDTH_CELLS; ++cx) {
@@ -138,17 +134,9 @@ void L2JSerializer::write_complex_block_cell(std::ostream &output,
       (cell.west ? DIRECTION_W : 0) | (cell.east ? DIRECTION_E : 0);
 
   std::int16_t z = cell.z;
-  round_height(z);
   z = (z << 1) | nswe; // add NSWE
 
   write(output, z);
-}
-
-void L2JSerializer::round_height(std::int16_t &height) const {
-  // Round cell height to fit 12 bits (other 4 bits for NSWE)
-  if (height % CELL_HEIGHT != 0) {
-    height = (height / CELL_HEIGHT) * CELL_HEIGHT;
-  }
 }
 
 void L2JSerializer::write(std::ostream &output, std::int16_t value) const {

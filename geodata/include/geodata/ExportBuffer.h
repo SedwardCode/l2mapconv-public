@@ -29,8 +29,11 @@ public:
 
   void reset(const Geodata &geodata);
 
-  auto block(int x, int y) const -> Block;
-  auto column(int x, int y, int cx, int cy) const -> Column;
+  // Not cheap operation
+  auto convert_to_geodata() const -> Geodata;
+
+  auto block(int x, int y) const -> const Block &;
+  auto column(int x, int y, int cx, int cy) const -> const Column &;
   auto cell(int x, int y, int cx = 0, int cy = 0, int layer = 0) const -> Cell;
 
   void set_block_type(int x, int y, BlockType type);
@@ -44,6 +47,8 @@ private:
   auto pack_cell(const Cell &cell) const -> PackedCell;
   auto unpack_cell(PackedCell packed_cell, BlockType type, int x, int y) const
       -> Cell;
+
+  auto round_height(std::int16_t height) const -> std::int16_t;
 };
 
 } // namespace geodata

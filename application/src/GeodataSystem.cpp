@@ -33,9 +33,10 @@ void GeodataSystem::build() const {
     utils::Log(utils::LOG_INFO, "App")
         << "Building geodata for map: " << map.name() << std::endl;
 
-    const auto geodata = geodata_builder.build(map, settings);
+    const auto &buffer = geodata_builder.build(map, settings);
     const auto geodata_entity = geodata_entity_factory.make_entity(
-        geodata, map.bounding_box(), SURFACE_GENERATED_GEODATA);
+        buffer.convert_to_geodata(), map.bounding_box(),
+        SURFACE_GENERATED_GEODATA);
 
     if (m_renderer != nullptr) {
       m_renderer->render_geodata({geodata_entity});
@@ -45,7 +46,7 @@ void GeodataSystem::build() const {
       utils::Log(utils::LOG_INFO, "App")
           << "Exporting geodata for map: " << map.name() << std::endl;
 
-      geodata_exporter.export_l2j_geodata(map.name(), geodata);
+      geodata_exporter.export_l2j_geodata(buffer, map.name());
     }
   }
 }

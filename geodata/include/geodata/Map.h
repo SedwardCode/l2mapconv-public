@@ -27,6 +27,7 @@ public:
   auto name() const -> const std::string &;
   auto bounding_box() const -> geometry::Box;
 
+  // Output coordinate system is converted backwards from Y-up to Z-up
   auto flipped_bounding_box() const -> const geometry::Box &;
 
   auto vertices() const -> const std::vector<glm::vec3> &;

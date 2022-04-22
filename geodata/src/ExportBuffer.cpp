@@ -6,11 +6,12 @@ namespace geodata {
 
 static constexpr auto MAP_WIDTH_BLOCKS = 256;
 static constexpr auto MAP_HEIGHT_BLOCKS = 256;
-static constexpr auto MAP_WIDTH_CELLS = 2048;
-static constexpr auto MAP_HEIGHT_CELLS = 2048;
 static constexpr auto BLOCK_WIDTH_CELLS = 8;
 static constexpr auto BLOCK_HEIGHT_CELLS = 8;
+static constexpr auto MAP_WIDTH_CELLS = MAP_WIDTH_BLOCKS * BLOCK_WIDTH_CELLS;
+static constexpr auto MAP_HEIGHT_CELLS = MAP_HEIGHT_BLOCKS * BLOCK_HEIGHT_CELLS;
 static constexpr auto MAX_LAYERS = 64;
+static constexpr auto CELL_HEIGHT = 8;
 
 ExportBuffer::ExportBuffer()
     : m_blocks{MAP_WIDTH_BLOCKS * MAP_HEIGHT_BLOCKS},
@@ -46,12 +47,52 @@ void ExportBuffer::reset(const Geodata &geodata) {
   }
 }
 
-auto ExportBuffer::block(int x, int y) const -> Block {
+auto ExportBuffer::convert_to_geodata() const -> Geodata {
+  Geodata geodata;
+
+  for (auto x = 0; x < MAP_WIDTH_BLOCKS; ++x) {
+    for (auto y = 0; y < MAP_HEIGHT_BLOCKS; ++y) {
+      const auto &block = this->block(x, y);
+
+      if (block.type == BLOCK_SIMPLE) {
+        const auto cell = this->cell(x, y);
+        geodata.cells.emplace_back(cell);
+      } else if (block.type == BLOCK_COMPLEX) {
+        for (auto cx = 0; cx < BLOCK_WIDTH_CELLS; ++cx) {
+          for (auto cy = 0; cy < BLOCK_HEIGHT_CELLS; ++cy) {
+            const auto cell = this->cell(x, y, cx, cy);
+            geodata.cells.emplace_back(cell);
+          }
+        }
+      } else if (block.type == BLOCK_MULTILAYER) {
+        for (auto cx = 0; cx < BLOCK_WIDTH_CELLS; ++cx) {
+          for (auto cy = 0; cy < BLOCK_HEIGHT_CELLS; ++cy) {
+            const auto &column = this->column(x, y, cx, cy);
+
+            for (auto layer = 0; layer < column.layers; ++layer) {
+              const auto cell = this->cell(x, y, cx, cy, layer);
+              geodata.cells.emplace_back(cell);
+            }
+          }
+        }
+      } else {
+        ASSERT(false, "Geodata",
+               "Invalid block type: " << static_cast<int>(block.type));
+      }
+    }
+  }
+
+  return geodata;
+}
+
+auto ExportBuffer::block(int x, int y) const -> const Block & {
   const auto block_index = y + x * MAP_WIDTH_BLOCKS;
   return m_blocks[block_index];
 }
 
-auto ExportBuffer::column(int x, int y, int cx, int cy) const -> Column {
+auto ExportBuffer::column(int x, int y, int cx, int cy) const
+    -> const Column & {
+
   const auto column_index = (y * BLOCK_HEIGHT_CELLS) + cy +
                             ((x * BLOCK_WIDTH_CELLS) + cx) * MAP_WIDTH_CELLS;
   return m_columns[column_index];
@@ -76,12 +117,12 @@ void ExportBuffer::set_block_height(int x, int y, std::int16_t height) {
   const auto column_index =
       (y * BLOCK_HEIGHT_CELLS) + (x * BLOCK_WIDTH_CELLS) * MAP_WIDTH_CELLS;
   const auto cell_index = column_index * MAX_LAYERS;
-  m_cells[cell_index].height = height;
+  m_cells[cell_index].height = round_height(height);
 }
 
 auto ExportBuffer::pack_cell(const Cell &cell) const -> PackedCell {
   PackedCell packed_cell{};
-  packed_cell.height = cell.z;
+  packed_cell.height = round_height(cell.z);
   packed_cell.north = cell.north;
   packed_cell.south = cell.south;
   packed_cell.west = cell.west;
@@ -102,6 +143,11 @@ auto ExportBuffer::unpack_cell(PackedCell packed_cell, BlockType type, int x,
   cell.west = packed_cell.west;
   cell.east = packed_cell.east;
   return cell;
+}
+
+auto ExportBuffer::round_height(std::int16_t height) const -> std::int16_t {
+  // Round cell height to fit 12 bits (other 4 bits for NSWE)
+  return (height / CELL_HEIGHT) * CELL_HEIGHT;
 }
 
 } // namespace geodata

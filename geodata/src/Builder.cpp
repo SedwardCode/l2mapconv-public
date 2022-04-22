@@ -1,50 +1,32 @@
 #include "pch.h"
 
-#include "RecastHelpers.h"
+#include "Compressor.h"
+#include "NSWE.h"
 
 #include <geodata/Builder.h>
 
 namespace geodata {
 
 auto Builder::build(const Map &map, const BuilderSettings &settings) const
-    -> Geodata {
+    -> const ExportBuffer & {
 
   // Build heightfield
   auto *hf = rcAllocHeightfield();
-  build_heightfield(*hf, map, settings.cell_size, settings.cell_height,
-                    settings.walkable_height, settings.walkable_angle);
+  build_filtered_heightfield(*hf, map, settings.cell_size, settings.cell_height,
+                             settings.walkable_height, settings.walkable_angle);
 
-  // Calculate NSWE
-  calculate_nswe(
-      *hf, static_cast<int>(settings.walkable_height / settings.cell_height),
-      static_cast<int>(settings.min_walkable_climb / settings.cell_height),
-      static_cast<int>(settings.max_walkable_climb / settings.cell_height));
+  // Calculate simple NSWE
+  calculate_simple_nswe(*hf, settings.cell_height, settings.walkable_height,
+                        settings.min_walkable_climb,
+                        settings.max_walkable_climb);
 
-  // Collsisions
+  // Calculate complex NSWE based on sphere-to-mesh collision
+  calculate_complex_nswe(*hf, map);
 
   const auto depth =
       static_cast<int>((map.bounding_box().max() - map.bounding_box().min()).z /
                        settings.cell_height) /
       2;
-
-  const auto &triangles = map.triangles_that_intersects(map.bounding_box());
-
-  //  for (auto y = 0; y < hf->height; ++y) {
-  //    for (auto x = 0; x < hf->width; ++x) {
-  //      for (auto *span = hf->spans[x + y * hf->width]; span != nullptr;
-  //           span = span->next) {
-
-  //        const auto area = unpack_area(span->area);
-
-  //        if (area != RC_COMPLEX_AREA) {
-  //          continue;
-  //        }
-
-  //        const auto &triangles =
-  //            map.triangles_that_intersects(map.bounding_box());
-  //      }
-  //    }
-  //  }
 
   // Convert heightfield to geodata
   Geodata geodata;
@@ -114,7 +96,13 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
 
   rcFreeHeightField(hf);
 
-  return geodata;
+  // Compress export buffer and return it
+  m_export_buffer.reset(geodata);
+
+  Compressor compressor{m_export_buffer};
+  compressor.compress();
+
+  return m_export_buffer;
 }
 
 } // namespace geodata

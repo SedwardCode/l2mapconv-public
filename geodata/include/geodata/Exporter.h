@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ExportBuffer.h"
-#include "Geodata.h"
 
 #include <filesystem>
 #include <string>
@@ -12,13 +11,11 @@ class Exporter {
 public:
   explicit Exporter(const std::filesystem::path &root_path);
 
-  void export_l2j_geodata(const std::string &name,
-                          const Geodata &geodata) const;
+  void export_l2j_geodata(const ExportBuffer &export_buffer,
+                          const std::string &name) const;
 
 private:
   const std::filesystem::path m_root_path;
-
-  mutable ExportBuffer m_export_buffer;
 };
 
 } // namespace geodata

@@ -8,9 +8,9 @@ add_library(${PROJECT_NAME}
     src/Exporter.cpp
     src/Map.cpp
     src/Builder.cpp
-    src/RecastHelpers.cpp
+    src/NSWE.cpp
     src/ExportBuffer.cpp
-    src/Optimizer.cpp
+    src/Compressor.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC include)
