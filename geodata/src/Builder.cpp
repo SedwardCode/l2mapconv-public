@@ -21,7 +21,7 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
                         settings.max_walkable_climb);
 
   // Calculate complex NSWE based on sphere-to-mesh collision
-  calculate_complex_nswe(*hf, map);
+  calculate_complex_nswe(*hf, map, settings.cell_size, settings.cell_height);
 
   const auto depth =
       static_cast<int>((map.bounding_box().max() - map.bounding_box().min()).z /

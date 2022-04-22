@@ -126,7 +126,9 @@ void calculate_simple_nswe(const rcHeightfield &hf, float cell_height,
   }
 }
 
-void calculate_complex_nswe(const rcHeightfield &hf, const Map &map) {
+void calculate_complex_nswe(const rcHeightfield &hf, const Map &map,
+                            float cell_size, float cell_height) {
+
   for (auto y = 0; y < hf.height; ++y) {
     for (auto x = 0; x < hf.width; ++x) {
       for (auto *span = hf.spans[x + y * hf.width]; span != nullptr;
@@ -136,6 +138,31 @@ void calculate_complex_nswe(const rcHeightfield &hf, const Map &map) {
 
         if (area != RC_COMPLEX_AREA) {
           continue;
+        }
+
+        for (auto direction = 0; direction < 4; ++direction) {
+          const auto dx = x + rcGetDirOffsetX(direction);
+          const auto dy = y + rcGetDirOffsetY(direction);
+
+          glm::vec3 center{map.bounding_box().min().x + dx * cell_size,
+                           map.bounding_box().min().y + dy * cell_size,
+                           map.bounding_box().min().z +
+                               span->smax * cell_height};
+          geometry::Sphere sphere{center, cell_size / 2.0f};
+
+          const auto triangles =
+              map.triangles_that_intersects(sphere.bounding_box());
+
+          for (const auto &triangle : triangles) {
+            geometry::Intersection intersection{};
+
+            if (!sphere.intersects(triangle, intersection)) {
+              continue;
+            }
+
+            std::cout << glm::to_string(intersection.normal) << " "
+                      << intersection.depth << std::endl;
+          }
         }
       }
     }

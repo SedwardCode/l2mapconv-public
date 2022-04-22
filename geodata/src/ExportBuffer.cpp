@@ -48,7 +48,7 @@ void ExportBuffer::reset(const Geodata &geodata) {
 }
 
 auto ExportBuffer::convert_to_geodata() const -> Geodata {
-  Geodata geodata;
+  Geodata geodata{};
 
   for (auto x = 0; x < MAP_WIDTH_BLOCKS; ++x) {
     for (auto y = 0; y < MAP_HEIGHT_BLOCKS; ++y) {
@@ -146,7 +146,7 @@ auto ExportBuffer::unpack_cell(PackedCell packed_cell, BlockType type, int x,
 }
 
 auto ExportBuffer::round_height(std::int16_t height) const -> std::int16_t {
-  // Round cell height to fit 12 bits (other 4 bits for NSWE)
+  // Round cell height to fit 12 bits
   return (height / CELL_HEIGHT) * CELL_HEIGHT;
 }
 

@@ -26,6 +26,7 @@ void calculate_simple_nswe(const rcHeightfield &hf, float cell_height,
 
 // Calculate NSWE based on sphere-to-mesh collision, must be called after
 // calculate_simple_nswe
-void calculate_complex_nswe(const rcHeightfield &hf, const Map &map);
+void calculate_complex_nswe(const rcHeightfield &hf, const Map &map,
+                            float cell_size, float cell_height);
 
 } // namespace geodata
