@@ -12,31 +12,27 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
 
   const auto map_origin = map.bounding_box().min();
 
-  // Build heightfield
-  auto *hf = rcAllocHeightfield();
-  std::vector<std::vector<int>> triangle_index;
-  build_filtered_heightfield(*hf, map, triangle_index, settings.cell_size,
-                             settings.cell_height, settings.walkable_height,
-                             settings.walkable_angle);
+  NSWE nswe_calculator{
+      map,
+      settings.cell_size,
+      settings.cell_height,
+      settings.walkable_height,
+      settings.walkable_angle,
+      settings.min_walkable_climb,
+      settings.max_walkable_climb,
+  };
 
-  // Calculate simple NSWE
-  calculate_simple_nswe(*hf, settings.cell_height, settings.walkable_height,
-                        settings.min_walkable_climb,
-                        settings.max_walkable_climb);
-
-  // Calculate complex NSWE based on sphere-to-mesh collision
-  calculate_complex_nswe(*hf, map, triangle_index, settings.cell_size,
-                         settings.cell_height);
+  const auto &hf = nswe_calculator.calculate_nswe();
 
   // Convert heightfield to geodata
   Geodata geodata;
 
-  std::vector<int> columns(hf->width * hf->height);
+  std::vector<int> columns(hf.width * hf.height);
   auto black_holes = 0;
 
-  for (auto y = 0; y < hf->height; ++y) {
-    for (auto x = 0; x < hf->width; ++x) {
-      for (auto *span = hf->spans[x + y * hf->width]; span != nullptr;
+  for (auto y = 0; y < hf.height; ++y) {
+    for (auto x = 0; x < hf.width; ++x) {
+      for (auto *span = hf.spans[x + y * hf.width]; span != nullptr;
            span = span->next) {
 
         const auto area = unpack_area(span->area);
@@ -62,15 +58,15 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
             (nswe & DIRECTION_S) != 0,
         });
 
-        columns[y * hf->width + x]++;
+        columns[y * hf.width + x]++;
       }
     }
   }
 
   // Add fake cells to columns with no layers
-  for (auto y = 0; y < hf->height; ++y) {
-    for (auto x = 0; x < hf->width; ++x) {
-      if (columns[y * hf->width + x] > 0) {
+  for (auto y = 0; y < hf.height; ++y) {
+    for (auto x = 0; x < hf.width; ++x) {
+      if (columns[y * hf.width + x] > 0) {
         continue;
       }
 
@@ -91,8 +87,6 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
     utils::Log(utils::LOG_WARN, "Geodata")
         << "Black holes (points of no return): " << black_holes << std::endl;
   }
-
-  rcFreeHeightField(hf);
 
   // Compress export buffer and return it
   m_export_buffer.reset(geodata);

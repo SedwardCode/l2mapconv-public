@@ -1,6 +1,10 @@
 #pragma once
 
+#include <cstdlib>
+#include <vector>
+
 #include <geodata/Map.h>
+#include <geometry/Triangle.h>
 
 #include "Recast.h"
 
@@ -14,22 +18,45 @@ static constexpr unsigned char RC_COMPLEX_AREA =
 inline auto unpack_area(int area) -> int { return area & 0x3; }
 inline auto unpack_nswe(int area) -> int { return area >> 2; }
 
-// Build heightfield and filter walkable low-height spans
-void build_filtered_heightfield(rcHeightfield &hf, const Map &map,
-                                std::vector<std::vector<int>> &triangle_index,
-                                float cell_size, float cell_height,
-                                float walkable_height, float walkable_angle);
+class NSWE {
+public:
+  explicit NSWE(const Map &map, float cell_size, float cell_height,
+                float walkable_height, float walkable_angle,
+                float min_walkable_climb, float max_walkable_climb);
 
-// Calculate NSWE based on the height difference of the neighboring spans and
-// mark some areas as RC_COMPLEX_AREA, on which we'll use calculate_complex_nswe
-void calculate_simple_nswe(const rcHeightfield &hf, float cell_height,
-                           float walkable_height, float min_walkable_climb,
-                           float max_walkable_climb);
+  ~NSWE();
 
-// Calculate NSWE based on sphere-to-mesh collision, must be called after
-// calculate_simple_nswe
-void calculate_complex_nswe(const rcHeightfield &hf, const Map &map,
-                            const std::vector<std::vector<int>> &triangle_index,
-                            float cell_size, float cell_height);
+  auto calculate_nswe() -> const rcHeightfield &;
+
+private:
+  const Map &m_map;
+
+  const float m_cell_size;
+  const float m_cell_height;
+  const float m_walkable_height;
+  const float m_walkable_angle;
+  const float m_min_walkable_climb;
+  const float m_max_walkable_climb;
+
+  rcHeightfield *m_hf;
+  std::vector<std::vector<int>> m_triangle_index;
+
+  // Build heightfield and filter walkable low-height spans
+  void build_filtered_heightfield();
+  void mark_walkable_triangles(const float *vertices, const int *triangles,
+                               std::size_t triangle_count,
+                               unsigned char *areas);
+
+  // Calculate NSWE based on the height difference of the neighboring spans and
+  // mark some areas as RC_COMPLEX_AREA, on which we'll use
+  // calculate_complex_nswe
+  void calculate_simple_nswe();
+
+  // Calculate NSWE based on sphere-to-mesh collision, must be called after
+  // calculate_simple_nswe
+  void calculate_complex_nswe();
+  auto triangles_at_columns(int x, int y, int radius)
+      -> std::vector<geometry::Triangle>;
+};
 
 } // namespace geodata
