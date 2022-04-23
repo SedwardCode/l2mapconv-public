@@ -10,6 +10,8 @@ namespace geodata {
 auto Builder::build(const Map &map, const BuilderSettings &settings) const
     -> const ExportBuffer & {
 
+  const auto map_origin = map.bounding_box().min();
+
   // Build heightfield
   auto *hf = rcAllocHeightfield();
   build_filtered_heightfield(*hf, map, settings.cell_size, settings.cell_height,
@@ -21,12 +23,8 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
                         settings.max_walkable_climb);
 
   // Calculate complex NSWE based on sphere-to-mesh collision
-  calculate_complex_nswe(*hf, map, settings.cell_size, settings.cell_height);
-
-  const auto depth =
-      static_cast<int>((map.bounding_box().max() - map.bounding_box().min()).z /
-                       settings.cell_height) /
-      2;
+  //  calculate_complex_nswe(*hf, map, settings.cell_size,
+  //  settings.cell_height);
 
   // Convert heightfield to geodata
   Geodata geodata;
@@ -50,13 +48,11 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
           black_holes++;
         }
 
-        const auto z = static_cast<int>(span->smax) - depth;
-
         geodata.cells.push_back({
             static_cast<std::int16_t>(x),
             static_cast<std::int16_t>(y),
-            static_cast<std::int16_t>(static_cast<float>(z) *
-                                      settings.cell_height),
+            static_cast<std::int16_t>(map_origin.z +
+                                      span->smax * settings.cell_height),
             BLOCK_MULTILAYER,
             (nswe & DIRECTION_N) != 0,
             (nswe & DIRECTION_W) != 0,

@@ -5,6 +5,9 @@ namespace geometry {
 Sphere::Sphere(const glm::vec3 &center, float radius)
     : m_center{center}, m_radius{radius} {}
 
+auto Sphere::center() const -> const glm::vec3 & { return m_center; }
+auto Sphere::radius() const -> float { return m_radius; }
+
 auto Sphere::bounding_box() const -> Box {
   static constexpr glm::vec3 corners[8] = {
       {-1.0f, -1.0f, -1.0f}, //

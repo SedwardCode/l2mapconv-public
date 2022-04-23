@@ -4,11 +4,12 @@
 
 namespace geodata {
 
-// Use this function to every input/output geometry::Box
+auto swap_y_with_z(const glm::vec3 &vector) -> glm::vec3 {
+  return {vector.x, vector.z, vector.y};
+}
+
 auto swap_y_with_z(const geometry::Box &box) -> geometry::Box {
-  const glm::vec3 min = {box.min().x, box.min().z, box.min().y};
-  const glm::vec3 max = {box.max().x, box.max().z, box.max().y};
-  return geometry::Box{min, max};
+  return geometry::Box{swap_y_with_z(box.min()), swap_y_with_z(box.max())};
 }
 
 Map::Map(const std::string &name, const geometry::Box &bounding_box)
@@ -100,13 +101,31 @@ auto Map::indices() const -> const std::vector<unsigned int> & {
   return m_indices;
 }
 
-auto Map::intersects(const geometry::Sphere &sphere,
-                     geometry::Intersection &intersection) const -> bool {}
+auto Map::collides(const geometry::Sphere &source_sphere) const -> bool {
+  const geometry::Sphere sphere{swap_y_with_z(source_sphere.center()),
+                                source_sphere.radius()};
+  const auto bounding_box = sphere.bounding_box();
 
-auto Map::triangles_that_intersects(const geometry::Box &source_bb) const
+  const auto triangles = triangles_that_intersects(bounding_box);
+
+  for (const auto &triangle : triangles) {
+    geometry::Intersection intersection{};
+
+    if (!sphere.intersects(triangle, intersection)) {
+      continue;
+    }
+
+    if (intersection.normal.y < 0.0f) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+auto Map::triangles_that_intersects(const geometry::Box &bounding_box) const
     -> const std::vector<geometry::Triangle> {
 
-  const auto bounding_box = swap_y_with_z(source_bb);
   std::vector<geometry::Triangle> triangles;
 
   for (const auto &entity_view : m_entities) {
@@ -117,11 +136,9 @@ auto Map::triangles_that_intersects(const geometry::Box &source_bb) const
     for (std::size_t index = 0; index < entity_view.index_count; index += 3) {
       const auto indices = &m_indices[entity_view.start_index + index];
 
-      const geometry::Triangle triangle{
-          identity * glm::vec4{m_vertices[indices[0]], 1.0f},
-          identity * glm::vec4{m_vertices[indices[1]], 1.0f},
-          identity * glm::vec4{m_vertices[indices[2]], 1.0f},
-      };
+      const geometry::Triangle triangle{m_vertices[indices[0]],
+                                        m_vertices[indices[1]],
+                                        m_vertices[indices[2]]};
 
       if (bounding_box.intersects(triangle.bounding_box())) {
         triangles.emplace_back(triangle);

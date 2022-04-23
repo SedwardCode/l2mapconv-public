@@ -33,8 +33,7 @@ public:
   auto vertices() const -> const std::vector<glm::vec3> &;
   auto indices() const -> const std::vector<unsigned int> &;
 
-  auto intersects(const geometry::Sphere &sphere,
-                  geometry::Intersection &intersection) const -> bool;
+  auto collides(const geometry::Sphere &source_sphere) const -> bool;
 
 private:
   struct EntityView {
@@ -50,6 +49,9 @@ private:
   std::vector<glm::vec3> m_vertices;
   std::vector<unsigned int> m_indices;
   std::vector<EntityView> m_entities;
+
+  auto triangles_that_intersects(const geometry::Box &bounding_box) const
+      -> const std::vector<geometry::Triangle>;
 };
 
 } // namespace geodata
