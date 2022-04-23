@@ -14,8 +14,10 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
 
   // Build heightfield
   auto *hf = rcAllocHeightfield();
-  build_filtered_heightfield(*hf, map, settings.cell_size, settings.cell_height,
-                             settings.walkable_height, settings.walkable_angle);
+  std::vector<std::vector<int>> triangle_index;
+  build_filtered_heightfield(*hf, map, triangle_index, settings.cell_size,
+                             settings.cell_height, settings.walkable_height,
+                             settings.walkable_angle);
 
   // Calculate simple NSWE
   calculate_simple_nswe(*hf, settings.cell_height, settings.walkable_height,
@@ -23,8 +25,8 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
                         settings.max_walkable_climb);
 
   // Calculate complex NSWE based on sphere-to-mesh collision
-  //  calculate_complex_nswe(*hf, map, settings.cell_size,
-  //  settings.cell_height);
+  calculate_complex_nswe(*hf, map, triangle_index, settings.cell_size,
+                         settings.cell_height);
 
   // Convert heightfield to geodata
   Geodata geodata;

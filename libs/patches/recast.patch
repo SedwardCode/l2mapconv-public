@@ -1,8 +1,17 @@
 diff --git a/Recast/Include/Recast.h b/Recast/Include/Recast.h
-index 4d55738..1ac2039 100644
+index 4d55738..3aa2111 100644
 --- a/Recast/Include/Recast.h
 +++ b/Recast/Include/Recast.h
-@@ -263,7 +263,7 @@ struct rcConfig
+@@ -19,6 +19,8 @@
+ #ifndef RECAST_H
+ #define RECAST_H
+ 
++#include <vector>
++
+ /// The value of PI used by Recast.
+ static const float RC_PI = 3.14159265f;
+ 
+@@ -263,7 +265,7 @@ struct rcConfig
  };
  
  /// Defines the number of bits allocated to rcSpan::smin and rcSpan::smax.
@@ -11,7 +20,7 @@ index 4d55738..1ac2039 100644
  /// Defines the maximum value for rcSpan::smin and rcSpan::smax.
  static const int RC_SPAN_MAX_HEIGHT = (1 << RC_SPAN_HEIGHT_BITS) - 1;
  
-@@ -277,7 +277,7 @@ struct rcSpan
+@@ -277,7 +279,7 @@ struct rcSpan
  {
  	unsigned int smin : RC_SPAN_HEIGHT_BITS; ///< The lower limit of the span. [Limit: < #smax]
  	unsigned int smax : RC_SPAN_HEIGHT_BITS; ///< The upper limit of the span. [Limit: <= #RC_SPAN_MAX_HEIGHT]
@@ -20,3 +29,80 @@ index 4d55738..1ac2039 100644
  	rcSpan* next;                            ///< The next span higher up in column.
  };
  
+@@ -871,7 +873,7 @@ bool rcRasterizeTriangle(rcContext* ctx, const float* v0, const float* v1, const
+ ///  @returns True if the operation completed successfully.
+ bool rcRasterizeTriangles(rcContext* ctx, const float* verts, const int nv,
+ 						  const int* tris, const unsigned char* areas, const int nt,
+-						  rcHeightfield& solid, const int flagMergeThr = 1);
++						  rcHeightfield& solid, std::vector<int>* triangleIndex, const int flagMergeThr = 1);
+ 
+ /// Rasterizes an indexed triangle mesh into the specified heightfield.
+ ///  @ingroup recast
+diff --git a/Recast/Source/RecastRasterization.cpp b/Recast/Source/RecastRasterization.cpp
+index a4cef74..523d6df 100644
+--- a/Recast/Source/RecastRasterization.cpp
++++ b/Recast/Source/RecastRasterization.cpp
+@@ -242,7 +242,7 @@ static bool rasterizeTri(const float* v0, const float* v1, const float* v2,
+ 						 const unsigned char area, rcHeightfield& hf,
+ 						 const float* bmin, const float* bmax,
+ 						 const float cs, const float ics, const float ich,
+-						 const int flagMergeThr)
++						 int index, std::vector<int>* triangleIndex, const int flagMergeThr)
+ {
+ 	const int w = hf.width;
+ 	const int h = hf.height;
+@@ -328,6 +328,9 @@ static bool rasterizeTri(const float* v0, const float* v1, const float* v2,
+ 			
+ 			if (!addSpan(hf, x, y, ismin, ismax, area, flagMergeThr))
+ 				return false;
++			
++			if (triangleIndex != nullptr)
++				triangleIndex[x + y * w].push_back(index);
+ 		}
+ 	}
+ 
+@@ -349,7 +352,7 @@ bool rcRasterizeTriangle(rcContext* ctx, const float* v0, const float* v1, const
+ 
+ 	const float ics = 1.0f/solid.cs;
+ 	const float ich = 1.0f/solid.ch;
+-	if (!rasterizeTri(v0, v1, v2, area, solid, solid.bmin, solid.bmax, solid.cs, ics, ich, flagMergeThr))
++	if (!rasterizeTri(v0, v1, v2, area, solid, solid.bmin, solid.bmax, solid.cs, ics, ich, 0, nullptr, flagMergeThr))
+ 	{
+ 		ctx->log(RC_LOG_ERROR, "rcRasterizeTriangle: Out of memory.");
+ 		return false;
+@@ -365,7 +368,7 @@ bool rcRasterizeTriangle(rcContext* ctx, const float* v0, const float* v1, const
+ /// @see rcHeightfield
+ bool rcRasterizeTriangles(rcContext* ctx, const float* verts, const int /*nv*/,
+ 						  const int* tris, const unsigned char* areas, const int nt,
+-						  rcHeightfield& solid, const int flagMergeThr)
++						  rcHeightfield& solid, std::vector<int>* triangleIndex, const int flagMergeThr)
+ {
+ 	rcAssert(ctx);
+ 
+@@ -380,7 +383,7 @@ bool rcRasterizeTriangles(rcContext* ctx, const float* verts, const int /*nv*/,
+ 		const float* v1 = &verts[tris[i*3+1]*3];
+ 		const float* v2 = &verts[tris[i*3+2]*3];
+ 		// Rasterize.
+-		if (!rasterizeTri(v0, v1, v2, areas[i], solid, solid.bmin, solid.bmax, solid.cs, ics, ich, flagMergeThr))
++		if (!rasterizeTri(v0, v1, v2, areas[i], solid, solid.bmin, solid.bmax, solid.cs, ics, ich, i, triangleIndex, flagMergeThr))
+ 		{
+ 			ctx->log(RC_LOG_ERROR, "rcRasterizeTriangles: Out of memory.");
+ 			return false;
+@@ -412,7 +415,7 @@ bool rcRasterizeTriangles(rcContext* ctx, const float* verts, const int /*nv*/,
+ 		const float* v1 = &verts[tris[i*3+1]*3];
+ 		const float* v2 = &verts[tris[i*3+2]*3];
+ 		// Rasterize.
+-		if (!rasterizeTri(v0, v1, v2, areas[i], solid, solid.bmin, solid.bmax, solid.cs, ics, ich, flagMergeThr))
++		if (!rasterizeTri(v0, v1, v2, areas[i], solid, solid.bmin, solid.bmax, solid.cs, ics, ich, 0, nullptr, flagMergeThr))
+ 		{
+ 			ctx->log(RC_LOG_ERROR, "rcRasterizeTriangles: Out of memory.");
+ 			return false;
+@@ -443,7 +446,7 @@ bool rcRasterizeTriangles(rcContext* ctx, const float* verts, const unsigned cha
+ 		const float* v1 = &verts[(i*3+1)*3];
+ 		const float* v2 = &verts[(i*3+2)*3];
+ 		// Rasterize.
+-		if (!rasterizeTri(v0, v1, v2, areas[i], solid, solid.bmin, solid.bmax, solid.cs, ics, ich, flagMergeThr))
++		if (!rasterizeTri(v0, v1, v2, areas[i], solid, solid.bmin, solid.bmax, solid.cs, ics, ich, 0, nullptr, flagMergeThr))
+ 		{
+ 			ctx->log(RC_LOG_ERROR, "rcRasterizeTriangles: Out of memory.");
+ 			return false;

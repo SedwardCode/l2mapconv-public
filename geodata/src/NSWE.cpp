@@ -8,8 +8,17 @@ void mark_walkable_triangles(float walkable_angle, const float *vertices,
                              const int *triangles, std::size_t triangle_count,
                              unsigned char *areas);
 
+auto triangles_at_columns(const rcHeightfield &hf, const Map &map,
+                          const std::vector<std::vector<int>> &triangle_index,
+                          int x, int y, int radius = 0)
+    -> std::vector<geometry::Triangle>;
+
 inline auto allow_direction(int area, int direction) -> int {
   return area | 1 << (direction + 2);
+}
+
+inline auto forbid_direction(int area, int direction) -> int {
+  return area & ~(1 << (direction + 2));
 }
 
 inline auto change_area(int area, int new_area) -> int {
@@ -19,6 +28,7 @@ inline auto change_area(int area, int new_area) -> int {
 /// Public functions
 
 void build_filtered_heightfield(rcHeightfield &hf, const Map &map,
+                                std::vector<std::vector<int>> &triangle_index,
                                 float cell_size, float cell_height,
                                 float walkable_height, float walkable_angle) {
 
@@ -42,11 +52,13 @@ void build_filtered_heightfield(rcHeightfield &hf, const Map &map,
   const auto triangle_count = map.indices().size() / 3;
 
   // Rasterize triangles
+  triangle_index.reserve(width * height);
   std::vector<unsigned char> areas(triangle_count);
   mark_walkable_triangles(walkable_angle, vertices, triangles, triangle_count,
                           &areas.front());
   rcRasterizeTriangles(&context, vertices, vertex_count, triangles,
-                       &areas.front(), triangle_count, hf, 0);
+                       &areas.front(), triangle_count, hf,
+                       &triangle_index.front());
 
   // Filter spans
   rcFilterWalkableLowHeightSpans(
@@ -83,17 +95,19 @@ void calculate_simple_nswe(const rcHeightfield &hf, float cell_height,
                              : max_height;
 
         for (auto direction = 0; direction < 4; ++direction) {
-          const auto dx = x + rcGetDirOffsetX(direction);
-          const auto dy = y + rcGetDirOffsetY(direction);
+          const auto side_x = x + rcGetDirOffsetX(direction);
+          const auto side_y = y + rcGetDirOffsetY(direction);
 
-          if (dx < 0 || dy < 0 || dx >= hf.width || dy >= hf.height) {
+          if (side_x < 0 || side_y < 0 || side_x >= hf.width ||
+              side_y >= hf.height) {
+
             span->area = allow_direction(span->area, direction);
             continue;
           }
 
           auto direction_allowed = false;
 
-          for (auto *neighbour = hf.spans[dx + dy * hf.width];
+          for (auto *neighbour = hf.spans[side_x + side_y * hf.width];
                neighbour != nullptr; neighbour = neighbour->next) {
 
             const auto neighbour_bottom = static_cast<int>(neighbour->smax);
@@ -106,7 +120,7 @@ void calculate_simple_nswe(const rcHeightfield &hf, float cell_height,
                                 std::max(bottom, neighbour_bottom);
             const auto diff = neighbour_bottom - bottom;
 
-            if (diff > min_walkable_climb_cells &&
+            if (diff >= min_walkable_climb_cells &&
                 diff <= max_walkable_climb_cells) {
               span->area = change_area(span->area, RC_COMPLEX_AREA);
             }
@@ -117,7 +131,7 @@ void calculate_simple_nswe(const rcHeightfield &hf, float cell_height,
             }
           }
 
-          if (direction_allowed) {
+          if (true || direction_allowed) {
             span->area = allow_direction(span->area, direction);
           }
         }
@@ -127,6 +141,7 @@ void calculate_simple_nswe(const rcHeightfield &hf, float cell_height,
 }
 
 void calculate_complex_nswe(const rcHeightfield &hf, const Map &map,
+                            const std::vector<std::vector<int>> &triangle_index,
                             float cell_size, float cell_height) {
 
   const auto map_origin = map.bounding_box().min();
@@ -138,26 +153,44 @@ void calculate_complex_nswe(const rcHeightfield &hf, const Map &map,
 
         const auto area = unpack_area(span->area);
 
-        //        if (area != RC_COMPLEX_AREA) {
-        //          continue;
-        //        }
+        if (area != RC_COMPLEX_AREA) {
+          continue;
+        }
 
         for (auto direction = 0; direction < 4; ++direction) {
-          const auto dx = x + rcGetDirOffsetX(direction);
-          const auto dy = y + rcGetDirOffsetY(direction);
+          const auto dx = rcGetDirOffsetX(direction);
+          const auto dy = rcGetDirOffsetY(direction);
+          const auto side_x = x + dx;
+          const auto side_y = y + dy;
+
+          if (side_x < 0 || side_y < 0 || side_x >= hf.width ||
+              side_y >= hf.height) {
+
+            continue;
+          }
 
           const auto sphere_radius = cell_size / 2.0f;
 
           const glm::vec3 sphere_center{
-              map_origin.x + dx * cell_size,
-              map_origin.y + dy * cell_size,
+              map_origin.x + x * cell_size + cell_size / 2.0f,
               map_origin.z + span->smax * cell_height + sphere_radius,
+              map_origin.y + y * cell_size + cell_size / 2.0f,
           };
 
           const geometry::Sphere sphere{sphere_center, sphere_radius};
 
-          if (!map.collides(sphere)) {
-            span->area = allow_direction(span->area, direction);
+          const auto triangles =
+              triangles_at_columns(hf, map, triangle_index, x, y, 0);
+
+          for (const auto &triangle : triangles) {
+            geometry::Intersection intersection{};
+
+            if (sphere.intersects(triangle, intersection)) {
+              if (intersection.normal.y <= 0.0f) {
+                span->area = forbid_direction(span->area, direction);
+                break;
+              }
+            }
           }
         }
       }
@@ -188,6 +221,41 @@ void mark_walkable_triangles(float walkable_angle, const float *vertices,
       areas[i] = RC_FLAT_AREA;
     }
   }
+}
+
+auto triangles_at_columns(const rcHeightfield &hf, const Map &map,
+                          const std::vector<std::vector<int>> &triangle_index,
+                          int x, int y, int radius)
+    -> std::vector<geometry::Triangle> {
+
+  std::vector<geometry::Triangle> triangles;
+  std::unordered_set<int> column_indices;
+
+  const auto &map_vertices = map.vertices();
+  const auto &map_triangles = map.indices();
+
+  for (auto dy = y - radius; dy < y + radius + 1; ++dy) {
+    for (auto dx = x - radius; dx < x + radius + 1; ++dx) {
+      if (dx < 0 || dy < 0 || dx >= hf.width || dy >= hf.height) {
+        continue;
+      }
+
+      const auto &indices = triangle_index[x + y * hf.width];
+      column_indices.insert(indices.cbegin(), indices.cend());
+    }
+  }
+
+  for (const auto index : column_indices) {
+    const geometry::Triangle triangle{
+        map_vertices[map_triangles[index * 3 + 0]],
+        map_vertices[map_triangles[index * 3 + 1]],
+        map_vertices[map_triangles[index * 3 + 2]],
+    };
+
+    triangles.emplace_back(triangle);
+  }
+
+  return triangles;
 }
 
 } // namespace geodata

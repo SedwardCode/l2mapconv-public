@@ -16,6 +16,7 @@ inline auto unpack_nswe(int area) -> int { return area >> 2; }
 
 // Build heightfield and filter walkable low-height spans
 void build_filtered_heightfield(rcHeightfield &hf, const Map &map,
+                                std::vector<std::vector<int>> &triangle_index,
                                 float cell_size, float cell_height,
                                 float walkable_height, float walkable_angle);
 
@@ -28,6 +29,7 @@ void calculate_simple_nswe(const rcHeightfield &hf, float cell_height,
 // Calculate NSWE based on sphere-to-mesh collision, must be called after
 // calculate_simple_nswe
 void calculate_complex_nswe(const rcHeightfield &hf, const Map &map,
+                            const std::vector<std::vector<int>> &triangle_index,
                             float cell_size, float cell_height);
 
 } // namespace geodata
