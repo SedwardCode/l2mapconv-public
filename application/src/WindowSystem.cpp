@@ -38,7 +38,7 @@ void WindowSystem::frame_begin(Timestep /*frame_time*/) {
   glfwGetFramebufferSize(m_window, &m_window_context.framebuffer.size.width,
                          &m_window_context.framebuffer.size.height);
 
-  // Mouse.
+  // Mouse
   m_window_context.mouse.right =
       glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
 

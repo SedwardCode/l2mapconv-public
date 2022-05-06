@@ -3,10 +3,7 @@
 namespace geometry {
 
 Sphere::Sphere(const glm::vec3 &center, float radius)
-    : m_center{center}, m_radius{radius} {}
-
-auto Sphere::center() const -> const glm::vec3 & { return m_center; }
-auto Sphere::radius() const -> float { return m_radius; }
+    : center{center}, radius{radius} {}
 
 auto Sphere::bounding_box() const -> Box {
   static constexpr glm::vec3 corners[8] = {
@@ -24,7 +21,7 @@ auto Sphere::bounding_box() const -> Box {
   Box bounding_box{};
 
   for (auto i = 0; i < 8; ++i) {
-    bounding_box += m_center + corners[i] * m_radius;
+    bounding_box += center + corners[i] * radius;
   }
 
   return bounding_box;
@@ -33,14 +30,31 @@ auto Sphere::bounding_box() const -> Box {
 auto Sphere::intersects(const Triangle &triangle,
                         Intersection &intersection) const -> bool {
 
-  const auto closest_point = triangle.closest_point_to(m_center);
-  const auto vector = closest_point - m_center;
+  const auto closest_point = triangle.closest_point_to(center);
+  const auto vector = center - closest_point;
   const auto length = glm::length(vector);
 
   intersection.normal = glm::normalize(vector);
-  intersection.depth = m_radius - length;
+  intersection.depth = radius - length;
 
-  return length <= m_radius;
+  return length <= radius;
+}
+
+auto Sphere::intersects(const std::vector<Triangle> &triangles,
+                        std::function<bool(float, float)> normal_predicate,
+                        float normal_treshold) const -> bool {
+
+  Intersection intersection{};
+
+  for (const auto &triangle : triangles) {
+    if (intersects(triangle, intersection) &&
+        normal_predicate(intersection.normal.y, normal_treshold)) {
+
+      return true;
+    }
+  }
+
+  return false;
 }
 
 } // namespace geometry

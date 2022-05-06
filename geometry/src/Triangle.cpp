@@ -61,7 +61,7 @@ auto Triangle::closest_point_to(const glm::vec3 &point) const -> glm::vec3 {
   const auto denom = 1.0f / (va + vb + vc);
   const auto v = vb * denom;
   const auto w = vc * denom;
-  return a + ab * v + ac * w; // = u*a + v*b + w*c, u = va * denom = 1.0f-v-w
+  return a + ab * v + ac * w; // = u*a + v*b + w*c, u = va*denom = 1.0f-v-w
 }
 
 } // namespace geometry

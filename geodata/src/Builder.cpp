@@ -10,8 +10,6 @@ namespace geodata {
 auto Builder::build(const Map &map, const BuilderSettings &settings) const
     -> const ExportBuffer & {
 
-  const auto map_origin = map.bounding_box().min();
-
   NSWE nswe_calculator{
       map,
       settings.cell_size,
@@ -26,6 +24,8 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
 
   // Convert heightfield to geodata
   Geodata geodata;
+
+  const auto map_origin = map.bounding_box().min();
 
   std::vector<int> columns(hf.width * hf.height);
   auto black_holes = 0;
@@ -47,15 +47,18 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
         }
 
         geodata.cells.push_back({
-            static_cast<std::int16_t>(x),
-            static_cast<std::int16_t>(y),
+            static_cast<std::int16_t>(x), static_cast<std::int16_t>(y),
             static_cast<std::int16_t>(map_origin.z +
                                       span->smax * settings.cell_height),
-            BLOCK_MULTILAYER,
-            (nswe & DIRECTION_N) != 0,
-            (nswe & DIRECTION_W) != 0,
-            (nswe & DIRECTION_E) != 0,
-            (nswe & DIRECTION_S) != 0,
+            BLOCK_MULTILAYER,          //
+            (nswe & DIRECTION_N) != 0, //
+            (nswe & DIRECTION_W) != 0, //
+            (nswe & DIRECTION_E) != 0, //
+            (nswe & DIRECTION_S) != 0, //
+                                       //            area == RC_COMPLEX_AREA,
+                                       //            area == RC_COMPLEX_AREA,
+                                       //            area == RC_COMPLEX_AREA,
+                                       //            area == RC_COMPLEX_AREA,
         });
 
         columns[y * hf.width + x]++;

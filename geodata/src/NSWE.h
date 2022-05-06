@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <geodata/Map.h>
+#include <geometry/Sphere.h>
 #include <geometry/Triangle.h>
 
 #include "Recast.h"
@@ -34,7 +35,7 @@ private:
   const float m_cell_size;
   const float m_cell_height;
   const float m_walkable_height;
-  const float m_walkable_angle;
+  const float m_walkable_angle_radians;
   const float m_min_walkable_climb;
   const float m_max_walkable_climb;
 
@@ -45,7 +46,7 @@ private:
   void build_filtered_heightfield();
   void mark_walkable_triangles(const float *vertices, const int *triangles,
                                std::size_t triangle_count,
-                               unsigned char *areas);
+                               unsigned char *areas) const;
 
   // Calculate NSWE based on the height difference of the neighboring spans and
   // mark some areas as RC_COMPLEX_AREA, on which we'll use
@@ -55,7 +56,11 @@ private:
   // Calculate NSWE based on sphere-to-mesh collision, must be called after
   // calculate_simple_nswe
   void calculate_complex_nswe();
-  auto triangles_at_columns(int x, int y, int radius)
+  auto slide_sphere_until_collision(int x, int y, int z, int direction) const
+      -> bool;
+  void drop_sphere(geometry::Sphere &sphere,
+                   const std::vector<geometry::Triangle> &triangles) const;
+  auto triangles_at_columns(int x, int y, int radius) const
       -> std::vector<geometry::Triangle>;
 };
 

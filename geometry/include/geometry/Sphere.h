@@ -6,23 +6,25 @@
 
 #include <glm/glm.hpp>
 
+#include <functional>
+#include <vector>
+
 namespace geometry {
 
-class Sphere {
-public:
-  explicit Sphere(const glm::vec3 &center, float radius);
+struct Sphere {
+  glm::vec3 center;
+  float radius;
 
-  auto center() const -> const glm::vec3 &;
-  auto radius() const -> float;
+  explicit Sphere(const glm::vec3 &center, float radius);
 
   auto bounding_box() const -> Box;
 
   auto intersects(const Triangle &triangle, Intersection &intersection) const
       -> bool;
 
-private:
-  const glm::vec3 m_center;
-  const float m_radius;
+  auto intersects(const std::vector<Triangle> &triangles,
+                  std::function<bool(float, float)> normal_predicate,
+                  float normal_treshold) const -> bool;
 };
 
 } // namespace geometry

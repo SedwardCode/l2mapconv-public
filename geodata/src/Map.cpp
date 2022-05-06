@@ -81,7 +81,7 @@ auto Map::bounding_box() const -> geometry::Box {
   return swap_y_with_z(m_bounding_box);
 }
 
-auto Map::flipped_bounding_box() const -> const geometry::Box & {
+auto Map::internal_bounding_box() const -> const geometry::Box & {
   return m_bounding_box;
 }
 

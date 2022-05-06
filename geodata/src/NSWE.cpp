@@ -2,7 +2,11 @@
 
 #include "NSWE.h"
 
+//#define DISABLE_SIMPLE_NSWE_CALCULATION
+
 namespace geodata {
+
+static constexpr auto GRAVITY_STEP_DELTA = 1.0f;
 
 void mark_walkable_triangles(float walkable_angle, const float *vertices,
                              const int *triangles, std::size_t triangle_count,
@@ -25,15 +29,18 @@ inline auto change_area(int area, int new_area) -> int {
   return new_area | unpack_nswe(area) << 2;
 }
 
+inline auto direction_forbidden(int area, int direction) -> bool {
+  return (area >> 2 & (1 << direction)) == 0;
+}
+
 NSWE::NSWE(const Map &map, float cell_size, float cell_height,
            float walkable_height, float walkable_angle,
            float min_walkable_climb, float max_walkable_climb)
     : m_map{map}, m_cell_size{cell_size}, m_cell_height{cell_height},
-      m_walkable_height{walkable_height}, m_walkable_angle{walkable_angle},
-      m_min_walkable_climb{min_walkable_climb}, m_max_walkable_climb{
-                                                    max_walkable_climb} {
-
-  m_hf = rcAllocHeightfield();
+      m_walkable_height{walkable_height}, m_walkable_angle_radians{std::cos(
+                                              glm::radians(walkable_angle))},
+      m_min_walkable_climb{min_walkable_climb},
+      m_max_walkable_climb{max_walkable_climb}, m_hf{rcAllocHeightfield()} {
 
   build_filtered_heightfield();
 }
@@ -42,16 +49,19 @@ NSWE::~NSWE() { rcFreeHeightField(m_hf); }
 
 auto NSWE::calculate_nswe() -> const rcHeightfield & {
 
+#ifndef DISABLE_SIMPLE_NSWE_CALCULATION
   calculate_simple_nswe();
-  calculate_complex_nswe();
+#endif
+
+  //  calculate_complex_nswe();
 
   return *m_hf;
 }
 
 void NSWE::build_filtered_heightfield() {
 
-  const auto *bb_min = glm::value_ptr(m_map.flipped_bounding_box().min());
-  const auto *bb_max = glm::value_ptr(m_map.flipped_bounding_box().max());
+  const auto *bb_min = glm::value_ptr(m_map.internal_bounding_box().min());
+  const auto *bb_max = glm::value_ptr(m_map.internal_bounding_box().max());
 
   // Grid size
   auto width = 0;
@@ -75,7 +85,7 @@ void NSWE::build_filtered_heightfield() {
   mark_walkable_triangles(vertices, triangles, triangle_count, &areas.front());
   rcRasterizeTriangles(&context, vertices, vertex_count, triangles,
                        &areas.front(), triangle_count, *m_hf,
-                       &m_triangle_index.front());
+                       &m_triangle_index.front(), 1);
 
   // Filter spans
   rcFilterWalkableLowHeightSpans(
@@ -112,6 +122,7 @@ void NSWE::calculate_simple_nswe() {
           const auto side_x = x + rcGetDirOffsetX(direction);
           const auto side_y = y + rcGetDirOffsetY(direction);
 
+          // Allow moving outside of the map
           if (side_x < 0 || side_y < 0 || side_x >= m_hf->width ||
               side_y >= m_hf->height) {
 
@@ -134,13 +145,25 @@ void NSWE::calculate_simple_nswe() {
                                 std::max(bottom, neighbour_bottom);
             const auto diff = neighbour_bottom - bottom;
 
-            if (diff >= min_walkable_climb_cells &&
-                diff <= max_walkable_climb_cells) {
-              span->area = change_area(span->area, RC_COMPLEX_AREA);
-            }
-
             if (height > walkable_height_cells) {
-              direction_allowed = diff <= max_walkable_climb_cells;
+              // Mark complex areas for further sphere-to-mesh collision
+              // detection
+              if (std::abs(diff) >= min_walkable_climb_cells / 2 &&
+                  std::abs(diff) <= max_walkable_climb_cells) {
+
+                span->area = change_area(span->area, RC_COMPLEX_AREA);
+              }
+
+              const auto neighbour_area = unpack_area(neighbour->area);
+
+              if (area <= RC_STEEP_AREA || neighbour_area <= RC_STEEP_AREA) {
+                // Forbid going up on steep surfaces
+                direction_allowed = diff <= 0;
+              } else {
+                // Allow direction if height difference is small
+                direction_allowed = diff <= max_walkable_climb_cells;
+              }
+
               break;
             }
           }
@@ -155,20 +178,28 @@ void NSWE::calculate_simple_nswe() {
 }
 
 void NSWE::calculate_complex_nswe() {
-  const auto map_origin = m_map.bounding_box().min();
-
   for (auto y = 0; y < m_hf->height; ++y) {
     for (auto x = 0; x < m_hf->width; ++x) {
       for (auto *span = m_hf->spans[x + y * m_hf->width]; span != nullptr;
            span = span->next) {
 
+#ifndef DISABLE_SIMPLE_NSWE_CALCULATION
         const auto area = unpack_area(span->area);
 
         if (area != RC_COMPLEX_AREA) {
           continue;
         }
+#endif
 
         for (auto direction = 0; direction < 4; ++direction) {
+#ifndef DISABLE_SIMPLE_NSWE_CALCULATION
+          // Skip collision checking if direction is already forbidden at the
+          // simple NSWE calculation step
+          if (direction_forbidden(span->area, direction)) {
+            continue;
+          }
+#endif
+
           const auto dx = rcGetDirOffsetX(direction);
           const auto dy = rcGetDirOffsetY(direction);
           const auto side_x = x + dx;
@@ -180,27 +211,12 @@ void NSWE::calculate_complex_nswe() {
             continue;
           }
 
-          const auto sphere_radius = m_cell_size / 2.0f;
-
-          const glm::vec3 sphere_center{
-              map_origin.x + x * m_cell_size + m_cell_size / 2.0f,
-              map_origin.z + span->smax * m_cell_height + sphere_radius,
-              map_origin.y + y * m_cell_size + m_cell_size / 2.0f,
-          };
-
-          const geometry::Sphere sphere{sphere_center, sphere_radius};
-
-          const auto triangles = triangles_at_columns(x, y, 0);
-
-          for (const auto &triangle : triangles) {
-            geometry::Intersection intersection{};
-
-            if (sphere.intersects(triangle, intersection)) {
-              if (intersection.normal.y <= 0.0f) {
-                span->area = forbid_direction(span->area, direction);
-                break;
-              }
-            }
+          if (slide_sphere_until_collision(x, y, span->smax, direction)) {
+            span->area = forbid_direction(span->area, direction);
+          } else {
+#ifdef DISABLE_SIMPLE_NSWE_CALCULATION
+            span->area = allow_direction(span->area, direction);
+#endif
           }
         }
       }
@@ -210,9 +226,7 @@ void NSWE::calculate_complex_nswe() {
 
 void NSWE::mark_walkable_triangles(const float *vertices, const int *triangles,
                                    std::size_t triangle_count,
-                                   unsigned char *areas) {
-
-  const auto walkable_angle_radians = std::cos(glm::radians(m_walkable_angle));
+                                   unsigned char *areas) const {
 
   for (std::size_t i = 0; i < triangle_count; ++i) {
     const auto *triangle = &triangles[i * 3];
@@ -221,9 +235,11 @@ void NSWE::mark_walkable_triangles(const float *vertices, const int *triangles,
                             glm::make_vec3(&vertices[triangle[1] * 3]),
                             glm::make_vec3(&vertices[triangle[2] * 3]));
 
-    if (normal.y <= 0.0f) {
+    const auto slope = glm::dot(normal, {0.0f, 1.0f, 0.0f});
+
+    if (slope < -0.01f) { // -0.01f workaround for "nearly vertical" surfaces
       areas[i] = RC_NULL_AREA;
-    } else if (normal.y < walkable_angle_radians) {
+    } else if (slope < m_walkable_angle_radians) {
       areas[i] = RC_STEEP_AREA;
     } else {
       areas[i] = RC_FLAT_AREA;
@@ -231,7 +247,64 @@ void NSWE::mark_walkable_triangles(const float *vertices, const int *triangles,
   }
 }
 
-auto NSWE::triangles_at_columns(int x, int y, int radius)
+auto NSWE::slide_sphere_until_collision(int x, int y, int z,
+                                        int direction) const -> bool {
+
+  static constexpr auto delta = 1.0f;
+
+  const auto map_origin = m_map.bounding_box().min();
+  const auto sphere_radius = m_cell_size / 2.0f;
+
+  // Place sphere on the cell
+  const glm::vec3 sphere_center{
+      map_origin.x + x * m_cell_size + m_cell_size / 2.0f,
+      map_origin.z + z * m_cell_height +
+          sphere_radius, // Z-up swapped with Y-up
+      map_origin.y + y * m_cell_size + m_cell_size / 2.0f,
+  };
+
+  geometry::Sphere sphere{sphere_center, sphere_radius};
+
+  const auto triangles = triangles_at_columns(x, y, 1);
+
+  const auto dx = rcGetDirOffsetX(direction);
+  const auto dy = rcGetDirOffsetY(direction);
+
+  for (auto i = 0; i < static_cast<int>(m_cell_size / delta); ++i) {
+    drop_sphere(sphere, triangles);
+
+    sphere.center.x += dx * delta;
+    sphere.center.z += dy * delta;
+
+    if (sphere.intersects(triangles, std::less_equal(), 0.7f)) {
+      return true;
+    }
+
+    sphere.center.y += delta;
+  }
+
+  return false;
+}
+
+void NSWE::drop_sphere(geometry::Sphere &sphere,
+                       const std::vector<geometry::Triangle> &triangles) const {
+
+  const auto original_z = sphere.center.y;
+
+  while (original_z - sphere.center.y < m_max_walkable_climb * 2.0f) {
+    if (sphere.intersects(triangles, std::less_equal(), 1.0f)) {
+      if (sphere.center.y != original_z) {
+        sphere.center.y += GRAVITY_STEP_DELTA;
+      }
+
+      return;
+    }
+
+    sphere.center.y -= GRAVITY_STEP_DELTA;
+  }
+}
+
+auto NSWE::triangles_at_columns(int x, int y, int radius) const
     -> std::vector<geometry::Triangle> {
 
   std::vector<geometry::Triangle> triangles;
@@ -240,17 +313,19 @@ auto NSWE::triangles_at_columns(int x, int y, int radius)
   const auto &map_vertices = m_map.vertices();
   const auto &map_triangles = m_map.indices();
 
+  // Find triangle indices
   for (auto dy = y - radius; dy < y + radius + 1; ++dy) {
     for (auto dx = x - radius; dx < x + radius + 1; ++dx) {
       if (dx < 0 || dy < 0 || dx >= m_hf->width || dy >= m_hf->height) {
         continue;
       }
 
-      const auto &indices = m_triangle_index[x + y * m_hf->width];
+      const auto &indices = m_triangle_index[dx + dy * m_hf->width];
       column_indices.insert(indices.cbegin(), indices.cend());
     }
   }
 
+  // Make triangles by found indices
   for (const auto index : column_indices) {
     const geometry::Triangle triangle{
         map_vertices[map_triangles[index * 3 + 0]],
@@ -258,7 +333,7 @@ auto NSWE::triangles_at_columns(int x, int y, int radius)
         map_vertices[map_triangles[index * 3 + 2]],
     };
 
-    triangles.emplace_back(triangle);
+    triangles.push_back(triangle);
   }
 
   return triangles;

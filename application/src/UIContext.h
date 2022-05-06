@@ -38,7 +38,7 @@ struct UIContext {
 
     void set_defaults() {
       cell_size = 16.0f;
-      cell_height = 1.0f;
+      cell_height = 8.0f;
       walkable_height = 48.0f;
       walkable_angle = 45.0f;
       min_walkable_climb = 8.0f;

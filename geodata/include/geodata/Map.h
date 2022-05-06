@@ -28,7 +28,7 @@ public:
   auto name() const -> const std::string &;
   auto bounding_box() const -> geometry::Box;
 
-  auto flipped_bounding_box() const -> const geometry::Box &;
+  auto internal_bounding_box() const -> const geometry::Box &;
 
   auto vertices() const -> const std::vector<glm::vec3> &;
   auto indices() const -> const std::vector<unsigned int> &;
