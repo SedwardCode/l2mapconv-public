@@ -146,22 +146,21 @@ void NSWE::calculate_simple_nswe() {
             const auto diff = neighbour_bottom - bottom;
 
             if (height > walkable_height_cells) {
-              // Mark complex areas for further sphere-to-mesh collision
-              // detection
-              if (std::abs(diff) >= min_walkable_climb_cells / 2 &&
-                  std::abs(diff) <= max_walkable_climb_cells) {
-
-                span->area = change_area(span->area, RC_COMPLEX_AREA);
-              }
-
               const auto neighbour_area = unpack_area(neighbour->area);
 
               if (area <= RC_STEEP_AREA || neighbour_area <= RC_STEEP_AREA) {
                 // Forbid going up on steep surfaces
-                direction_allowed = diff <= 0;
+                direction_allowed = diff <= min_walkable_climb_cells;
               } else {
-                // Allow direction if height difference is small
                 direction_allowed = diff <= max_walkable_climb_cells;
+              }
+
+              // Mark complex areas for further sphere-to-mesh collision
+              // detection
+              if (std::abs(diff) >= min_walkable_climb_cells &&
+                  std::abs(diff) <= max_walkable_climb_cells) {
+
+                span->area = change_area(span->area, RC_COMPLEX_AREA);
               }
 
               break;
@@ -205,6 +204,7 @@ void NSWE::calculate_complex_nswe() {
           const auto side_x = x + dx;
           const auto side_y = y + dy;
 
+          // Skip map edges
           if (side_x < 0 || side_y < 0 || side_x >= m_hf->width ||
               side_y >= m_hf->height) {
 
@@ -275,12 +275,12 @@ auto NSWE::slide_sphere_until_collision(int x, int y, int z,
 
     sphere.center.x += dx * delta;
     sphere.center.z += dy * delta;
+    sphere.center.y += 5.0f;
 
-    if (sphere.intersects(triangles, std::less_equal(), 0.7f)) {
+    if (sphere.intersects(triangles, std::less_equal(),
+                          m_walkable_angle_radians)) {
       return true;
     }
-
-    sphere.center.y += delta;
   }
 
   return false;

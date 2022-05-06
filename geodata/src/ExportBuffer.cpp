@@ -147,7 +147,7 @@ auto ExportBuffer::unpack_cell(PackedCell packed_cell, BlockType type, int x,
 
 auto ExportBuffer::round_height(std::int16_t height) const -> std::int16_t {
   // Round cell height to fit 12 bits
-  return (height / CELL_HEIGHT) * CELL_HEIGHT;
+  return ((height / CELL_HEIGHT) + 1) * CELL_HEIGHT;
 }
 
 } // namespace geodata

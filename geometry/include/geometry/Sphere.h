@@ -23,8 +23,8 @@ struct Sphere {
       -> bool;
 
   auto intersects(const std::vector<Triangle> &triangles,
-                  std::function<bool(float, float)> normal_predicate,
-                  float normal_treshold) const -> bool;
+                  std::function<bool(float, float)> slope_predicate,
+                  float slope_treshold) const -> bool;
 };
 
 } // namespace geometry
