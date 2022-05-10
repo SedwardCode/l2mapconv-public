@@ -12,12 +12,13 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
 
   NSWE nswe_calculator{
       map,
-      settings.cell_size,
-      settings.cell_height,
-      settings.walkable_height,
-      settings.walkable_angle,
+      settings.actor_height,
+      settings.actor_radius,
+      settings.max_walkable_angle,
       settings.min_walkable_climb,
       settings.max_walkable_climb,
+      settings.cell_size,
+      settings.cell_height,
   };
 
   const auto &hf = nswe_calculator.calculate_nswe();
@@ -26,6 +27,7 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
   Geodata geodata;
 
   const auto map_origin = map.bounding_box().min();
+  const auto cell_elevation = map_origin.z + settings.actor_height / 2.0f;
 
   std::vector<int> columns(hf.width * hf.height);
   auto black_holes = 0;
@@ -47,14 +49,15 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
         }
 
         geodata.cells.push_back({
-            static_cast<std::int16_t>(x), static_cast<std::int16_t>(y),
-            static_cast<std::int16_t>(map_origin.z +
-                                      span->smax * settings.cell_height),
-            BLOCK_MULTILAYER,          //
-            (nswe & DIRECTION_N) != 0, //
-            (nswe & DIRECTION_W) != 0, //
-            (nswe & DIRECTION_E) != 0, //
-            (nswe & DIRECTION_S) != 0, //
+            static_cast<std::int16_t>(x), //
+            static_cast<std::int16_t>(y), //
+            static_cast<std::int16_t>(cell_elevation +
+                                      span->smax * settings.cell_height), //
+            BLOCK_MULTILAYER,                                             //
+            (nswe & DIRECTION_N) != 0,                                    //
+            (nswe & DIRECTION_W) != 0,                                    //
+            (nswe & DIRECTION_E) != 0,                                    //
+            (nswe & DIRECTION_S) != 0,                                    //
                                        //            area == RC_COMPLEX_AREA,
                                        //            area == RC_COMPLEX_AREA,
                                        //            area == RC_COMPLEX_AREA,

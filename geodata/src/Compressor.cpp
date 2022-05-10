@@ -8,7 +8,7 @@ static constexpr auto MAP_WIDTH_BLOCKS = 256;
 static constexpr auto MAP_HEIGHT_BLOCKS = 256;
 static constexpr auto BLOCK_WIDTH_CELLS = 8;
 static constexpr auto BLOCK_HEIGHT_CELLS = 8;
-static constexpr auto SIMPLE_BLOCK_MAX_HEIGHT_DIFFERENCE = 24;
+static constexpr auto SIMPLE_BLOCK_MAX_HEIGHT_DIFFERENCE = 32;
 
 Compressor::Compressor(ExportBuffer &buffer) : m_buffer{buffer} {}
 
@@ -74,7 +74,7 @@ auto Compressor::is_simple_block(int x, int y, std::int16_t &new_z) const
     }
   }
 
-  new_z = max_z;
+  new_z = min_z + (max_z - min_z) / 2;
   return true;
 };
 

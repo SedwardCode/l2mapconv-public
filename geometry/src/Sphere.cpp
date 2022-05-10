@@ -48,8 +48,9 @@ auto Sphere::intersects(const std::vector<Triangle> &triangles,
 
   for (const auto &triangle : triangles) {
     if (intersects(triangle, intersection)) {
-      const auto slope = glm::dot(intersection.normal * intersection.depth,
-                                  {0.0f, 1.0f, 0.0f});
+      const auto slope =
+          glm::dot(glm::normalize(intersection.normal * intersection.depth),
+                   {0.0f, 1.0f, 0.0f});
 
       if (slope_predicate(slope, slope_treshold)) {
         return true;

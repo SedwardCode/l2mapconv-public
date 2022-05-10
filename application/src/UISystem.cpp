@@ -79,14 +79,16 @@ void UISystem::geodata_window() const {
   ImGui::Begin("Geodata", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 
   ImGui::PushItemWidth(50);
-  ImGui::InputFloat("Cell Size", &m_ui_context.geodata.cell_size);
-  ImGui::InputFloat("Cell Height", &m_ui_context.geodata.cell_height);
-  ImGui::InputFloat("Walkable Height", &m_ui_context.geodata.walkable_height);
-  ImGui::InputFloat("Walkable Angle", &m_ui_context.geodata.walkable_angle);
+  ImGui::InputFloat("Actor Height", &m_ui_context.geodata.actor_height);
+  ImGui::InputFloat("Actor Radius", &m_ui_context.geodata.actor_radius);
+  ImGui::InputFloat("Max Walkable Angle",
+                    &m_ui_context.geodata.max_walkable_angle);
   ImGui::InputFloat("Min Walkable Climb",
                     &m_ui_context.geodata.min_walkable_climb);
   ImGui::InputFloat("Max Walkable Climb",
                     &m_ui_context.geodata.max_walkable_climb);
+  ImGui::InputFloat("Cell Size", &m_ui_context.geodata.cell_size);
+  ImGui::InputFloat("Cell Height", &m_ui_context.geodata.cell_height);
 
   if (ImGui::Button("Reset")) {
     m_ui_context.geodata.set_defaults();

@@ -26,23 +26,25 @@ struct UIContext {
   } rendering;
 
   struct {
-    float cell_size;
-    float cell_height;
-    float walkable_height;
-    float walkable_angle;
+    float actor_height;
+    float actor_radius;
+    float max_walkable_angle;
     float min_walkable_climb;
     float max_walkable_climb;
+    float cell_size;
+    float cell_height;
 
     std::function<void()> build_handler;
     bool should_export;
 
     void set_defaults() {
-      cell_size = 16.0f;
-      cell_height = 1.0f;
-      walkable_height = 48.0f;
-      walkable_angle = 45.0f;
+      actor_height = 48.0f;
+      actor_radius = 16.0f;
+      max_walkable_angle = 46.0f;
       min_walkable_climb = 8.0f;
       max_walkable_climb = 16.0f;
+      cell_size = 16.0f;
+      cell_height = 1.0f;
     }
   } geodata;
 };

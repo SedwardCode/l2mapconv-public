@@ -21,9 +21,9 @@ inline auto unpack_nswe(int area) -> int { return area >> 2; }
 
 class NSWE {
 public:
-  explicit NSWE(const Map &map, float cell_size, float cell_height,
-                float walkable_height, float walkable_angle,
-                float min_walkable_climb, float max_walkable_climb);
+  explicit NSWE(const Map &map, float actor_height, float actor_radius,
+                float max_walkable_angle, float min_walkable_climb,
+                float max_walkable_climb, float cell_size, float cell_height);
 
   ~NSWE();
 
@@ -32,12 +32,13 @@ public:
 private:
   const Map &m_map;
 
-  const float m_cell_size;
-  const float m_cell_height;
-  const float m_walkable_height;
-  const float m_walkable_angle_radians;
+  const float m_actor_height;
+  const float m_actor_radius;
+  const float m_max_walkable_angle_radians;
   const float m_min_walkable_climb;
   const float m_max_walkable_climb;
+  const float m_cell_size;
+  const float m_cell_height;
 
   rcHeightfield *m_hf;
   std::vector<std::vector<int>> m_triangle_index;
