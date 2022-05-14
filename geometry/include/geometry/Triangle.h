@@ -13,8 +13,6 @@ struct Triangle {
 
   explicit Triangle(const glm::vec3 &a, const glm::vec3 &b, const glm::vec3 &c);
 
-  auto bounding_box() const -> Box;
-
   auto closest_point_to(const glm::vec3 &point) const -> glm::vec3;
 };
 

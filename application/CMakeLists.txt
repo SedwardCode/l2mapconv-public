@@ -52,7 +52,12 @@ add_custom_target(copy-resources ALL
 )
 
 # CMake options
-option(LOAD_TEXTURES "Load textures" OFF)
-if(LOAD_TEXTURES)
+option(L2MAPCONV_LOAD_TEXTURES "Load Textures" OFF)
+if(L2MAPCONV_LOAD_TEXTURES)
   add_definitions(-DLOAD_TEXTURES)
+endif()
+
+option(L2MAPCONV_LOAD_TERRAIN "Load Terrain" ON)
+if(L2MAPCONV_LOAD_TERRAIN)
+  add_definitions(-DLOAD_TERRAIN)
 endif()

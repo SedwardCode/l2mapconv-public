@@ -5,8 +5,6 @@ namespace geometry {
 Triangle::Triangle(const glm::vec3 &a, const glm::vec3 &b, const glm::vec3 &c)
     : a{a}, b{b}, c{c} {}
 
-auto Triangle::bounding_box() const -> Box { return Box{{a, b, c}}; }
-
 // Copy-pasted from the Real-Time Collision Detection book
 auto Triangle::closest_point_to(const glm::vec3 &point) const -> glm::vec3 {
   // Check if P in vertex region outside A

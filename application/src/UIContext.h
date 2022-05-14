@@ -40,8 +40,8 @@ struct UIContext {
     void set_defaults() {
       actor_height = 48.0f;
       actor_radius = 16.0f;
-      max_walkable_angle = 46.0f;
-      min_walkable_climb = 8.0f;
+      max_walkable_angle = 45.5f;
+      min_walkable_climb = 2.0f;
       max_walkable_climb = 16.0f;
       cell_size = 16.0f;
       cell_height = 1.0f;

@@ -5,7 +5,7 @@
 
 UnrealLoader::UnrealLoader(const std::filesystem::path &root_path)
     : m_package_loader{root_path,
-                       {unreal::SearchConfig{"MAPS", "unr"},
+                       {unreal::SearchConfig{"Maps", "unr"},
                         unreal::SearchConfig{"StaticMeshes", "usx"},
                         unreal::SearchConfig{"Textures", "utx"},
                         unreal::SearchConfig{"SysTextures", "utx"}}} {}
@@ -30,12 +30,14 @@ auto UnrealLoader::load_map(const std::string &name) const -> Map {
       to_vec3(terrain->bounding_box().min) * scale + map.position,
       to_vec3(terrain->bounding_box().max) * scale + map.position};
 
+#ifdef LOAD_TERRAIN
   if (!terrain->broken_scale()) {
     const auto terrain_entities = load_terrain_entities(*terrain);
     map.entities.insert(map.entities.end(),
                         std::make_move_iterator(terrain_entities.begin()),
                         std::make_move_iterator(terrain_entities.end()));
   }
+#endif
 
   // Mesh actors
   const auto mesh_actor_entities = load_mesh_actor_entities(package);

@@ -28,6 +28,8 @@ l2mapconv.exe --preview/build --client-root <path> -- [maps...]
     --help             Print help
 ```
 
+> Use `--log-level 4` option to print building progress.
+
 ## Project building
 
 Requirements:
@@ -57,6 +59,12 @@ $ cmake -H. -G Ninja -Bbuild -DCMAKE_BUILD_TYPE=Release
 $ cd build
 $ ninja
 ```
+
+### CMake Options
+
+- `L2MAPCONV_GEODATA_POST_PROCESSING` — enable geodata compression and cell alignment. Disable to see actual cell positions during development.
+- `L2MAPCONV_LOAD_TERRAIN` — disable for faster geodata building during development.
+- `L2MAPCONV_LOAD_TEXTURES` — loads textures for some static meshes and BSPs in the preview mode. Very unstable.
 
 ## Credits
 

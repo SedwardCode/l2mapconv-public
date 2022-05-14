@@ -27,7 +27,12 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
   Geodata geodata;
 
   const auto map_origin = map.bounding_box().min();
+
+#ifdef GEODATA_POST_PROCESSING
   const auto cell_elevation = map_origin.z + settings.actor_height / 2.0f;
+#else
+  const auto cell_elevation = map_origin.z + settings.cell_height;
+#endif
 
   std::vector<int> columns(hf.width * hf.height);
   auto black_holes = 0;
@@ -97,8 +102,10 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
   // Compress export buffer and return it
   m_export_buffer.reset(geodata);
 
+#ifdef GEODATA_POST_PROCESSING
   Compressor compressor{m_export_buffer};
   compressor.compress();
+#endif
 
   return m_export_buffer;
 }

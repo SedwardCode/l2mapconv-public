@@ -43,6 +43,8 @@ private:
   rcHeightfield *m_hf;
   std::vector<std::vector<int>> m_triangle_index;
 
+  mutable std::vector<std::vector<geometry::Triangle>> m_triangle_cache;
+
   // Build heightfield and filter walkable low-height spans
   void build_filtered_heightfield();
   void mark_walkable_triangles(const float *vertices, const int *triangles,
@@ -63,6 +65,9 @@ private:
                    const std::vector<geometry::Triangle> &triangles) const;
   auto triangles_at_columns(int x, int y, int radius) const
       -> std::vector<geometry::Triangle>;
+
+  // Utility
+  void print_progress(int x, int y) const;
 };
 
 } // namespace geodata

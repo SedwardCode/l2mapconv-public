@@ -32,3 +32,9 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 )
 
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic)
+
+# CMake options
+option(L2MAPCONV_GEODATA_POST_PROCESSING "Geodata Post-Processing" ON)
+if(L2MAPCONV_GEODATA_POST_PROCESSING)
+  add_definitions(-DGEODATA_POST_PROCESSING)
+endif()
