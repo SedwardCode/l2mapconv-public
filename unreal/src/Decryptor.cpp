@@ -13,7 +13,7 @@ static constexpr std::array<char, LINEAGE_SIZE> LINEAGE_HEADER = {
     0x00, 0x65, 0x00, 0x32, 0x00, 0x56, 0x00, 0x65, 0x00, 0x72, 0x00};
 
 void Decryptor::decrypt(const std::filesystem::path &path,
-                        std::ostream &output) {
+                        std::ostream &output) const {
 
   std::ifstream input{path, std::ios::binary};
   const auto version = extract_version(input);
@@ -37,7 +37,9 @@ void Decryptor::decrypt(const std::filesystem::path &path,
   }
 }
 
-auto Decryptor::extract_version(std::istream &input) -> std::optional<int> {
+auto Decryptor::extract_version(std::istream &input) const
+    -> std::optional<int> {
+
   std::array<char, LINEAGE_SIZE> lineage_buffer{};
   std::array<char, VERSION_SIZE> version_buffer{};
   input.read(lineage_buffer.data(), LINEAGE_SIZE);
@@ -60,7 +62,7 @@ auto Decryptor::extract_version(std::istream &input) -> std::optional<int> {
 }
 
 void Decryptor::decrypt_xor(std::istream &input, std::ostream &output,
-                            int key) {
+                            int key) const {
 
   std::istreambuf_iterator input_iterator{input};
   std::ostreambuf_iterator output_iterator{output};
@@ -71,12 +73,12 @@ void Decryptor::decrypt_xor(std::istream &input, std::ostream &output,
   }
 }
 
-void Decryptor::decrypt_v111(std::istream &input, std::ostream &output) {
+void Decryptor::decrypt_v111(std::istream &input, std::ostream &output) const {
   decrypt_xor(input, output, 0xac);
 }
 
 void Decryptor::decrypt_v121(std::istream &input, std::ostream &output,
-                             const std::filesystem::path &path) {
+                             const std::filesystem::path &path) const {
 
   const auto filename = path.filename().string();
   auto key = 0;
