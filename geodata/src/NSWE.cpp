@@ -36,6 +36,16 @@ inline auto vertical_slope(const glm::vec3 &vector) -> float {
   return glm::dot(glm::normalize(vector), {0.0f, 1.0f, 0.0f});
 }
 
+template <typename T>
+auto fill_vector(std::vector<std::vector<T>> &vector, int size) {
+  vector.reserve(size);
+
+  for (auto i = 0; i < size; ++i) {
+    auto inner_vector = std::vector<T>();
+    vector.push_back(std::move(inner_vector));
+  }
+}
+
 NSWE::NSWE(const Map &map, float actor_height, float actor_radius,
            float max_walkable_angle, float min_walkable_climb,
            float max_walkable_climb, float cell_size, float cell_height)
@@ -87,8 +97,8 @@ void NSWE::build_filtered_heightfield() {
   const auto triangle_count = m_map.indices().size() / 3;
 
   // Rasterize triangles
-  m_triangle_index.reserve(width * height);
-  m_triangle_cache.reserve(width * height);
+  fill_vector(m_triangle_index, width * height);
+  fill_vector(m_triangle_cache, width * height);
 
   std::vector<unsigned char> areas(triangle_count);
   mark_walkable_triangles(vertices, triangles, triangle_count, &areas.front());

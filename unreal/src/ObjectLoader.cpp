@@ -19,6 +19,7 @@ auto ObjectLoader::load_object(const ObjectImport &import) const
     if (object_export.object_name == import.object_name &&
         object_export.class_name == import.class_name &&
         object_export.class_name != "Package") {
+
       return export_object(object_export);
     }
   }
@@ -34,11 +35,11 @@ auto ObjectLoader::load_object(Index index) const -> std::shared_ptr<Object> {
   if (index < 0) {
     ASSERT(static_cast<std::size_t>(-index) <= m_archive.import_map.size(),
            "Unreal", "Index out of import_map bounds");
-    auto &import = m_archive.import_map[-index - 1];
+    const auto &import = m_archive.import_map[-index - 1];
 
     ASSERT(import.package_index != 0, "Unreal",
            "Package index can't be equal to zero");
-    auto *package_import = &import;
+    const auto *package_import = &import;
 
     do {
       ASSERT(static_cast<std::size_t>(-package_import->package_index) <=
@@ -48,7 +49,7 @@ auto ObjectLoader::load_object(Index index) const -> std::shared_ptr<Object> {
           &m_archive.import_map[-package_import->package_index - 1];
     } while (package_import->package_index != 0);
 
-    auto *archive =
+    const auto *archive =
         m_archive_loader.load_archive(std::string{package_import->object_name});
 
     if (archive == nullptr) {

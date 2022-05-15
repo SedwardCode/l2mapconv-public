@@ -39,7 +39,7 @@ auto ArchiveLoader::load_and_cache_archive(
     -> Archive * {
 
   std::stringstream decrypted;
-  Decryptor decryptor;
+  const Decryptor decryptor;
   decryptor.decrypt(path, decrypted);
 
   if (utils::Log::level > utils::LOG_INFO) {
