@@ -1,5 +1,7 @@
 #include <utils/Bitset.h>
 
+#include <limits>
+
 namespace utils {
 
 auto Bitset::size() const -> std::size_t {

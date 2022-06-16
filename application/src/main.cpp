@@ -48,13 +48,16 @@ auto main(int argc, char **argv) -> int {
   } else if (input.count("build") > 0) {
     build = true;
   } else {
-    utils::Log(utils::LOG_ERROR) << "Unspecified command" << std::endl;
+    utils::Log(utils::LOG_ERROR)
+        << "Unspecified command (use either --preview or --build)" << std::endl;
     std::cout << options.help() << std::endl;
     return EXIT_FAILURE;
   }
 
   // Client root
   if (input.count("client-root") == 0) {
+    utils::Log(utils::LOG_ERROR)
+        << "Unspecified Lineage II client path (--client-root)" << std::endl;
     std::cout << options.help() << std::endl;
     return EXIT_FAILURE;
   }
