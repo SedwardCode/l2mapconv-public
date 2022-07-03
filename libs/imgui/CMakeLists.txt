@@ -21,8 +21,5 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE libglew_static
 )
 
-# Compiler options
-set_target_properties(${PROJECT_NAME} PROPERTIES
-    CXX_STANDARD 20
-    CXX_STANDARD_REQUIRED ON
-)
+# Compiler settings
+set_target_properties(${PROJECT_NAME} PROPERTIES ${TARGET_PROPERTIES})
