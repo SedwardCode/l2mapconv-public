@@ -55,7 +55,7 @@ index a4cef74..523d6df 100644
  			
  			if (!addSpan(hf, x, y, ismin, ismax, area, flagMergeThr))
  				return false;
-+			
++
 +			if (triangleIndex != nullptr)
 +				triangleIndex[x + y * w].push_back(index);
  		}

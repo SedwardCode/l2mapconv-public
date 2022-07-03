@@ -34,30 +34,27 @@ l2mapconv.exe --preview/build --client-root <path> -- [maps...]
 
 Requirements:
 
-- Clang
-- Cmake
-- Ninja or another build system
-- MVS on Windows and Xcode on macOS (or standalone Clang)
+- Clang/GCC
+- CMake
+- Ninja or other build system
 - Git to apply the [Recast patch](libs/patches/recast.patch)
 
 ### Windows
 
 ```sh
-> git clone --recurse-submodules -j8 https://github.com/madyanov/l2mapconv-public.git
-> cd l2mapconv-public
-> cmake -H. -G Ninja -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="C:/Program Files/LLVM/bin/clang.exe" -DCMAKE_CXX_COMPILER="C:/Program Files/LLVM/bin/clang.exe"
-> cd build
-> ninja
+git clone --recurse-submodules -j8 git@github.com:madyanov/l2mapconv-public.git
+cd l2mapconv-public
+cmake -S . -B build -G Ninja -D CMAKE_BUILD_TYPE=Release -D CMAKE_C_COMPILER="C:/Program Files/LLVM/bin/clang.exe" -D CMAKE_CXX_COMPILER="C:/Program Files/LLVM/bin/clang++.exe"
+cmake --build build --parallel
 ```
 
-### macOS
+### macOS/Linux
 
 ```sh
-$ git clone --recurse-submodules -j8 https://github.com/madyanov/l2mapconv-public.git
-$ cd l2mapconv-public
-$ cmake -H. -G Ninja -Bbuild -DCMAKE_BUILD_TYPE=Release
-$ cd build
-$ ninja
+git clone --recurse-submodules -j8 git@github.com:madyanov/l2mapconv-public.git
+cd l2mapconv-public
+CC=clang CXX=clang++ cmake -S . -B build -G Ninja -D CMAKE_BUILD_TYPE=Release
+cmake --build build --parallel
 ```
 
 ### CMake Options
@@ -66,9 +63,18 @@ $ ninja
 - `L2MAPCONV_LOAD_TERRAIN` — disable for faster geodata building during development.
 - `L2MAPCONV_LOAD_TEXTURES` — loads textures for some static meshes and BSPs in the preview mode. Very unstable.
 
+## Dependencies
+
+- [recast](https://github.com/recastnavigation/recastnavigation)
+- [cxxopts](https://github.com/jarro2783/cxxopts)
+- [glew](https://github.com/Perlmint/glew-cmake)
+- [glfw](https://github.com/glfw/glfw)
+- [glm](https://github.com/g-truc/glm)
+- [imgui](https://github.com/ocornut/imgui)
+- [stb](https://github.com/nothings/stb)
+
 ## Credits
 
-- [Recast](https://github.com/recastnavigation/recastnavigation)
 - [L2PackageTools](https://github.com/Bigcheese/L2PackageTools)
 - [l2mapper](https://github.com/justgos/l2mapper)
 - [UEViewer](https://github.com/gildor2/UEViewer)

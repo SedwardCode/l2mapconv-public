@@ -1,5 +1,6 @@
 .DS_Store
 .vs/
+.vscode/
 .cmake/
 CMakeLists.txt.user
 build/

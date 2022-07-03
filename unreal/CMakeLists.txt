@@ -44,15 +44,4 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     CXX_STANDARD_REQUIRED ON
 )
 
-target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic)
-
-# Test executable
-add_executable(${PROJECT_NAME}_test src/main.cpp)
-target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
-
-set_target_properties(${PROJECT_NAME}_test PROPERTIES
-    CXX_STANDARD 20
-    CXX_STANDARD_REQUIRED ON
-)
-
-target_compile_options(${PROJECT_NAME}_test PRIVATE -Wall -Wextra -pedantic)
+target_compile_options(${PROJECT_NAME} PRIVATE ${TARGET_COMPILE_OPTIONS})
