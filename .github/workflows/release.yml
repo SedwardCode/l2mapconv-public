@@ -1,0 +1,112 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build-linux-x11-gcc:
+    name: X11 (Linux, GCC)
+    runs-on: ubuntu-latest
+    env:
+      CC: gcc
+      CXX: g++
+    steps:
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev libglew-dev
+      - name: Configure
+        run: cmake -S . -B build -D CMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      - name: Build
+        run: cmake --build build --parallel
+      - uses: actions/upload-artifact@v3
+        with:
+          name: l2mapconv-linux-gcc-${{env.BUILD_TYPE}}
+          path: build/install
+
+  build-linux-x11-clang:
+    name: X11 (Linux, Clang)
+    runs-on: ubuntu-latest
+    env:
+      CC: clang
+      CXX: clang++
+    steps:
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev libglew-dev
+      - name: Configure
+        run: cmake -S . -B build -D CMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      - name: Build
+        run: cmake --build build --parallel
+      - uses: actions/upload-artifact@v3
+        with:
+          name: l2mapconv-linux-clang-${{env.BUILD_TYPE}}
+          path: build/install
+
+  build-macos-cocoa-clang:
+    name: Cocoa (macOS, Clang)
+    runs-on: macos-latest
+    env:
+      CC: clang
+      CXX: clang++
+    steps:
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Configure
+        run: cmake -S . -B build -D CMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+      - name: Build
+        run: cmake --build build --parallel
+      - uses: actions/upload-artifact@v3
+        with:
+          name: l2mapconv-macos-clang-${{env.BUILD_TYPE}}
+          path: build/install
+
+  # build-windows-win32-vs2022:
+  #   name: Win32 (Windows, VS2022)
+  #   runs-on: windows-latest
+  #   steps:
+  #     - name: Checkout repository and submodules
+  #       uses: actions/checkout@v3
+  #       with:
+  #         submodules: recursive
+  #     - name: Configure
+  #       run: cmake -S . -B build -G "Visual Studio 17 2022"
+  #     - name: Build
+  #       run: cmake --build build --parallel --config ${{env.BUILD_TYPE}}
+
+  build-windows-win32-clang:
+    name: Win32 (Windows, Clang)
+    runs-on: windows-latest
+    env:
+      CC: clang
+      CXX: clang++
+    steps:
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Configure
+        run: cmake -S . -B build -G Ninja -D CMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      - name: Build
+        run: cmake --build build --parallel --config ${{env.BUILD_TYPE}}
+      - uses: actions/upload-artifact@v3
+        with:
+          name: l2mapconv-win32-clang-${{env.BUILD_TYPE}}
+          path: build/install
