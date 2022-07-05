@@ -8,7 +8,7 @@ static constexpr auto MAP_WIDTH_BLOCKS = 256;
 static constexpr auto MAP_HEIGHT_BLOCKS = 256;
 static constexpr auto BLOCK_WIDTH_CELLS = 8;
 static constexpr auto BLOCK_HEIGHT_CELLS = 8;
-static constexpr auto SIMPLE_BLOCK_MAX_HEIGHT_DIFFERENCE = 16;
+static constexpr auto SIMPLE_BLOCK_MAX_HEIGHT_DIFFERENCE = 32;
 
 Compressor::Compressor(ExportBuffer &buffer) : m_buffer{buffer} {}
 
