@@ -94,6 +94,9 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
     }
   }
 
+   utils::Log(utils::LOG_WARN, "Map")
+      << "Map Processed: " << map.name() << std::endl;
+
   if (black_holes > 0) {
     utils::Log(utils::LOG_WARN, "Geodata")
         << "Black holes (points of no return): " << black_holes << std::endl;
