@@ -4,6 +4,7 @@
 #include "NSWE.h"
 
 #include <geodata/Builder.h>
+#include <WinBase.h>
 
 namespace geodata {
 
@@ -94,13 +95,8 @@ auto Builder::build(const Map &map, const BuilderSettings &settings) const
     }
   }
 
-   utils::Log(utils::LOG_WARN, "Map")
-      << "Map Processed: " << map.name() << std::endl;
-
-  if (black_holes > 0) {
-    utils::Log(utils::LOG_WARN, "Geodata")
-        << "Black holes (points of no return): " << black_holes << std::endl;
-  }
+    utils::Log(utils::LOG_INFO, "Geodata")
+        << "Map Proccessed:" << map.name() << " - Black holes (points of no return): " << black_holes << std::endl;
 
   // Compress export buffer and return it
   m_export_buffer.reset(geodata);
