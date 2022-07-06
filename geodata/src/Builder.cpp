@@ -4,7 +4,6 @@
 #include "NSWE.h"
 
 #include <geodata/Builder.h>
-#include <WinBase.h>
 
 namespace geodata {
 
