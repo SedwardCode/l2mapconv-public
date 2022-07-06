@@ -20,6 +20,8 @@ void Decryptor::decrypt(const std::filesystem::path &path,
 
   if (!version.has_value()) {
     ASSERT(false, "Unreal", "Can't detect Lineage 2 encryption version");
+    utils::Log(utils::LOG_WARN, "Path")
+        << "Path: " << path << std::endl;
     return;
   }
 
